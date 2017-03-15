@@ -1,4 +1,18 @@
 from math import *
+c=299792458 #in m/s
+#Masses in MeV/c^2
+def getEcm(mE1,mE2,E1L):
+    vels=getVelcm(mE1,mE2,E1L)
+    # mE1=getEMass(iso1)
+    # mE2=getEMass(iso2)
+    #Alternative way
+    # mu=mE1*mE2/(mE1+mE2)
+    # rVel=vels[0]-vels[1]
+    # print 1.0/2.0*mu*rVel**2
+    E1cm=0.5*(vels[0]/c)**2*mE1
+    E2cm=0.5*(vels[1]/c)**2*mE2
+    Ecm=E1cm+E2cm
+    return E1cm,E2cm,Ecm 
 
 def getEcmsFromECM2(m1,m2,ECM):
     #For example, in a decay ECM=Q
@@ -10,9 +24,9 @@ def getEcmsFromECM2(m1,m2,ECM):
     E2=0.5*(P*c)**2/m2
     return E1,E2
 
-def getAvailEnergy(iso1,iso2,isoEject,isoRes,E1L,E2L=0):
-    E1cm,E2cm,Ecm=getEcm(iso1,iso2,E1L)
-    Q=getIsoQVal(iso1,iso2,isoEject,isoRes)
+def getAvailEnergy(m1,m2,m3,m4,E1L,E2L=0):
+    E1cm,E2cm,Ecm=getEcm(m1,m2,E1L)
+    Q=getQVal(m1,m2,m3,m4)
     return Ecm+Q
 
 def getAllVs(iso1,iso2,isoE,isoR,E1L):
@@ -23,9 +37,9 @@ def getAllVs(iso1,iso2,isoE,isoR,E1L):
     vE=sqrt(2.0*ejectE/getEMass(isoE))*c
     vR=sqrt(2.0*resE/getEMass(isoR))*c
 
-def getVelcm(iso1,iso2,E1):
-    m1=getEMass(iso1)
-    m2=getEMass(iso2)
+def getVelcm(m1,m2,E1):
+    # m1=getEMass(iso1)
+    # m2=getEMass(iso2)
     v1=sqrt(2.0*E1/m1)*c
     v2=0 #assuming it is still
     Vcm=(1.0*v1*m1+1.0*v2*m2)/(m1+m2)
