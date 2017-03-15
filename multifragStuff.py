@@ -12,7 +12,7 @@ def getEcm(mE1,mE2,E1L):
     E1cm=0.5*(vels[0]/c)**2*mE1
     E2cm=0.5*(vels[1]/c)**2*mE2
     Ecm=E1cm+E2cm
-    return E1cm,E2cm,Ecm 
+    return E1cm,E2cm,Ecm
 
 def getEcmsFromECM2(m1,m2,ECM):
     #For example, in a decay ECM=Q
@@ -50,3 +50,9 @@ def getVelcm(m1,m2,E1):
 def getQVal(m1,m2,m3,m4):
     Q=(m1+m2-m3-m4)
     return Q
+
+#Not using relativistic case here
+def getSimpleVels(m1,E1cm,m2,E2cm):
+    v1cm=sqrt(2.0*E1cm/m1)*c
+    v2cm=sqrt(2.0*E2cm/m2)*c
+    return v1cm,v2cm
