@@ -29,6 +29,10 @@ def getAvailEnergy(m1,m2,m3,m4,E1L,E2L=0):
     Q=getQVal(m1,m2,m3,m4)
     return Ecm+Q
 
+def getAvailEnergy0(m1,me1,me2,Ecm):
+    Q=getQVal(m1,0,me2,me2)
+    return Ecm+Q
+
 def getAllVs(iso1,iso2,isoE,isoR,E1L):
     v1cm,v2cm,Vcm=getVelcm(iso1,iso2,E1L)
     EcmAvail=getAvailEnergy(iso1,iso2,isoE,isoR,E1L)
@@ -53,6 +57,6 @@ def getQVal(m1,m2,m3,m4):
 
 #Not using relativistic case here
 def getSimpleVels(m1,E1cm,m2,E2cm):
-    v1cm=sqrt(2.0*E1cm/m1)*c
-    v2cm=sqrt(2.0*E2cm/m2)*c
+    v1cm=sqrt(2.0*E1cm/m1)
+    v2cm=sqrt(2.0*E2cm/m2)
     return v1cm,v2cm
