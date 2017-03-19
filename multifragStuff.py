@@ -60,3 +60,109 @@ def getSimpleVels(m1,E1cm,m2,E2cm):
     v1cm=sqrt(2.0*E1cm/m1)
     v2cm=sqrt(2.0*E2cm/m2)
     return v1cm,v2cm
+
+def printTree(treeDict):
+    if treeDict == {}:
+        return
+
+    # print(treeDict)
+    print("")
+    print("name is ", treeDict["name"])
+
+    if "dictList" not in treeDict:
+        return
+
+    for e in treeDict:
+        if e != "name" and e != "dictList":
+            print(e,treeDict[e])
+
+    print("The child names are")
+    printChildNames(treeDict["dictList"])
+
+    for e in treeDict["dictList"]:
+        printTree(e)
+
+def printChildNames(dictList):
+    for i in range(len(dictList)):
+        if "name" not in dictList[i]:
+            continue
+        print(dictList[i]["name"])
+
+
+def getFinalMass(dictNode):
+    if "mass" not in dictNode:
+        return None
+
+    m=dictNode["mass"]
+    if "exE" not in dictNode:
+        myExE=0
+    else:
+        myExE=dictNode["exE"]
+
+    m+=myExE
+    return m
+
+def globalCompleteTree(treeDict):
+    treeDict["mass"]=treeDict["massP"]+treeDict["massT"]
+    mPro=treeDict["massP"]
+    mTar=treeDict["massT"]
+    ELab=treeDict["ELab"]
+    initEcm=getEcm(mPro,mTar,ELab)[2]
+    treeDict["Ecm"]=initEcm
+    completeTree0(treeDict)
+    completeTree1(treeDict)
+
+def completeTree0(treeDict):
+    if treeDict == {}:
+        return
+
+    finalMass=getFinalMass(treeDict)
+    if finalMass != None:
+        treeDict["fMass"]=finalMass
+
+    qVal=getQVal(treeDict)
+    if qVal != None:
+        print("filling tree with", qVal)
+        treeDict["Q"]=qVal
+
+    if "dictList" not in treeDict:
+        return
+
+    for e in treeDict["dictList"]:
+        completeTree0(e)
+
+def completeTree1(treeDict):
+    if treeDict == {}:
+        return
+
+    qVal=getQVal(treeDict)
+    if qVal != None:
+        treeDict["Q"]=qVal
+
+    if "dictList" not in treeDict:
+        return
+
+    for e in treeDict["dictList"]:
+        completeTree1(e)
+
+
+def getQVal(dictNode):
+    if "fMass" not in dictNode:
+        return None
+
+    if "dictList" not in dictNode:
+        return None
+
+    for e in dictNode["dictList"]:
+        if "fMass" not in e:
+            return None
+
+    finalMass=dictNode["fMass"]
+    daugthersMass=0
+    for e in dictNode["dictList"]:
+        daugthersMass+=e["fMass"]
+
+    Q=finalMass-daugthersMass
+    return Q
+
+# def getEcmFromNode(dictNode):
