@@ -36,18 +36,18 @@ oxyDict["dictList"]=[d1Dict,{}]
 beDict["dictList"]=[alphaADict,alphaBDict]
 alphaSysDict["dictList"]=[alphaADict,alphaBDict]
 
-initDict["dictList"]=[oxyDict,beDict]
-# initDict["dictList"]=[oxyDict,alphaSysDict]
+# initDict["dictList"]=[oxyDict,beDict]
+initDict["dictList"]=[oxyDict,alphaSysDict]
 
 # treeStruct=[alphaADict,[d1Dict,{}]]
 
-# printTree(initDict)
+printTree(initDict)
 print("")
 
 # print("The final mass of 8Be is")
 # print(getFinalMass(beDict))
 print("")
-# print("Now completing the tree")
+print("Now completing the tree")
 globalCompleteTree(initDict)
 
 printTree(initDict)
