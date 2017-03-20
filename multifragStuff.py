@@ -55,7 +55,7 @@ def getQVal(m1,m2,m3,m4):
     Q=(m1+m2-m3-m4)
     return Q
 
-#Not using relativistic case here
+#Not using relativistic case here, these are betas (v/c)
 def getSimpleVels(m1,E1cm,m2,E2cm):
     v1cm=sqrt(2.0*E1cm/m1)
     v2cm=sqrt(2.0*E2cm/m2)
@@ -103,14 +103,27 @@ def getFinalMass(dictNode):
     return m
 
 def globalCompleteTree(treeDict):
-    treeDict["mass"]=treeDict["massP"]+treeDict["massT"]
+    fillInit(treeDict)
+    completeTree0(treeDict)
+    completeTree1(treeDict)
+    completeTree2(treeDict)
+
+def fillInit(treeDict):
+    if treeDict == {}:
+        return
+    if "ELab" not in treeDict:#Do more error cheching...
+        return
     mPro=treeDict["massP"]
     mTar=treeDict["massT"]
+    treeDict["mass"]=mPro+mTar
+
     ELab=treeDict["ELab"]
     initEcm=getEcm(mPro,mTar,ELab)[2]
     treeDict["Ecm"]=initEcm
-    completeTree0(treeDict)
-    completeTree1(treeDict)
+    #Saving the beta
+    treeDict["BVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
+    treeDict["redVcm"]=treeDict["BVcm"]*100
+
 
 def completeTree0(treeDict):
     if treeDict == {}:
@@ -120,7 +133,7 @@ def completeTree0(treeDict):
     if finalMass != None:
         treeDict["fMass"]=finalMass
 
-    qVal=getQVal(treeDict)
+    qVal=getNodeQVal(treeDict)
     if qVal != None:
         print("filling tree with", qVal)
         treeDict["Q"]=qVal
@@ -135,7 +148,7 @@ def completeTree1(treeDict):
     if treeDict == {}:
         return
 
-    qVal=getQVal(treeDict)
+    qVal=getNodeQVal(treeDict)
     if qVal != None:
         treeDict["Q"]=qVal
 
@@ -146,7 +159,64 @@ def completeTree1(treeDict):
         completeTree1(e)
 
 
-def getQVal(dictNode):
+def completeTree2(treeDict):
+    if treeDict == {}:
+        return
+
+    eAvail=getAvailE(treeDict)
+    if eAvail != None:
+        treeDict["EAvail"]=eAvail
+        childMasses=getChildMasses(treeDict)
+        if childMasses != None:
+            m1,m2=childMasses
+            E1cm,E2cm=getEcmsFromECM2(m1,m2,eAvail)
+            pushNewEcmAndVels(E1cm,E2cm,treeDict["dictList"])
+
+    if "dictList" not in treeDict:
+        return
+
+    for e in treeDict["dictList"]:
+        completeTree2(e)
+
+def pushNewEcmAndVels(E1cm,E2cm,dictNode):
+    dictNode[0]["Ecm"]=E1cm
+    m1=dictNode[0]["fMass"]
+    BVcm1=sqrt(2.0*E1cm/m1)#Leaving out *c for now
+    dictNode[0]["BVcm"]=BVcm1
+    dictNode[0]["redVcm"]=BVcm1*100
+
+    dictNode[1]["Ecm"]=E2cm
+    m2=dictNode[1]["fMass"]
+    BVcm2=sqrt(2.0*E2cm/m2)#Leaving out *c for now
+    dictNode[1]["BVcm"]=BVcm2
+    dictNode[1]["redVcm"]=BVcm2*100
+
+
+def getAvailE(dictNode):
+    if "Ecm" not in dictNode:
+        return None
+    eCm=dictNode["Ecm"]
+    if "Q" not in dictNode:
+        qVal=0
+    else:
+        qVal=dictNode["Q"]
+    eAvail=eCm+qVal
+    return eAvail
+
+def getChildMasses(dictNode):
+    if "dictList" not in dictNode:
+        return None
+    leftDict=dictNode["dictList"][0]
+    rightDict=dictNode["dictList"][1]
+
+    if "fMass" not in leftDict or "fMass" not in rightDict:
+        return None
+    leftMass=leftDict["fMass"]
+    rightMass=rightDict["fMass"]
+    return leftMass,rightMass
+
+
+def getNodeQVal(dictNode):
     if "fMass" not in dictNode:
         return None
 
