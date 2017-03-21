@@ -61,25 +61,25 @@ def getSimpleVels(m1,E1cm,m2,E2cm):
     v2cm=sqrt(2.0*E2cm/m2)
     return v1cm,v2cm
 
-def printTree(treeDict):
-    if treeDict == {}:
+def printTree(binTreeDict):
+    if binTreeDict == {}:
         return
 
-    # print(treeDict)
+    # print(binTreeDict)
     print("")
-    print("name is ", treeDict["name"])
+    print("name is ", binTreeDict["name"])
 
-    if "dictList" not in treeDict:
+    if "dictList" not in binTreeDict:
         return
 
-    for e in treeDict:
+    for e in binTreeDict:
         if e != "name" and e != "dictList":
-            print(e,treeDict[e])
+            print(e,binTreeDict[e])
 
     print("The child names are")
-    printChildNames(treeDict["dictList"])
+    printChildNames(binTreeDict["dictList"])
 
-    for e in treeDict["dictList"]:
+    for e in binTreeDict["dictList"]:
         printTree(e)
 
 def printChildNames(dictList):
@@ -91,6 +91,13 @@ def printChildNames(dictList):
 
 def getFinalMass(dictNode):
     if "mass" not in dictNode:
+        if dictNode["type"] == "set":
+            leftDict=dictNode["dictList"][0]
+            rightDict=dictNode["dictList"][1]
+            mLeft=getFinalMass(leftDict)
+            mRight=getFinalMass(leftDict)
+            m=mLeft+mRight
+            return m
         return None
 
     m=dictNode["mass"]
@@ -102,80 +109,79 @@ def getFinalMass(dictNode):
     m+=myExE
     return m
 
-def globalCompleteTree(treeDict):
-    fillInit(treeDict)
-    completeTree0(treeDict)
-    completeTree1(treeDict)
-    completeTree2(treeDict)
+def globalCompleteTree(binTreeDict):
+    fillInit(binTreeDict)
+    completeTree0(binTreeDict)
+    completeTree1(binTreeDict)
+    completeTree2(binTreeDict)
 
-def fillInit(treeDict):
-    if treeDict == {}:
+def fillInit(binTreeDict):
+    if binTreeDict == {}:
         return
-    if "ELab" not in treeDict:#Do more error cheching...
+    if "ELab" not in binTreeDict:#Do more error cheching...
         return
-    mPro=treeDict["massP"]
-    mTar=treeDict["massT"]
-    treeDict["mass"]=mPro+mTar
+    mPro=binTreeDict["massP"]
+    mTar=binTreeDict["massT"]
+    binTreeDict["mass"]=mPro+mTar
 
-    ELab=treeDict["ELab"]
+    ELab=binTreeDict["ELab"]
     initEcm=getEcm(mPro,mTar,ELab)[2]
-    treeDict["Ecm"]=initEcm
+    binTreeDict["Ecm"]=initEcm
     #Saving the beta
-    treeDict["BVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
-    treeDict["redVcm"]=treeDict["BVcm"]*100
+    binTreeDict["BVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
+    binTreeDict["redVcm"]=binTreeDict["BVcm"]*100
 
-
-def completeTree0(treeDict):
-    if treeDict == {}:
+def completeTree0(binTreeDict):
+    if binTreeDict == {}:
         return
 
-    finalMass=getFinalMass(treeDict)
+    finalMass=getFinalMass(binTreeDict)
     if finalMass != None:
-        treeDict["fMass"]=finalMass
+        binTreeDict["fMass"]=finalMass
 
-    qVal=getNodeQVal(treeDict)
+    qVal=getNodeQVal(binTreeDict)
     if qVal != None:
         print("filling tree with", qVal)
-        treeDict["Q"]=qVal
+        binTreeDict["Q"]=qVal
 
-    if "dictList" not in treeDict:
+    if "dictList" not in binTreeDict:
         return
 
-    for e in treeDict["dictList"]:
+    for e in binTreeDict["dictList"]:
         completeTree0(e)
 
-def completeTree1(treeDict):
-    if treeDict == {}:
+def completeTree1(binTreeDict):
+    if binTreeDict == {}:
         return
 
-    qVal=getNodeQVal(treeDict)
+    qVal=getNodeQVal(binTreeDict)
     if qVal != None:
-        treeDict["Q"]=qVal
+        binTreeDict["Q"]=qVal
 
-    if "dictList" not in treeDict:
+    if "dictList" not in binTreeDict:
         return
 
-    for e in treeDict["dictList"]:
+    for e in binTreeDict["dictList"]:
         completeTree1(e)
 
 
-def completeTree2(treeDict):
-    if treeDict == {}:
+def completeTree2(binTreeDict):
+    if binTreeDict == {}:
         return
 
-    eAvail=getAvailE(treeDict)
+    eAvail=getAvailE(binTreeDict)
     if eAvail != None:
-        treeDict["EAvail"]=eAvail
-        childMasses=getChildMasses(treeDict)
+        binTreeDict["EAvail"]=eAvail
+        childMasses=getChildMasses(binTreeDict)
         if childMasses != None:
             m1,m2=childMasses
             E1cm,E2cm=getEcmsFromECM2(m1,m2,eAvail)
-            pushNewEcmAndVels(E1cm,E2cm,treeDict["dictList"])
+            pushNewEcmAndVels(E1cm,E2cm,binTreeDict["dictList"])
 
-    if "dictList" not in treeDict:
+    if "dictList" not in binTreeDict:
         return
 
-    for e in treeDict["dictList"]:
+    for e in binTreeDict["dictList"]:
         completeTree2(e)
 
 def pushNewEcmAndVels(E1cm,E2cm,dictNode):
@@ -234,5 +240,3 @@ def getNodeQVal(dictNode):
 
     Q=finalMass-daugthersMass
     return Q
-
-# def getEcmFromNode(dictNode):

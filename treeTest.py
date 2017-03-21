@@ -12,6 +12,7 @@ ex8Be=3.04
 
 #Types of dictionaries
 tP="particle"
+tS="set" #particle set
 tD="detector"
 tI="initial"
 
@@ -20,7 +21,7 @@ initDict={"type":tI,"name":"12C+12C","massP":m12C,
           "massT":m12C,"ELab":60.0}
 oxyDict={"type":tP,"name":"16O","mass":m16O}
 beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
-alphaSysDict={"type":tP,"name":"4He+4He","mass":2*m4He}
+alphaSysDict={"type":tS,"name":"4He+4He"}
 alphaADict={"type":tP,"name":"4He","mass":m4He}
 alphaBDict={"type":tP,"name":"4He","mass":m4He}
 
