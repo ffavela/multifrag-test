@@ -1,0 +1,15 @@
+- Clean the code a bit. Get rid of unnecessary lines.
+
+- Do a recursive fill for the mass in case the type is a set (particle
+  set). This will automatically take into account the cases where the
+  child states are in an excited state. DONE (I think)
+
+
+- Change the names from tree to binary tree. (treeDict => binTreeDict)
+DONE
+
+- Create a higher hierarchy tree, from which all the possible binary
+  trees are created. So we can have all the possible solution trees
+  and we don't leave out any solution due to groupping.
+
+- Get the final masses also for the particle set. DONE
