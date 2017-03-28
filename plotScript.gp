@@ -40,7 +40,7 @@ xSolFSec(x)=(x-sqrt(x**2-(m**2+1)*(x**2-r**2)))/(m**2+1)
 
 # segFunc(x)=(x < 20 || x > 30? NaN: 30)
 
-solCM(x)=(x < 0 || x > x0Max ? NaN: detFun((xSolF(x)+x)/2)/2)
+# solCM(x)=(x < 0 || x > x0Max ? NaN: detFun((xSolF(x)+x)/2)/2)
 
 # print xSolVal, ySolValCirc, ySolValLine
 
@@ -49,7 +49,7 @@ solCM(x)=(x < 0 || x > x0Max ? NaN: detFun((xSolF(x)+x)/2)/2)
 
 unset multiplot
 
-set xrange[0:45]
+set xrange[0:65]
 set yrange[-5:30]
 set sample 1500
 
@@ -86,6 +86,8 @@ myLineEq(x)=(mLine1 > 0? line1Sec(x): line2Sec(x))
 
 detFunSec(x)=(detFun(x) > 0 ? detFun(x): NaN )
 
+cF=0.5
+
 frac=0.1
 myCount=0
 myIncFunc(aValue)=(aValue < 0 ? 1: 0)
@@ -100,17 +102,20 @@ do for [x00=0:int(x0Max/frac)] {
     mLine1=ySolValLine/(xSolVal-x0)
 
     set output outfile
-    set object 1 circle at first (xSolVal+x0)/2,ySolValLine/2 radius\
-      char 0.1 fillstyle empty border lc rgb '#00cc66' lw 2
+    set object 1 circle at first (xSolVal+x0)*cF,\
+    ySolValLine*cF radius\
+    char 0.1 fillstyle empty border lc rgb '#00cc66' lw 2
 
-    set object circle at first (xSolVal+x0)/2,ySolValLine/2 radius\
-      char 0.01 fillstyle empty border lc rgb '#aa0099' lw 2
+     set object circle at first (xSolVal+x0)*cF,\
+     ySolValLine*cF radius\
+     char 0.01 fillstyle empty border lc rgb '#aa0099' lw 2
 
     set object 2 circle at first x0,0 radius char 0.2 \
-      fillstyle empty border lc rgb '#aabbaa' lw 2
+    fillstyle empty border lc rgb '#aabbaa' lw 2
 
-    set object 3 circle at first xSolVal,ySolValLine radius char 0.2 \
-      fillstyle empty border lc rgb '#aabbaa' lw 2
+    set object 3 circle at first xSolVal,\
+    ySolValLine radius char 0.2 \
+    fillstyle empty border lc rgb '#aabbaa' lw 2
 
     plot detFun(x),circFun(x), myLineEq(x), 0
 }
@@ -125,17 +130,20 @@ do for [x00=0:int(x0Max/frac)-152] {
     mLine1=ySolValLine/(xSolVal-x0)
 
     set output outfile
-    set object 1 circle at first (xSolVal+x0)/2,ySolValLine/2 radius\
-      char 0.1 fillstyle empty border lc rgb '#00cc66' lw 2
+    set object 1 circle at first (xSolVal+x0)*cF,\
+    ySolValLine*cF radius\
+    char 0.1 fillstyle empty border lc rgb '#00cc66' lw 2
 
-    set object circle at first (xSolVal+x0)/2,ySolValLine/2 radius\
-      char 0.01 fillstyle empty border lc rgb '#666699' lw 2
+    set object circle at first (xSolVal+x0)*cF,\
+    ySolValLine/2 radius\
+    char 0.01 fillstyle empty border lc rgb '#666699' lw 2
 
     set object 2 circle at first x0,0 radius char 0.2 \
-      fillstyle empty border lc rgb '#aabbaa' lw 2
+    fillstyle empty border lc rgb '#aabbaa' lw 2
 
-    set object 3 circle at first xSolVal,ySolValLine radius char 0.2 \
-      fillstyle empty border lc rgb '#aabbaa' lw 2
+    set object 3 circle at first xSolVal,\
+    ySolValLine radius char 0.2 \
+    fillstyle empty border lc rgb '#aabbaa' lw 2
 
     plot detFun(x),circFun(x), myLineEq(x), 0
 }
