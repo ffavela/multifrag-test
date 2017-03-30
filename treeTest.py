@@ -53,5 +53,9 @@ globalCompleteTree(initDict)
 
 printTree(initDict)
 
+print("\n\nNow testing the free part route stuff\n")
+getDirectFreeRoute(initDict)
+print(generalList)
+
 # print("Testing the Q val function")
 # print(getQVal(initDict))

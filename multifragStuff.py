@@ -240,3 +240,39 @@ def getNodeQVal(dictNode):
 
     Q=finalMass-daugthersMass
     return Q
+
+def checkIfNodeIsFreePart(dictNode):
+    if dictNode == {}:
+        return None
+    if "type" not in dictNode:
+        return None
+    if "dictList" not in dictNode:
+        return None
+    dList=dictNode["dictList"]
+    if dList[0]=={} and dList[1]=={}:
+        return True
+    return None
+
+generalList=[]
+def getFreePartRoute(binTreeDict):
+    if binTreeDict == {}:
+        return None
+    if "dictList" not in binTreeDict:
+        return None
+
+    myDict=binTreeDict["dictList"]
+    for i in range(len(myDict)):
+        myVal=checkIfNodeIsFreePart(myDict[i])
+        if myVal != None:
+            generalList.append(i)
+            return True
+
+    for i in range(len(myDict)):
+        myVal=getFreePartRoute(myDict[i])
+        if myVal != None:
+            generalList.append(i)
+            return True
+
+def getDirectFreeRoute(binTreeDict):
+    getFreePartRoute(binTreeDict)
+    generalList.reverse()
