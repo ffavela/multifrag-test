@@ -1,7 +1,7 @@
 from multifragStuff import *
 
 #print all energies in MeV
-beamE=60
+beamE=120
 
 m12C=11177.9292
 m16O=14899.168598161144
@@ -18,27 +18,37 @@ tI="initial"
 
 #Particle dict
 initDict={"type":tI,"name":"12C+12C","massP":m12C,
-          "massT":m12C,"ELab":60.0}
-oxyDict={"type":tP,"name":"16O","mass":m16O}
+          "massT":m12C,"ELab":beamE}
+oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":8.8719}
 beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
+carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+
 alphaSysDict={"type":tS,"name":"4He+4He"}
 alphaADict={"type":tP,"name":"4He","mass":m4He}
 alphaBDict={"type":tP,"name":"4He","mass":m4He}
+alphaCDict={"type":tP,"name":"4He","mass":m4He}
+# alphaDDict={"type":tP,"name":"4He","mass":m4He}
+# alphaEDict={"type":tP,"name":"4He","mass":m4He}
 
 #Defining the detectors
 d1Dict={"type":tD,"name":"d1"}
 d2Dict={"type":tD,"name":"d2"}
+d3Dict={"type":tD,"name":"d3"}
+# d4Dict={"type":tD,"name":"d4"}
 
 #Completing the dictionaries
-alphaBDict["dictList"]=[{},{}]
-alphaADict["dictList"]=[d2Dict,{}]
+alphaBDict["dictList"]=[d3Dict,{}]
+alphaADict["dictList"]=[{},{}]
+alphaCDict["dictList"]=[d1Dict,{}]
 
-oxyDict["dictList"]=[d1Dict,{}]
+oxyDict["dictList"]=[alphaCDict,carbonDict]
+
 beDict["dictList"]=[alphaADict,alphaBDict]
 alphaSysDict["dictList"]=[alphaADict,alphaBDict]
+carbonDict["dictList"]=[d2Dict,{}]
 
-# initDict["dictList"]=[oxyDict,beDict]
-initDict["dictList"]=[oxyDict,alphaSysDict]
+initDict["dictList"]=[oxyDict,beDict]
+# initDict["dictList"]=[oxyDict,alphaSysDict]
 
 # treeStruct=[alphaADict,[d1Dict,{}]]
 

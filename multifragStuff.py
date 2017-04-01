@@ -130,6 +130,9 @@ def fillInit(binTreeDict):
     #Saving the beta
     binTreeDict["BVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
     binTreeDict["redVcm"]=binTreeDict["BVcm"]*100
+    #This is only for setting a search range, the final vel won't be
+    #this high.
+    binTreeDict["BVLabMax"]=binTreeDict["redVcm"]
 
 def completeTree0(binTreeDict):
     if binTreeDict == {}:
@@ -176,7 +179,8 @@ def completeTree2(binTreeDict):
         if childMasses != None:
             m1,m2=childMasses
             E1cm,E2cm=getEcmsFromECM2(m1,m2,eAvail)
-            pushNewEcmAndVels(E1cm,E2cm,binTreeDict["dictList"])
+            maxVel=binTreeDict["BVLabMax"]
+            pushNewEcmAndVels(E1cm,E2cm,binTreeDict["dictList"],maxVel)
 
     if "dictList" not in binTreeDict:
         return
@@ -184,19 +188,20 @@ def completeTree2(binTreeDict):
     for e in binTreeDict["dictList"]:
         completeTree2(e)
 
-def pushNewEcmAndVels(E1cm,E2cm,dictNode):
+def pushNewEcmAndVels(E1cm,E2cm,dictNode,maxVel):
     dictNode[0]["Ecm"]=E1cm
     m1=dictNode[0]["fMass"]
     BVcm1=sqrt(2.0*E1cm/m1)#Leaving out *c for now
     dictNode[0]["BVcm"]=BVcm1
     dictNode[0]["redVcm"]=BVcm1*100
+    dictNode[0]["BVLabMax"]=maxVel+BVcm1*100
 
     dictNode[1]["Ecm"]=E2cm
     m2=dictNode[1]["fMass"]
     BVcm2=sqrt(2.0*E2cm/m2)#Leaving out *c for now
     dictNode[1]["BVcm"]=BVcm2
     dictNode[1]["redVcm"]=BVcm2*100
-
+    dictNode[1]["BVLabMax"]=maxVel+BVcm2*100
 
 def getAvailE(dictNode):
     if "Ecm" not in dictNode:
