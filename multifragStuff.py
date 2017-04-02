@@ -1,4 +1,6 @@
 from math import *
+import numpy as np
+
 c=299792458 #in m/s
 #Masses in MeV/c^2
 def getEcm(mE1,mE2,E1L):
@@ -131,7 +133,7 @@ def fillInit(binTreeDict):
     binTreeDict["BVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
     binTreeDict["redVcm"]=binTreeDict["BVcm"]*100
     #This is only for setting a search range, the final vel won't be
-    #this high.
+    #this high. This criteria will be improved eventually.
     binTreeDict["BVLabMax"]=binTreeDict["redVcm"]
 
 def completeTree0(binTreeDict):
@@ -281,3 +283,119 @@ def getFreePartRoute(binTreeDict):
 def getDirectFreeRoute(binTreeDict):
     getFreePartRoute(binTreeDict)
     generalList.reverse()
+
+
+def spherToCart(r,theta,phi):
+    x=r*sin(theta)*cos(phi)
+    y=r*sin(theta)*sin(phi)
+    z=r*cos(theta)
+    return x,y,z
+
+def getStraightLinePoints(theta,phi,vLabMax,part=1000):
+    vArray=np.linspace(0,vLabMax,part)
+    myVectArray=np.zeros( (part,3) )
+    for i in range(part):
+        v=vArray[i]
+        x,y,z=spherToCart(v,theta,phi)
+        myVectArray[i]=np.array([x,y,z])
+    return myVectArray
+
+def getTrainStatus(aPoint,aVRad,train):
+    trueList=[True for e in train]
+    falseList=[False for e in train]
+    boolList=[np.linalg.norm(t-aPoint)<aVRad\
+              for t in train]
+    if boolList == trueList:
+        return -1
+    if boolList == falseList:
+        return 1
+    return 0
+
+def getTrainSolIdx(vPoint,vRad,vLine,i=0,\
+                   direction="forward",tolerance=None,\
+                   trainLen=2):
+    if direction == "forward":
+        dIncr=1
+    else:
+        dIncr=-1
+    lineMax=len(vLine)
+
+    if tolerance == None:
+        tolerance=lineMax
+
+    #Train derail
+    if i < 0 or i+trainLen >= lineMax:
+        return None
+    train=vLine[i:i+trainLen]
+    trainStatus=getTrainStatus(vPoint,vRad,train)
+    while trainStatus != 0:
+        #Train derail
+        i+=dIncr
+        if i < 0 or i+trainLen >= lineMax:
+            return None
+        if tolerance <= 0:
+            return None
+        tolerance-=1
+        train=vLine[i:i+trainLen]
+        trainStatus=getTrainStatus(vPoint,vRad,train)
+    return i
+
+def getMidPointLine(vLine1,vLine2,vRad,frac=0.5):
+    fD="forward"
+    bD="backward"
+    forTol=4
+    backTol=4
+    oldI=0
+    foundAny=False
+    midPLine=[]
+    for vP1 in vLine1:
+        if not foundAny:
+            i=getTrainSolIdx(vP1,vRad,vLine2,oldI,fD)
+            if i == None:
+                continue
+            else:
+                foundAny=True
+                oldI=i
+                print(i)
+                continue
+
+        i=getTrainSolIdx(vP1,vRad,vLine2,oldI,fD,forTol)
+        if i == None:
+            print("Trying backward sol")
+            i=getTrainSolIdx(vP1,vRad,vLine2,oldI,bD,backTol)
+            if i == None:
+                print("No back sol found")
+                break
+
+        oldI=i
+        train=vLine2[i:i+2]
+        myP=getLinSolPoint(vP1,vRad,train)
+        midPoint=vP1*(1-frac)+myP*frac
+        midPLine.append(midPoint)
+
+    midPLine=np.array(midPLine)
+    return midPLine
+
+def getLinSol(vP,vRad,train):
+    #Here we expect to use only 2 points
+    p0=train[0]
+    p1=train[-1] #expecting len(train)==2 so this works properly
+    A=np.linalg.norm(p0-vP)-vRad**2
+    C=np.linalg.norm(p1-p0)
+    B=np.linalg.norm(p1-vP)-A-C-vRad**2
+    tPlus=(-B+sqrt(B**2-4*A*C))/(2*A)
+    tMinus=(-B-sqrt(B**2-4*A*C))/(2*A)
+    return [tPlus,tMinus]
+
+def getLinSolPoint(vP,vRad,train):
+    p0=train[0]
+    p1=train[-1]
+    linSol=getLinSol(vP,vRad,train)
+    t=None
+    for tValue in linSol:
+        if 0 <= tValue <= 1:
+            t=tValue
+    if t == None:
+        return None
+    myP=p0*(1-t)+t*p1
+    return myP
