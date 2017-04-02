@@ -1,5 +1,10 @@
 from multifragStuff import *
 
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+import matplotlib.pyplot as plt
+
 beamE=60.0 #MeV
 #Masses are in MeV/c^2
 mC=11177.9292
@@ -12,85 +17,38 @@ mBe=7456.894471212898
 exEnergy=3.04
 mBeEx=mBe+exEnergy
 
-print(getEcm(mC,mC,beamE))
-print("Getting the Vcm of the initial system")
-initVelsCM=getVelcm(mC,mC,beamE)
-print(initVelsCM[2]/c)
+myVLine1=getStraightLinePoints(radians(25),radians(15),15.0)
+myVLine2=getStraightLinePoints(radians(45),radians(35),15.0)
 
-print("Q values")
-berReactQ=getQVal(mC,mC,mOxy,mBeEx)
-alphasReactQ=getQVal(mC,mC,mOxy,2*mAlpha)
+vRad=3.5
+frac=0.1
+midPLine1=getMidPointLine(myVLine1,myVLine2,vRad,frac)
+midPLine2=getMidPointLine(myVLine2,myVLine1,vRad,1-frac)
 
-print(berReactQ)
-print(alphasReactQ)
+x1=myVLine1[ : ,0]
+y1=myVLine1[ : ,1]
+z1=myVLine1[ : ,2]
 
-print("Available energies")
-berEnergy=getAvailEnergy(mC,mC,mOxy,mBeEx,beamE)
-print(berEnergy)
+x2=myVLine2[ : ,0]
+y2=myVLine2[ : ,1]
+z2=myVLine2[ : ,2]
 
-alphasE=getAvailEnergy(mC,mC,mOxy,2*mAlpha,beamE)
-print(alphasE)
+midX1=midPLine1[ : ,0]
+midY1=midPLine1[ : ,1]
+midZ1=midPLine1[ : ,2]
 
-print("Energies for each system")
+midX2=midPLine2[ : ,0]
+midY2=midPLine2[ : ,1]
+midZ2=midPLine2[ : ,2]
 
-print("Case berEx")
-EOxyBer,EBerEx=getEcmsFromECM2(mOxy,mBeEx,berEnergy)
-print(EOxyBer,EBerEx)
+mpl.rcParams['legend.fontsize'] = 10
 
-EOxy,EAlphas=getEcmsFromECM2(mOxy,2*mAlpha,alphasE)
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+ax.plot(x1, y1, z1, label='my curve')
+ax.plot(x2, y2, z2, label='my sec curve')
+ax.plot(midX1, midY1, midZ1, label='my mid curve 1')
+ax.plot(midX2, midY2, midZ2, label='my mid curve 2')
+ax.legend()
 
-print("Case alphas")
-print(EOxy,EAlphas)
-
-print("getting cm velocities")
-
-print("Berillium case")
-vOxyBer,vBerEx=getSimpleVels(mOxy,EOxyBer,mBeEx,EBerEx)
-print("vOxyBer, vBerEx")
-print(vOxyBer,vBerEx)
-
-print("Alphas case")
-vOxy,vAlphas=getSimpleVels(mOxy,EOxy,2*mAlpha,EAlphas)
-print("vOxy, vAlphas")
-print(vOxy,vAlphas)
-
-print("\n\nThe oxygen velocity in the center of mass frame\n\
- is finally defined, now is the alphas turn\n\n")
-
-print("Q values")
-print("For the Be case")
-berSysQ=getQVal(mBeEx,0,mAlpha,mAlpha)
-print(berSysQ)
-
-print("For the alphas, 0 obviously")
-alphasSysQ=getQVal(mAlpha,mAlpha,mAlpha,mAlpha)
-print(alphasSysQ)
-
-print("Now getting their available energies @ cm")
-
-print("4 the excited 8Be breakup")
-ExBeBreakE=getAvailEnergy0(mBeEx,mAlpha,mAlpha,berEnergy)
-print(ExBeBreakE)
-
-print("4 the 2 alpha system")
-print("Q=0 in this case")
-alphasAvailE=getAvailEnergy0(2*mAlpha,mAlpha,mAlpha,EAlphas)
-print(alphasAvailE)
-
-print("Getting the Ecms")
-
-print("alphas from 8BeEx")
-alphasBeECM=getEcmsFromECM2(mAlpha,mAlpha,ExBeBreakE)
-print(alphasBeECM)
-
-print("direct breakup alphas")
-dBAlphas=getEcmsFromECM2(mAlpha,mAlpha,alphasAvailE)
-print(dBAlphas)
-
-print("\nNow getting the alpha's velocity for each final case\n")
-
-print("the ones from Berillium")
-print(getSimpleVels(mAlpha,alphasBeECM[0],mAlpha,alphasBeECM[1]))
-
-print("the ones from direct")
-print(getSimpleVels(mAlpha,dBAlphas[0],mAlpha,dBAlphas[1]))
+plt.show()
