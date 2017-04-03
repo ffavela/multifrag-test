@@ -90,7 +90,6 @@ def printChildNames(dictList):
             continue
         print(dictList[i]["name"])
 
-
 def getFinalMass(dictNode):
     if "mass" not in dictNode:
         if dictNode["type"] == "set":
@@ -228,7 +227,6 @@ def getChildMasses(dictNode):
     rightMass=rightDict["fMass"]
     return leftMass,rightMass
 
-
 def getNodeQVal(dictNode):
     if "fMass" not in dictNode:
         return None
@@ -356,15 +354,14 @@ def getMidPointLine(vLine1,vLine2,vRad,frac=0.5):
             else:
                 foundAny=True
                 oldI=i
-                print(i)
                 continue
 
         i=getTrainSolIdx(vP1,vRad,vLine2,oldI,fD,forTol)
         if i == None:
-            print("Trying backward sol")
+            # print("Trying backward sol")
             i=getTrainSolIdx(vP1,vRad,vLine2,oldI,bD,backTol)
             if i == None:
-                print("No back sol found")
+                # print("No back sol found")
                 break
 
         oldI=i
