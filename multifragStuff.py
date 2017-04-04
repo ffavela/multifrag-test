@@ -282,7 +282,6 @@ def getDirectFreeRoute(binTreeDict):
     getFreePartRoute(binTreeDict)
     generalList.reverse()
 
-
 def spherToCart(r,theta,phi):
     x=r*sin(theta)*cos(phi)
     y=r*sin(theta)*sin(phi)
@@ -396,3 +395,41 @@ def getLinSolPoint(vP,vRad,train):
         return None
     myP=p0*(1-t)+t*p1
     return myP
+
+def pullLinesFromNode(binTreeDict):
+    emptyNpA=np.array([])
+    if binTreeDict == {}:
+        return emptyNpA
+    if binTreeDict["type"]=="detector":
+        vLabMax=binTreeDict["BVLabMax"]
+        theta,phi=binTreeDict["angles"]
+        line=getStraightLinePoints(theta,phi,vLabMax)
+        return [line]
+
+    dList=binTreeDict["dictList"]
+    lineList=[]
+    lines1=pullLinesFromNode(dList[0])
+    if lines1 == False:
+        return False
+    lines2=pullLinesFromNode(dList[1])
+    if lines2 == False:
+        return False
+
+    l1EmptyBoolVal=checkIfAllAreEmpty(lines1)
+    l2EmptyBoolVal=checkIfAllAreEmpty(lines2)
+    
+    if l1EmptyBoolVal and l2EmptyBoolVal :
+        return False
+    #This 2 ifs are 4 particles arriving 2 detectors
+    if l1EmptyBoolVal:
+        return [lines2]
+    if l2EmptyBoolVal:
+        return [lines1]
+
+def checkIfAllAreEmpty(lines):
+    emptyNpA=np.array([])
+    myEmptyArrays=[emptyNpA for e in lines]
+    if lines == myEmptyArrays:
+        return True
+    return False
+        
