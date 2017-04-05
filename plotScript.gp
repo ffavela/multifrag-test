@@ -106,8 +106,8 @@ do for [x00=0:int(x0Max/frac)] {
     ySolValLine*cF radius\
     char 0.1 fillstyle empty border lc rgb '#00cc66' lw 2
 
-     set object circle at first (xSolVal+x0)*cF,\
-     ySolValLine*cF radius\
+     set object circle at first (xSolVal+x0)*(1-cF),\
+     ySolValLine*(1-cF) radius\
      char 0.01 fillstyle empty border lc rgb '#aa0099' lw 2
 
     set object 2 circle at first x0,0 radius char 0.2 \
@@ -134,8 +134,8 @@ do for [x00=0:int(x0Max/frac)-152] {
     ySolValLine*cF radius\
     char 0.1 fillstyle empty border lc rgb '#00cc66' lw 2
 
-    set object circle at first (xSolVal+x0)*cF,\
-    ySolValLine/2 radius\
+    set object circle at first (xSolVal+x0)*(1-cF),\
+    ySolValLine*(1-cF) radius\
     char 0.01 fillstyle empty border lc rgb '#666699' lw 2
 
     set object 2 circle at first x0,0 radius char 0.2 \
