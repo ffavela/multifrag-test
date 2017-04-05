@@ -403,28 +403,56 @@ def pullLinesFromNode(binTreeDict):
     if binTreeDict["type"]=="detector":
         vLabMax=binTreeDict["BVLabMax"]
         theta,phi=binTreeDict["angles"]
-        line=getStraightLinePoints(theta,phi,vLabMax)
-        return [line]
+        vLine=getStraightLinePoints(theta,phi,vLabMax)
+        return [vLine]
 
     dList=binTreeDict["dictList"]
-    lineList=[]
-    lines1=pullLinesFromNode(dList[0])
-    if lines1 == False:
+    vLineList=[]
+    vLines1=pullLinesFromNode(dList[0])
+    if vLines1 == False:
         return False
-    lines2=pullLinesFromNode(dList[1])
-    if lines2 == False:
+    vLines2=pullLinesFromNode(dList[1])
+    if vLines2 == False:
         return False
 
-    l1EmptyBoolVal=checkIfAllAreEmpty(lines1)
-    l2EmptyBoolVal=checkIfAllAreEmpty(lines2)
-    
-    if l1EmptyBoolVal and l2EmptyBoolVal :
+    l1EmptyBoolVal=checkIfAllAreEmpty(vLines1)
+    l2EmptyBoolVal=checkIfAllAreEmpty(vLines2)
+
+    if l1EmptyBoolVal and l2EmptyBoolVal:
         return False
-    #This 2 ifs are 4 particles arriving 2 detectors
-    if l1EmptyBoolVal:
-        return [lines2]
-    if l2EmptyBoolVal:
-        return [lines1]
+
+    if checkIfLastPartNode(binTreeDict) == True:
+        #Empty lines from nodes are only acceptable when there is a
+        #detector
+        if l1EmptyBoolVal:
+            return [vLines2]
+        if l2EmptyBoolVal:
+            return [vLines1]
+    #Unless there was a detector connected, empty line sets are
+    #unacceptable
+    if l1EmptyBoolVal or l2EmptyBoolVal:
+        return False
+
+    #Preparing to do line sweeps
+    childVels=getChildVels(binTreeDict)
+    if childVels == None:
+        return False
+    vLeft,vRight=childVels
+    vRad=vLeft+vRight
+    myFrac=vLeft/vRad
+    #Sweep from line 1 to line 2
+    for vLine1 in vLines1:
+        for vLine2 in vLines2:
+            cmLine=getMidPointLine(vLine1,vLine2,vRad,myFrac)
+            vLineList.append(cmLine)
+
+    #Sweep from line 2 to line 1
+    for vLine2 in vLines2:
+        for vLine1 in vLines1:
+            cmLine=getMidPointLine(vLine2,vLine1,vRad,1-myFrac)
+            vLineList.append(cmLine)
+
+    return vLineList
 
 def checkIfAllAreEmpty(lines):
     emptyNpA=np.array([])
@@ -432,4 +460,42 @@ def checkIfAllAreEmpty(lines):
     if lines == myEmptyArrays:
         return True
     return False
-        
+
+def checkIfLastPartNode(dictNode):
+    childTypes=getChildTypes(dictNode):
+    if childTypes == None:
+        return None
+    #Important if there is a connection to a detector
+    if "detector" in childTypes:
+        return True
+    return False
+
+def getChildTypes(dictNode):
+    if "dictList" not in dictNode:
+        return None
+    leftDict=dictNode["dictList"][0]
+    rightDict=dictNode["dictList"][1]
+
+    if "type" not in leftDict:
+        leftType=None
+    else:
+        leftType=leftDict["type"]
+    if "type" not in rightDict:
+        rightType=None
+    else:
+        rightType=rightDict["type"]
+
+    return [rightType,leftType]
+
+
+def getChildVels(dictNode):
+    if "dictList" not in dictNode:
+        return None
+    leftDict=dictNode["dictList"][0]
+    rightDict=dictNode["dictList"][1]
+
+    if "redVcm" not in leftDict or "redVcm" not in rightDict:
+        return None
+    leftVel=leftDict["redVcm"]
+    rightVel=rightDict["redVcm"]
+    return [leftVel,rightVel]
