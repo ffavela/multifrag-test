@@ -115,7 +115,7 @@ do for [x00=0:int(x0Max/frac)] {
 
     set object 3 circle at first xSolVal,\
     ySolValLine radius char 0.2 \
-    fillstyle empty border lc rgb '#aabbaa' lw 2
+    fillstyle empty border lc rgb '#aabbaa' lwg 2
 
     plot detFun(x),circFun(x), myLineEq(x), 0
 }

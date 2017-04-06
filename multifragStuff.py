@@ -400,18 +400,21 @@ def pullLinesFromNode(binTreeDict):
     emptyNpA=np.array([])
     if binTreeDict == {}:
         return emptyNpA
-    if binTreeDict["type"]=="detector":
+    if checkIfLastPartNode(binTreeDict) == True:
+        idx=findDetectIndex(binTreeDict["dictList"])
+        if idx == None:
+            return False
         vLabMax=binTreeDict["BVLabMax"]
-        theta,phi=binTreeDict["angles"]
+        theta,phi=binTreeDict["dicList"][idx]["angles"]
         vLine=getStraightLinePoints(theta,phi,vLabMax)
-        return [vLine]
+        binTreeDict["vLines"]=[vLine]
+        return None
 
     dList=binTreeDict["dictList"]
-    vLineList=[]
-    vLines1=pullLinesFromNode(dList[0])
+    boolVal1=pullLinesFromNode(dList[0])
     if vLines1 == False:
         return False
-    vLines2=pullLinesFromNode(dList[1])
+    boolVal2=pullLinesFromNode(dList[1])
     if vLines2 == False:
         return False
 
@@ -462,7 +465,7 @@ def checkIfAllAreEmpty(lines):
     return False
 
 def checkIfLastPartNode(dictNode):
-    childTypes=getChildTypes(dictNode):
+    childTypes=getChildTypes(dictNode)
     if childTypes == None:
         return None
     #Important if there is a connection to a detector
@@ -499,3 +502,12 @@ def getChildVels(dictNode):
     leftVel=leftDict["redVcm"]
     rightVel=rightDict["redVcm"]
     return [leftVel,rightVel]
+
+def findDetectIndex(aList):
+    for i in range(aList):
+        if "type" not in aList[i]:
+            continue
+        if aList[i]["type"] == "detector":
+            return i
+    return None
+            

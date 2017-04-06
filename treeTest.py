@@ -19,7 +19,7 @@ tI="initial"
 #Particle dict
 initDict={"type":tI,"name":"12C+12C","massP":m12C,
           "massT":m12C,"ELab":beamE}
-oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":8.8719}
+oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
 beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
 carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
 
@@ -66,6 +66,10 @@ printTree(initDict)
 print("\n\nNow testing the free part route stuff\n")
 getDirectFreeRoute(initDict)
 print(generalList)
+
+print("trying to fill the oxygen tree")
+newDict=pullLinesFromNode(d1Dict)
+print(newDict)
 
 # print("Testing the Q val function")
 # print(getQVal(initDict))
