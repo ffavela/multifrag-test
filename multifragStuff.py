@@ -405,34 +405,24 @@ def pullLinesFromNode(binTreeDict):
         if idx == None:
             return False
         vLabMax=binTreeDict["BVLabMax"]
-        theta,phi=binTreeDict["dicList"][idx]["angles"]
+        theta,phi=binTreeDict["dictList"][idx]["angles"]
         vLine=getStraightLinePoints(theta,phi,vLabMax)
         binTreeDict["vLines"]=[vLine]
-        return None
+        return True
 
     dList=binTreeDict["dictList"]
     boolVal1=pullLinesFromNode(dList[0])
-    if vLines1 == False:
+    if boolVal1 == False:
         return False
     boolVal2=pullLinesFromNode(dList[1])
-    if vLines2 == False:
+    if boolVal2 == False:
         return False
 
+    vLines1=dList[0]["vLines"]
     l1EmptyBoolVal=checkIfAllAreEmpty(vLines1)
+    vLines2=dList[1]["vLines"]
     l2EmptyBoolVal=checkIfAllAreEmpty(vLines2)
 
-    if l1EmptyBoolVal and l2EmptyBoolVal:
-        return False
-
-    if checkIfLastPartNode(binTreeDict) == True:
-        #Empty lines from nodes are only acceptable when there is a
-        #detector
-        if l1EmptyBoolVal:
-            return [vLines2]
-        if l2EmptyBoolVal:
-            return [vLines1]
-    #Unless there was a detector connected, empty line sets are
-    #unacceptable
     if l1EmptyBoolVal or l2EmptyBoolVal:
         return False
 
@@ -443,6 +433,7 @@ def pullLinesFromNode(binTreeDict):
     vLeft,vRight=childVels
     vRad=vLeft+vRight
     myFrac=vLeft/vRad
+    vLineList=[]
     #Sweep from line 1 to line 2
     for vLine1 in vLines1:
         for vLine2 in vLines2:
@@ -455,7 +446,8 @@ def pullLinesFromNode(binTreeDict):
             cmLine=getMidPointLine(vLine2,vLine1,vRad,1-myFrac)
             vLineList.append(cmLine)
 
-    return vLineList
+    binTreeDict["vLines"]=vLineList
+    return True
 
 def checkIfAllAreEmpty(lines):
     emptyNpA=np.array([])
@@ -504,10 +496,9 @@ def getChildVels(dictNode):
     return [leftVel,rightVel]
 
 def findDetectIndex(aList):
-    for i in range(aList):
+    for i in range(len(aList)):
         if "type" not in aList[i]:
             continue
         if aList[i]["type"] == "detector":
             return i
     return None
-            

@@ -67,9 +67,10 @@ print("\n\nNow testing the free part route stuff\n")
 getDirectFreeRoute(initDict)
 print(generalList)
 
-print("trying to fill the oxygen tree")
-newDict=pullLinesFromNode(d1Dict)
-print(newDict)
+print("trying to fill the oxyDict tree")
+boolPull=pullLinesFromNode(oxyDict)
+print(boolPull)
+printTree(initDict)
 
 # print("Testing the Q val function")
 # print(getQVal(initDict))
