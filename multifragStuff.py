@@ -1,6 +1,13 @@
 from math import *
 import numpy as np
 
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+
 c=299792458 #in m/s
 #Masses in MeV/c^2
 def getEcm(mE1,mE2,E1L):
@@ -523,3 +530,34 @@ def getOtherVal(j):
     if j==0:
         return 1
     return 0
+
+def plotAllLines(binTreeDict,ax):
+    if binTreeDict == {}:
+        return
+
+    # print(binTreeDict)
+    print("")
+    print("name is ", binTreeDict["name"])
+
+    if "dictList" not in binTreeDict:
+        return
+
+    # for e in binTreeDict:
+    #     if e != "name" and e != "dictList":
+    #         print(e,binTreeDict[e])
+
+    if "vLines" in binTreeDict:
+        myVLines=binTreeDict["vLines"]
+    else:
+        myVLines=[]
+    for line in myVLines:
+        plotNoDisplay(ax,line,name=binTreeDict["name"])
+
+    for e in binTreeDict["dictList"]:
+        plotAllLines(e,ax)
+
+def plotNoDisplay(ax,lineArray,name="defaultName"):
+    x=lineArray[ : ,0]
+    y=lineArray[ : ,1]
+    z=lineArray[ : ,2]
+    ax.plot(x,y,z,label=name)

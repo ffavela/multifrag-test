@@ -1,10 +1,5 @@
 from multifragStuff import *
 
-import matplotlib as mpl
-from mpl_toolkits.mplot3d import Axes3D
-import numpy as np
-import matplotlib.pyplot as plt
-
 beamE=60.0 #MeV
 #Masses are in MeV/c^2
 mC=11177.9292
@@ -90,17 +85,20 @@ mpl.rcParams['legend.fontsize'] = 10
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 ax.plot(x1, y1, z1, label='my curve')
-ax.plot(x2, y2, z2, label='my sec curve')
-ax.plot(x3, y3, z3, label='my third curve')
-ax.plot(x4, y4, z4, label='my fourth curve')
-ax.plot(midX1, midY1, midZ1, label='my mid curve 1')
-ax.plot(midX2, midY2, midZ2, label='my mid curve 2')
-ax.plot(midX3, midY3, midZ3, label='my mid curve 3')
-ax.plot(midX3_4, midY3_4, midZ3_4, label='my mid curve 3_4')
-ax.plot(midX4_3, midY4_3, midZ4_3, label='my mid curve 4_3')
-ax.plot(midX3P, midY3P, midZ3P, label='my mid curve 3 P')
-ax.plot(midXSec3, midYSec3, midZSec3, label='my mid curve sec 3')
-ax.plot(midXSec3P, midYSec3P, midZSec3P, label='my mid curve sec 3 P')
+plotNoDisplay(ax,myVLine1,"aName")
+plotNoDisplay(ax,myVLine2,"aName")
+
+# ax.plot(x2, y2, z2, label='my sec curve')
+# ax.plot(x3, y3, z3, label='my third curve')
+# ax.plot(x4, y4, z4, label='my fourth curve')
+# ax.plot(midX1, midY1, midZ1, label='my mid curve 1')
+# ax.plot(midX2, midY2, midZ2, label='my mid curve 2')
+# ax.plot(midX3, midY3, midZ3, label='my mid curve 3')
+# ax.plot(midX3_4, midY3_4, midZ3_4, label='my mid curve 3_4')
+# ax.plot(midX4_3, midY4_3, midZ4_3, label='my mid curve 4_3')
+# ax.plot(midX3P, midY3P, midZ3P, label='my mid curve 3 P')
+# ax.plot(midXSec3, midYSec3, midZSec3, label='my mid curve sec 3')
+# ax.plot(midXSec3P, midYSec3P, midZSec3P, label='my mid curve sec 3 P')
 # ax.legend()
 
 plt.show()

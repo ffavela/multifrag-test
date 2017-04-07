@@ -33,7 +33,7 @@ alphaCDict={"type":tP,"name":"4He","mass":m4He}
 #Defining the detectors
 d1Dict={"type":tD,"name":"d1","angles":[radians(35),radians(24)]}
 d2Dict={"type":tD,"name":"d2","angles":[radians(16),radians(56)]}
-d3Dict={"type":tD,"name":"d3","angles":[radians(130),radians(24)]}
+d3Dict={"type":tD,"name":"d3","angles":[radians(179),radians(67)]}
 # d4Dict={"type":tD,"name":"d4"}
 
 #Completing the dictionaries
@@ -79,3 +79,10 @@ print("Trying to pull every line atomatically")
 boolPull=pullEveryLine(initDict,generalList)
 
 printTree(initDict)
+
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+
+plotAllLines(initDict,ax)
+ax.legend()
+plt.show()
