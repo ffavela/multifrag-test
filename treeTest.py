@@ -67,10 +67,15 @@ print("\n\nNow testing the free part route stuff\n")
 getDirectFreeRoute(initDict)
 print(generalList)
 
-print("trying to fill the oxyDict tree")
-boolPull=pullLinesFromNode(oxyDict)
-print(boolPull)
-printTree(initDict)
+# print("trying to fill the oxyDict tree")
+# boolPull=pullLinesFromNode(oxyDict)
+# print(boolPull)
+# printTree(initDict)
 
 # print("Testing the Q val function")
 # print(getQVal(initDict))
+print("Trying to pull every line atomatically")
+
+boolPull=pullEveryLine(initDict,generalList)
+
+printTree(initDict)

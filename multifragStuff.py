@@ -396,6 +396,20 @@ def getLinSolPoint(vP,vRad,train):
     myP=p0*(1-t)+t*p1
     return myP
 
+def pullEveryLine(binTreeDict,freePartListRoute):
+    if len(freePartListRoute)==0:
+        return True
+    freePartIndex=freePartListRoute[0]
+    branchIndex=getOtherVal(freePartIndex)
+    if branchIndex==None:
+        return False
+    tree2Fill=binTreeDict["dictList"][branchIndex]
+    pullBool=pullLinesFromNode(tree2Fill)
+    if pullBool==False:
+        return False
+    newBinTree=binTreeDict["dictList"][freePartIndex]
+    return pullEveryLine(newBinTree,freePartListRoute[1:])
+
 def pullLinesFromNode(binTreeDict):
     emptyNpA=np.array([])
     if binTreeDict == {}:
@@ -502,3 +516,10 @@ def findDetectIndex(aList):
         if aList[i]["type"] == "detector":
             return i
     return None
+
+def getOtherVal(j):
+    if j not in [0,1]:
+        return None
+    if j==0:
+        return 1
+    return 0
