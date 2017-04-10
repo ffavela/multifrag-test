@@ -535,16 +535,8 @@ def plotAllLines(binTreeDict,ax):
     if binTreeDict == {}:
         return
 
-    # print(binTreeDict)
-    print("")
-    print("name is ", binTreeDict["name"])
-
     if "dictList" not in binTreeDict:
         return
-
-    # for e in binTreeDict:
-    #     if e != "name" and e != "dictList":
-    #         print(e,binTreeDict[e])
 
     if "vLines" in binTreeDict:
         myVLines=binTreeDict["vLines"]
@@ -561,3 +553,15 @@ def plotNoDisplay(ax,lineArray,name="defaultName"):
     y=lineArray[ : ,1]
     z=lineArray[ : ,2]
     ax.plot(x,y,z,label=name)
+
+def getSphereLineSols(vSCent,vSRad,vLine):
+    i=getTrainSolIdx(vSCent,vSRad,vLine,i=0)
+    cmNormVects=[]
+    while i != None:
+        train=vLine[i:i+2]
+        myP=getLinSolPoint(vSCent,vSRad,train)
+        myPInCM=myP-vSCent
+        norm=np.linalg.norm(myPInCM)
+        cmNormVects.append(myPInCM/norm)
+        i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
+    return np.array(cmNormVects)

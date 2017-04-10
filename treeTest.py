@@ -31,8 +31,8 @@ alphaCDict={"type":tP,"name":"4He","mass":m4He}
 # alphaEDict={"type":tP,"name":"4He","mass":m4He}
 
 #Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(34),radians(6)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(23),radians(200)]}
+d1Dict={"type":tD,"name":"d1","angles":[radians(17),radians(6)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(18),radians(200)]}
 d3Dict={"type":tD,"name":"d3","angles":[radians(140),radians(20)]}
 # d4Dict={"type":tD,"name":"d4"}
 
@@ -124,3 +124,12 @@ ax.plot_surface(x, y, z,  rstride=4, cstride=4, color='#668800')
 
 
 plt.show()
+oxyLine=initDict["dictList"][0]["vLines"][0]
+oxyVelRad=initDict["dictList"][0]["redVcm"]
+print("oxyVelRad = ",oxyVelRad)
+# oxyVelRad=1.3
+oxyCenter=np.array([0,0,firstVelMag])
+print(oxyLine)
+normVelSols=getSphereLineSols(oxyCenter,oxyVelRad,oxyLine)
+
+print("normalized solutions",normVelSols)
