@@ -140,6 +140,13 @@ normVelSols2=getSphereLineSols(oxyCenter,oxyVelRad,oxyLine2)
 print("normalized solutions 1",normVelSols1)
 print("normalized solutions 2",normVelSols2)
 
+
+indexSols1=getSphereLineIdxSols(oxyCenter,oxyVelRad,oxyLine1)
+indexSols2=getSphereLineIdxSols(oxyCenter,oxyVelRad,oxyLine2)
+
+print("idx sols 1", indexSols1)
+print("idx sols 2", indexSols2)
+
 myVar=len(initDict["dictList"][0]["vLines"])
 print("num of lines",myVar)
 

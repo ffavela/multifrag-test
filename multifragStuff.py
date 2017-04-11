@@ -455,19 +455,26 @@ def pullLinesFromNode(binTreeDict):
     vRad=vLeft+vRight
     myFrac=vLeft/vRad
     vLineList=[]
+    offsetList=[]
     #Sweep from line 1 to line 2
     for vLine1 in vLines1:
         for vLine2 in vLines2:
             cmLine=getMidPointLine(vLine1,vLine2,vRad,myFrac)
             vLineList.append(cmLine)
+            offsets=getMidPOffsets(vLine1,vLine2,vRad)
+            offsetList.append(offsets)
 
     #Sweep from line 2 to line 1
     for vLine2 in vLines2:
         for vLine1 in vLines1:
             cmLine=getMidPointLine(vLine2,vLine1,vRad,1-myFrac)
             vLineList.append(cmLine)
+            offsets=getMidPOffsets(vLine2,vLine1,vRad)
+            offsetList.append(offsets)
+
 
     binTreeDict["vLines"]=vLineList
+    binTreeDict["offsets"]=offsetList
     return True
 
 def checkIfAllAreEmpty(lines):
@@ -573,3 +580,13 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
         idxSols.append(i)
         i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
     return idxSols
+
+def getMidPOffsets(vLine1,vLine2,vRad):
+    j=0
+    for i in range(len(vLine1)):
+        vP1=vLine1[i]
+        j=getTrainSolIdx(vP1,vRad,vLine2,j)
+        if j == None:
+            continue
+        return [i,j]
+    return None
