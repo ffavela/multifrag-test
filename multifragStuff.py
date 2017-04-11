@@ -565,3 +565,11 @@ def getSphereLineSols(vSCent,vSRad,vLine):
         cmNormVects.append(myPInCM/norm)
         i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
     return np.array(cmNormVects)
+
+def getSphereLineIdxSols(vSCent,vSRad,vLine):
+    i=getTrainSolIdx(vSCent,vSRad,vLine,i=0)
+    idxSols=[]
+    while i != None:
+        idxSols.append(i)
+        i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
+    return idxSols
