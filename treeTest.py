@@ -123,13 +123,24 @@ z = oxyVel * np.outer(np.ones(np.size(u)), np.cos(v))+firstVelMag
 ax.plot_surface(x, y, z,  rstride=4, cstride=4, color='#668800')
 
 
-plt.show()
-oxyLine=initDict["dictList"][0]["vLines"][0]
+
+oxyLine1=initDict["dictList"][0]["vLines"][0]
+oxyLine2=initDict["dictList"][0]["vLines"][1]
+
 oxyVelRad=initDict["dictList"][0]["redVcm"]
 print("oxyVelRad = ",oxyVelRad)
 # oxyVelRad=1.3
 oxyCenter=np.array([0,0,firstVelMag])
-print(oxyLine)
-normVelSols=getSphereLineSols(oxyCenter,oxyVelRad,oxyLine)
+print(oxyLine1)
+print(oxyLine2)
 
-print("normalized solutions",normVelSols)
+normVelSols1=getSphereLineSols(oxyCenter,oxyVelRad,oxyLine1)
+normVelSols2=getSphereLineSols(oxyCenter,oxyVelRad,oxyLine2)
+
+print("normalized solutions 1",normVelSols1)
+print("normalized solutions 2",normVelSols2)
+
+myVar=len(initDict["dictList"][0]["vLines"])
+print("num of lines",myVar)
+
+plt.show()
