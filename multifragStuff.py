@@ -455,6 +455,7 @@ def pullLinesFromNode(binTreeDict):
     vRad=vLeft+vRight
     myFrac=vLeft/vRad
     vLineList=[]
+    lineParentsIdxList=[]
     offsetList=[]
     #Sweep from line 1 to line 2
     for vLine1 in vLines1:
@@ -464,13 +465,26 @@ def pullLinesFromNode(binTreeDict):
             offsets=getMidPOffsets(vLine1,vLine2,vRad)
             offsetList.append(offsets)
 
+            parentChildIdx1=vLines1.index(vLine1)
+            parentChildIdx2=vLines2.index(vLine2)
+            lineParentsIdxList.append([parentChildIdx1,parentChildIdx2])
+
     #Sweep from line 2 to line 1
     for vLine2 in vLines2:
         for vLine1 in vLines1:
             cmLine=getMidPointLine(vLine2,vLine1,vRad,1-myFrac)
             vLineList.append(cmLine)
             offsets=getMidPOffsets(vLine2,vLine1,vRad)
+            parentChildIdx1=vLines1.index(vLine1)
+            parentChildIdx2=vLines2.index(vLine2)
+            #Inverting order so that when recalling this info the
+            #convention remains no matter the index in the lists.
+            if offsets != None:
+                i,j=offsets
+                offsets=j,i
+
             offsetList.append(offsets)
+            lineParentsIdxList.append([parentChildIdx2,parentChildIdx1])
 
 
     binTreeDict["vLines"]=vLineList
@@ -583,6 +597,7 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
 
 def getMidPOffsets(vLine1,vLine2,vRad):
     j=0
+    foundAny=False
     for i in range(len(vLine1)):
         vP1=vLine1[i]
         j=getTrainSolIdx(vP1,vRad,vLine2,j)
@@ -590,3 +605,48 @@ def getMidPOffsets(vLine1,vLine2,vRad):
             continue
         return [i,j]
     return None
+
+def getAllIdxSFromNode(treeNode):
+    pass #For now
+    if "type" not in treeNode:
+        return None
+    if treeNode["type"] != "particle":
+        return None
+    #By the time this function is called a lot of error checks have
+    #been done.
+    circleCenters=treeNode["velSolutions"]#If type is initial its the
+                                         #reaction center
+    partVelRad=treeNode["redVcm"]
+    myVLines=treeNode["vLines"]
+    indexSols=[]
+    for solCenter in circleCenters:
+        for vLine in myVLines:
+            myIdx=getSphereLineIdxSols(solCenter,partVelRad,vLine)
+            indexSols+=myIdx
+
+    return idxSols
+
+def getVelSolutions(treeNode):
+    if "type" not in treeNode:
+        return False
+    if treeNode["type"]==detector:
+            return False
+    if treeNode["type"]=="initial":
+        initRedVcm=treeNode["redVcm"]
+        centerPos=np.array([0.0,0.0,initRedVcm])
+        treeNode["velSolutions"]=[centerPos]
+        return True
+
+    #More is missing, check it later
+
+def findLineParentSolsInChildNodes(branchDict):
+    if branchDict == {}:
+        return False
+    if "type" not in branchDict:
+        return False
+    if treeNode["type"] == "detector":
+        return True
+
+    boolVelStatus=getVelSolutions(branchDict)
+    if checkIfLastPartNode(binTreeDict) == True:
+        return True

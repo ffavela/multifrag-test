@@ -74,7 +74,7 @@ print(generalList)
 
 # print("Testing the Q val function")
 # print(getQVal(initDict))
-print("Trying to pull every line atomatically")
+print("Trying to pull every line automatically")
 
 boolPull=pullEveryLine(initDict,generalList)
 
