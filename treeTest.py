@@ -147,7 +147,13 @@ indexSols2=getSphereLineIdxSols(oxyCenter,oxyVelRad,oxyLine2)
 print("idx sols 1", indexSols1)
 print("idx sols 2", indexSols2)
 
+totIndexSols=indexSols1+indexSols2
+print("tot idx Sols", totIndexSols)
 myVar=len(initDict["dictList"][0]["vLines"])
 print("num of lines",myVar)
+
+print("Now doing the new function")
+solListInParents=getSolListInParents(oxyDict,totIndexSols)
+print(solListInParents)
 
 plt.show()

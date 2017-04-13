@@ -489,6 +489,7 @@ def pullLinesFromNode(binTreeDict):
 
     binTreeDict["vLines"]=vLineList
     binTreeDict["offsets"]=offsetList
+    binTreeDict["lParentsIdxs"]=lineParentsIdxList
     return True
 
 def checkIfAllAreEmpty(lines):
@@ -650,3 +651,46 @@ def findLineParentSolsInChildNodes(branchDict):
     boolVelStatus=getVelSolutions(branchDict)
     if checkIfLastPartNode(binTreeDict) == True:
         return True
+
+#Still need to implement some functions
+def solveEveryRoute(binTreeDict,freePartListRoute):
+    if len(freePartListRoute)==0:
+        return True
+    freePartIndex=freePartListRoute[0]
+    branchIndex=getOtherVal(freePartIndex)
+    if branchIndex==None:
+        return False
+    tree2Fill=binTreeDict["dictList"][branchIndex]
+    #Here, find the solutions of the velCirc with the lines. This func
+    #also fills all the indeces and velocities and energies etc. of the
+    #corresponding points.
+    boolSolStatus=findIntersectionsAndSolveBranch(tree2Fill)
+    if pullBool==False:
+        return False
+    newBinTree=binTreeDict["dictList"][freePartIndex]
+    return solveEveryRoute(newBinTree,freePartListRoute[1:])
+
+def getSolListInParents(treeNode,solIdxList):
+    checkRes=checkIfNodeIsFreePart(treeNode)
+    if checkRes == True:
+        #First generation line return the index (or true?) no need to
+        #recall the function
+        return None
+    if "dictList" not in treeNode:
+        return None
+    if "offsets" not in treeNode:
+        return None
+    if "lParentsIdxs" not in treeNode:
+        return None
+    offS=treeNode["offsets"]
+    parIdx=treeNode["lParentsIdxs"]
+    sols4LeftNode=[]
+    sols4RightNode=[]
+    print("solIdxList",solIdxList)
+    for pIdx,oSet,solIdx in zip(parIdx,offS,solIdxList):
+        print("pIdx,oSet,solIdx = ",pIdx,oSet,solIdx)
+        leftIdxStuff=[pIdx[0],oSet[0]+solIdx]
+        sols4LeftNode.append(leftIdxStuff)
+        rightIdxStuff=[pIdx[1],oSet[1]+solIdx]
+        sols4RightNode.append(sols4RightNode)
+    return [leftIdxStuff,rightIdxStuff]
