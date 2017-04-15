@@ -156,4 +156,10 @@ print("Now doing the new function")
 solListInParents=getSolListInParents(oxyDict,totIndexSols)
 print(solListInParents)
 
+print("Filling the oxygenNode with solutions")
+fillSphereLineIdxSolsInNode(oxyDict,oxyCenter,oxyVelRad)
+fillSolVelsEnergiesEtcInNode(oxyDict)
+printNode(oxyDict)
+
+ax.set_zlim3d(-5, 20)
 plt.show()

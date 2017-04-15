@@ -70,6 +70,24 @@ def getSimpleVels(m1,E1cm,m2,E2cm):
     v2cm=sqrt(2.0*E2cm/m2)
     return v1cm,v2cm
 
+def printNode(nodeFromTree):
+    if nodeFromTree == {}:
+        return
+
+    # print(binTreeDict)
+    print("")
+    print("name is ", nodeFromTree["name"])
+
+    if "dictList" not in nodeFromTree:
+        return
+
+    for e in nodeFromTree:
+        if e != "name" and e != "dictList":
+            print(e,nodeFromTree[e])
+
+    print("The child names are")
+    printChildNames(nodeFromTree["dictList"])
+
 def printTree(binTreeDict):
     if binTreeDict == {}:
         return
@@ -595,6 +613,64 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
         idxSols.append(i)
         i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
     return idxSols
+
+def fillSphereLineIdxSolsInNode(treeNode,vSCent,vSRad):
+    nodeVLines=treeNode["vLines"]
+    solIdxList=[]
+    for vLine in nodeVLines:
+        lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
+        solIdxList.append(lineInterIdxList)
+    if "sphereSols" not in treeNode:
+        treeNode["sphereSols"]={}
+    sphereString=str([vSCent.tolist(),vSRad])
+    treeNode["sphereSols"][sphereString]={"indexSols":solIdxList}
+
+def fillSolVelsEnergiesEtcInNode(treeNode):
+    #fillSphereLineIdxSolsInNode has to be called b4 this one
+    if "sphereSols" not in treeNode:
+        return None
+    sphereSolsDict=treeNode["sphereSols"]
+    myMass=treeNode["fMass"]
+    #For debugging
+    theCenter=np.array([0,0,7.326472906898222])
+    minLabVelNorm=7.326472906898222-treeNode["redVcm"]
+    eMin=1.0/2.0*myMass*(minLabVelNorm/100.0)**2
+    print("Min O vel and energy @ cm 180", minLabVelNorm,eMin)
+    for sphereStr in sphereSolsDict:
+        velSolListOfLists=[]
+        energySolListOfLists=[]
+        indexSolLists=sphereSolsDict[sphereStr]["indexSols"]
+        for i in range(len(indexSolLists)):
+            solIdxSubList=indexSolLists[i]
+            #Here the "i" index corresponds to an intersection with a
+            #line with the same index.
+            myVLine=treeNode["vLines"][i]
+            solVelList=[]
+            solEList=[]
+            for vSolIndex in solIdxSubList:
+                velSol=myVLine[vSolIndex]
+                solVelList.append(velSol)
+
+                vNorm=np.linalg.norm(velSol)
+                cmVelVal=velSol-theCenter
+                cmVelValNorm=np.linalg.norm(cmVelVal)
+                print("cmVelValNorm = ",cmVelValNorm)
+                print("index, norm of velSol = ",vSolIndex,vNorm)
+                ESol=1.0/2.0*myMass*(vNorm/100.0)**2
+                solEList.append(ESol)
+
+            velSolListOfLists.append(solVelList)
+            energySolListOfLists.append(solEList)
+        if "velSols" not in sphereSolsDict[sphereStr]:
+            sphereSolsDict[sphereStr]["velSols"]=[]
+        sphereSolsDict[sphereStr]["velSols"].append(velSolListOfLists)
+
+        if "energySols" not in sphereSolsDict[sphereStr]:
+            sphereSolsDict[sphereStr]["energySols"]=[]
+
+        sphereSolsDict[sphereStr]["energySols"].append(energySolListOfLists)
+
+
 
 def getMidPOffsets(vLine1,vLine2,vRad):
     j=0
