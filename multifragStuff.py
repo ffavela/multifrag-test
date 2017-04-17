@@ -614,16 +614,33 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
         i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
     return idxSols
 
+def fillMayorSols(binTreeDic,freePartRoute,sphereSolsD={}):
+    #Do more error checking... please
+    if len(freePartRoute)==0:
+        return True
+    freePartIndex=freePartRoute[0]
+    branchIndex=getOtherVal(freePartIndex)
+    if branchIndex==None:
+        return False
+    for e in binTreeDic["sphereSols"]:
+        sphereSolBool=fillSphereLineIdxSolsInNode(binTreeDic,vC,cSR)
+        if sphereSolBool == True:
+            sphereSolsD=fillSolVelsEnergiesEtcInNode(binTreeDic)
+            fillMayorSols()
+
 def fillSphereLineIdxSolsInNode(treeNode,vSCent,vSRad):
     nodeVLines=treeNode["vLines"]
     solIdxList=[]
     for vLine in nodeVLines:
         lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
         solIdxList.append(lineInterIdxList)
+    if solIdxList == []:
+        return False
     if "sphereSols" not in treeNode:
         treeNode["sphereSols"]={}
     sphereString=str([vSCent.tolist(),vSRad])
     treeNode["sphereSols"][sphereString]={"indexSols":solIdxList}
+    return True
 
 def fillSolVelsEnergiesEtcInNode(treeNode):
     #fillSphereLineIdxSolsInNode has to be called b4 this one
@@ -631,11 +648,6 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
         return None
     sphereSolsDict=treeNode["sphereSols"]
     myMass=treeNode["fMass"]
-    #For debugging
-    theCenter=np.array([0,0,7.326472906898222])
-    minLabVelNorm=7.326472906898222-treeNode["redVcm"]
-    eMin=1.0/2.0*myMass*(minLabVelNorm/100.0)**2
-    print("Min O vel and energy @ cm 180", minLabVelNorm,eMin)
     for sphereStr in sphereSolsDict:
         velSolListOfLists=[]
         energySolListOfLists=[]
@@ -652,10 +664,6 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
                 solVelList.append(velSol)
 
                 vNorm=np.linalg.norm(velSol)
-                cmVelVal=velSol-theCenter
-                cmVelValNorm=np.linalg.norm(cmVelVal)
-                print("cmVelValNorm = ",cmVelValNorm)
-                print("index, norm of velSol = ",vSolIndex,vNorm)
                 ESol=1.0/2.0*myMass*(vNorm/100.0)**2
                 solEList.append(ESol)
 
@@ -669,6 +677,7 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
             sphereSolsDict[sphereStr]["energySols"]=[]
 
         sphereSolsDict[sphereStr]["energySols"].append(energySolListOfLists)
+        return sphereSolsDict[sphereStr]
 
 
 
