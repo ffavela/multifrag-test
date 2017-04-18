@@ -100,9 +100,16 @@ def printTree(binTreeDict):
         return
 
     for e in binTreeDict:
-        if e != "name" and e != "dictList":
+        if e != "name" and e != "dictList" and e != "sphereSols":
             print(e,binTreeDict[e])
 
+    if  "sphereSols" in binTreeDict:
+        print("sphereSols")
+        for sphereString in binTreeDict["sphereSols"]:
+            print("sphereString = ", sphereString)
+            for subVal in binTreeDict["sphereSols"][sphereString]:
+                print(subVal)
+                print(binTreeDict["sphereSols"][sphereString][subVal])
     print("The child names are")
     printChildNames(binTreeDict["dictList"])
 
@@ -140,6 +147,22 @@ def globalCompleteTree(binTreeDict):
     completeTree0(binTreeDict)
     completeTree1(binTreeDict)
     completeTree2(binTreeDict)
+
+def initSphereSols(binTreeDict):
+    #This is our free CM solution, we at least know this one! ;-)
+    if binTreeDict["type"]=="initial":
+        vCM=binTreeDict["redVcm"]
+        sCenter=np.array([0.0,0.0,0.0])
+        sphereString=str([sCenter.tolist(),vCM])
+        binTreeDict["sphereSols"]={}
+        binTreeDict["sphereSols"][sphereString]={}
+        binTreeDict["sphereSols"][sphereString]["velSols"]=[[[np.array([0.0,0.0,-vCM])]]]
+        #The minus is there for the velocity part to preserve program
+        #structure, the function will invert the velocity value and
+        #use the correct initial velocity.
+
+        #I think this is enough for the initial system
+        return binTreeDict["sphereSols"]
 
 def fillInit(binTreeDict):
     if binTreeDict == {}:
@@ -614,19 +637,64 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
         i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
     return idxSols
 
-def fillMayorSols(binTreeDic,freePartRoute,sphereSolsD={}):
+def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
     #Do more error checking... please
     if len(freePartRoute)==0:
         return True
+    if binTreeDict["type"]=="initial":
+        sphereSolsD=initSphereSols(binTreeDict)
+
     freePartIndex=freePartRoute[0]
     branchIndex=getOtherVal(freePartIndex)
+
     if branchIndex==None:
         return False
-    for e in binTreeDic["sphereSols"]:
-        sphereSolBool=fillSphereLineIdxSolsInNode(binTreeDic,vC,cSR)
-        if sphereSolBool == True:
-            sphereSolsD=fillSolVelsEnergiesEtcInNode(binTreeDic)
-            fillMayorSols()
+    branch2Solve=binTreeDict["dictList"][branchIndex]
+    branch2Go=binTreeDict["dictList"][freePartIndex]
+
+    vRad=binTreeDict["redVcm"]
+    #Maybe these 2 are reduntant
+    b2SolveRad=branch2Solve["redVcm"]
+    b2GoRad=branch2Go["redVcm"]
+
+    vCenterList=getVCenterList(sphereSolsD)
+    nSphereSolsDList=[]
+    for vCent in vCenterList:
+        normInvVelSol=-vCent/np.linalg.norm(vCent)
+        newCent=vRad*normInvVelSol
+        fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
+        newSphereSolsD={}
+        if fillBool == True:
+            newSphereSolsD=fillSolVelsEnergiesEtcInNode(branch2Solve)
+        nSphereSolsDList.append(newSphereSolsD)
+
+    boolList=[]
+    falseList=[False for e in newSphereSolsD]
+
+    for newSphereSolsD in nSphereSolsDList:
+        if newSphereSolsD == {}:
+            #The corresponding bool value was False
+            boolList.append(False)
+            continue
+
+        #Call the fill mayor sols here!!
+        newBool=fillMayorSols(branch2Go,freePartRoute[1:],newSphereSolsD)
+        boolList.append(newBool)
+
+    if boolList == falseList:
+        return False
+
+    return True
+
+def getVCenterList(sphereSolsD):
+    vCenterList=[]
+    for sphereString in sphereSolsD:
+        for velLists in sphereSolsD[sphereString]["velSols"]:
+            for velSolSet in velLists:
+                for velocitySol in velSolSet:
+                    vCenterList.append(velocitySol)
+    return vCenterList
+
 
 def fillSphereLineIdxSolsInNode(treeNode,vSCent,vSRad):
     nodeVLines=treeNode["vLines"]
@@ -677,7 +745,7 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
             sphereSolsDict[sphereStr]["energySols"]=[]
 
         sphereSolsDict[sphereStr]["energySols"].append(energySolListOfLists)
-        return sphereSolsDict[sphereStr]
+    return sphereSolsDict
 
 
 

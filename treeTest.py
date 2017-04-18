@@ -152,14 +152,22 @@ print("tot idx Sols", totIndexSols)
 myVar=len(initDict["dictList"][0]["vLines"])
 print("num of lines",myVar)
 
-print("Now doing the new function")
-solListInParents=getSolListInParents(oxyDict,totIndexSols)
-print(solListInParents)
+# print("Now doing the new function")
+# solListInParents=getSolListInParents(oxyDict,totIndexSols)
+# print(solListInParents)
 
-print("Filling the oxygenNode with solutions")
-fillSphereLineIdxSolsInNode(oxyDict,oxyCenter,oxyVelRad)
-fillSolVelsEnergiesEtcInNode(oxyDict)
-printNode(oxyDict)
+# print("Filling the oxygenNode with solutions")
+# print("oxyVelRad = ",oxyVelRad)
+# fillSphereLineIdxSolsInNode(oxyDict,oxyCenter,oxyVelRad)
+# sphereSols=fillSolVelsEnergiesEtcInNode(oxyDict)
+# print("sphereSols = ",sphereSols)
 
 ax.set_zlim3d(-5, 20)
-plt.show()
+mayorSolBool=fillMayorSols(initDict,generalList)
+if mayorSolBool == False:
+    print("Couldn't fill the tree :'-(")
+else:
+    print("Success in filling the tree!! :-)")
+printTree(initDict)
+
+# plt.show()
