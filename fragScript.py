@@ -87,6 +87,7 @@ ax = fig.gca(projection='3d')
 ax.plot(x1, y1, z1, label='my curve')
 plotNoDisplay(ax,myVLine1,"aName")
 plotNoDisplay(ax,myVLine2,"aName")
+plotNoDisplay(ax,midPLineSec3P,"new name")
 
 # ax.plot(x2, y2, z2, label='my sec curve')
 # ax.plot(x3, y3, z3, label='my third curve')
@@ -100,5 +101,35 @@ plotNoDisplay(ax,myVLine2,"aName")
 # ax.plot(midXSec3, midYSec3, midZSec3, label='my mid curve sec 3')
 # ax.plot(midXSec3P, midYSec3P, midZSec3P, label='my mid curve sec 3 P')
 # ax.legend()
+
+vCenter1=np.array([4.0,2.5,15.0])
+vRad1=3.4
+
+myTrainSols11=getSphereLineIdxSols(vCenter1,vRad,myVLine1)
+print("The solutions are ", myTrainSols11)
+
+from matplotlib.patches import FancyArrowPatch
+from mpl_toolkits.mplot3d import proj3d
+class Arrow3D(FancyArrowPatch):
+
+    def __init__(self, xs, ys, zs, *args, **kwargs):
+        FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
+        self._verts3d = xs, ys, zs
+
+    def draw(self, renderer):
+        xs3d, ys3d, zs3d = self._verts3d
+        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, renderer.M)
+        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
+        FancyArrowPatch.draw(self, renderer)
+
+
+u = np.linspace(0, 2 * np.pi, 100)
+v = np.linspace(0, np.pi, 100)
+
+x = vRad1 * np.outer(np.cos(u), np.sin(v))+vCenter1[0]
+y = vRad1 * np.outer(np.sin(u), np.sin(v))+vCenter1[1]
+z = vRad1 * np.outer(np.ones(np.size(u)), np.cos(v))+vCenter1[2]
+ax.plot_surface(x, y, z,  rstride=4, cstride=4, color='#668800')
+
 
 plt.show()

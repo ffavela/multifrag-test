@@ -31,8 +31,8 @@ alphaCDict={"type":tP,"name":"4He","mass":m4He}
 # alphaEDict={"type":tP,"name":"4He","mass":m4He}
 
 #Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(17),radians(6)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(18),radians(200)]}
+d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(15),radians(20)]}
 d3Dict={"type":tD,"name":"d3","angles":[radians(140),radians(20)]}
 # d4Dict={"type":tD,"name":"d4"}
 
@@ -116,58 +116,58 @@ u = np.linspace(0, 2 * np.pi, 100)
 v = np.linspace(0, np.pi, 100)
 
 # oxyVel=initDict["dictList"][0]["redVcm"]
-oxyVel=2.0
-x = oxyVel * np.outer(np.cos(u), np.sin(v))
-y = oxyVel * np.outer(np.sin(u), np.sin(v))
-z = oxyVel * np.outer(np.ones(np.size(u)), np.cos(v))+firstVelMag
-ax.plot_surface(x, y, z,  rstride=4, cstride=4, color='#668800')
+oxyVelRad=initDict["dictList"][0]["redVcm"]
 
+x = oxyVelRad * np.outer(np.cos(u), np.sin(v))
+y = oxyVelRad * np.outer(np.sin(u), np.sin(v))
+z = oxyVelRad * np.outer(np.ones(np.size(u)), np.cos(v))+firstVelMag
+ax.plot_surface(x, y, z,  rstride=4, cstride=4, color='#668800')
 
 
 oxyLine1=initDict["dictList"][0]["vLines"][0]
 oxyLine2=initDict["dictList"][0]["vLines"][1]
 
 oxyVelRad=initDict["dictList"][0]["redVcm"]
-print("oxyVelRad = ",oxyVelRad)
+# print("oxyVelRad = ",oxyVelRad)
 # oxyVelRad=1.3
 oxyCenter=np.array([0,0,firstVelMag])
-print(oxyLine1)
-print(oxyLine2)
+# print(oxyLine1)
+# print(oxyLine2)
 
 normVelSols1=getSphereLineSols(oxyCenter,oxyVelRad,oxyLine1)
 normVelSols2=getSphereLineSols(oxyCenter,oxyVelRad,oxyLine2)
 
-print("normalized solutions 1",normVelSols1)
-print("normalized solutions 2",normVelSols2)
+# print("normalized solutions 1",normVelSols1)
+# print("normalized solutions 2",normVelSols2)
 
 
 indexSols1=getSphereLineIdxSols(oxyCenter,oxyVelRad,oxyLine1)
 indexSols2=getSphereLineIdxSols(oxyCenter,oxyVelRad,oxyLine2)
 
-print("idx sols 1", indexSols1)
-print("idx sols 2", indexSols2)
+# print("idx sols 1", indexSols1)
+# print("idx sols 2", indexSols2)
 
 totIndexSols=indexSols1+indexSols2
-print("tot idx Sols", totIndexSols)
+# print("tot idx Sols", totIndexSols)
 myVar=len(initDict["dictList"][0]["vLines"])
-print("num of lines",myVar)
+# print("num of lines",myVar)
 
-# print("Now doing the new function")
-# solListInParents=getSolListInParents(oxyDict,totIndexSols)
-# print(solListInParents)
+print("Now doing the new function")
+solListInParents=getSolListInParents(oxyDict,totIndexSols)
+print(solListInParents)
 
-# print("Filling the oxygenNode with solutions")
-# print("oxyVelRad = ",oxyVelRad)
-# fillSphereLineIdxSolsInNode(oxyDict,oxyCenter,oxyVelRad)
-# sphereSols=fillSolVelsEnergiesEtcInNode(oxyDict)
-# print("sphereSols = ",sphereSols)
+print("Filling the oxygenNode with solutions")
+print("oxyVelRad = ",oxyVelRad)
+fillSphereLineIdxSolsInNode(oxyDict,oxyCenter,oxyVelRad)
+sphereSols=fillSolVelsEnergiesEtcInNode(oxyDict)
+print("sphereSols = ",sphereSols)
 
 ax.set_zlim3d(-5, 20)
-mayorSolBool=fillMayorSols(initDict,generalList)
-if mayorSolBool == False:
-    print("Couldn't fill the tree :'-(")
-else:
-    print("Success in filling the tree!! :-)")
+# mayorSolBool=fillMayorSols(initDict,generalList)
+# if mayorSolBool == False:
+#     print("Couldn't fill the tree :'-(")
+# else:
+#     print("Success in filling the tree!! :-)")
 # printTree(initDict)
 
-# plt.show()
+plt.show()
