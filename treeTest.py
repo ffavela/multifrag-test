@@ -52,7 +52,7 @@ initDict["dictList"]=[oxyDict,beDict]
 
 # treeStruct=[alphaADict,[d1Dict,{}]]
 
-printTree(initDict)
+# printTree(initDict)
 print("")
 
 # print("The final mass of 8Be is")
@@ -61,7 +61,7 @@ print("")
 print("Now completing the tree")
 globalCompleteTree(initDict)
 
-printTree(initDict)
+# printTree(initDict)
 
 print("\n\nNow testing the free part route stuff\n")
 getDirectFreeRoute(initDict)
@@ -78,7 +78,7 @@ print("Trying to pull every line automatically")
 
 boolPull=pullEveryLine(initDict,generalList)
 
-printTree(initDict)
+# printTree(initDict)
 
 fig = plt.figure()
 ax = fig.gca(projection='3d')
@@ -168,6 +168,6 @@ if mayorSolBool == False:
     print("Couldn't fill the tree :'-(")
 else:
     print("Success in filling the tree!! :-)")
-printTree(initDict)
+# printTree(initDict)
 
 # plt.show()

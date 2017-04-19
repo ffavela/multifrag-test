@@ -659,18 +659,28 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
 
     vCenterList=getVCenterList(sphereSolsD)
     nSphereSolsDList=[]
+    print("Printing the sphere strings and sols")
+    for sphereString in sphereSolsD:
+        print(sphereString)
     for vCent in vCenterList:
+        print("vCent = ", vCent)
+
+    for vCent in vCenterList:
+        print("vCent = ", vCent)
         normInvVelSol=-vCent/np.linalg.norm(vCent)
         newCent=vRad*normInvVelSol
         fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
         newSphereSolsD={}
         if fillBool == True:
             newSphereSolsD=fillSolVelsEnergiesEtcInNode(branch2Solve)
+        if newSphereSolsD in nSphereSolsDList:
+            newSphereSolsD=[]
         nSphereSolsDList.append(newSphereSolsD)
 
     boolList=[]
     falseList=[False for e in newSphereSolsD]
 
+    print("About to go in the direct loop")
     for newSphereSolsD in nSphereSolsDList:
         if newSphereSolsD == {}:
             #The corresponding bool value was False
@@ -678,12 +688,16 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
             continue
 
         #Call the fill mayor sols here!!
+        print("Inside the loop, newSphereSolsD = ", newSphereSolsD)
         newBool=fillMayorSols(branch2Go,freePartRoute[1:],newSphereSolsD)
         boolList.append(newBool)
 
+    print("boolList = ", boolList)
     if boolList == falseList:
+        print("Returning a false value somewhere")
         return False
 
+    print("Made it to the last part")
     return True
 
 def getVCenterList(sphereSolsD):
