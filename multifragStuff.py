@@ -336,7 +336,7 @@ def spherToCart(r,theta,phi):
     z=r*cos(theta)
     return x,y,z
 
-def getStraightLinePoints(theta,phi,vLabMax,part=1000):
+def getStraightLinePoints(theta,phi,vLabMax,part=2000):
     vArray=np.linspace(0,vLabMax,part)
     myVectArray=np.zeros( (part,3) )
     for i in range(part):
@@ -657,24 +657,28 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
     b2SolveRad=branch2Solve["redVcm"]
     b2GoRad=branch2Go["redVcm"]
 
+    print("The name of the node is ", binTreeDict["name"])
     vCenterList=getVCenterList(sphereSolsD)
     nSphereSolsDList=[]
     print("Printing the sphere strings and sols")
     for sphereString in sphereSolsD:
-        print(sphereString)
-    for vCent in vCenterList:
-        print("vCent = ", vCent)
+        print(sphereString+'\n')
+    for lastVCent in vCenterList:
+        print("lastVCent = ", lastVCent)
 
-    for vCent in vCenterList:
-        print("vCent = ", vCent)
-        normInvVelSol=-vCent/np.linalg.norm(vCent)
+    print("\n\n")
+
+    fillBoolList=[]
+    for lastVCent in vCenterList:
+        print("lastVCent = ", lastVCent)
+        normInvVelSol=-lastVCent/np.linalg.norm(lastVCent)
         newCent=vRad*normInvVelSol
+        print("The filling branch node with name and newCent", branch2Solve["name"], newCent)
         fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
-        newSphereSolsD={}
-        if fillBool == True:
-            newSphereSolsD=fillSolVelsEnergiesEtcInNode(branch2Solve)
-        if newSphereSolsD in nSphereSolsDList:
-            newSphereSolsD=[]
+        fillBoolList.append(fillBool)
+
+    if True in fillBoolList:
+        newSphereSolsD=fillSolVelsEnergiesEtcInNode(branch2Solve)
         nSphereSolsDList.append(newSphereSolsD)
 
     boolList=[]
@@ -682,13 +686,13 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
 
     print("About to go in the direct loop")
     for newSphereSolsD in nSphereSolsDList:
+        print("Inside the loop, newSphereSolsD = ", newSphereSolsD)
         if newSphereSolsD == {}:
             #The corresponding bool value was False
             boolList.append(False)
             continue
 
         #Call the fill mayor sols here!!
-        print("Inside the loop, newSphereSolsD = ", newSphereSolsD)
         newBool=fillMayorSols(branch2Go,freePartRoute[1:],newSphereSolsD)
         boolList.append(newBool)
 
@@ -704,11 +708,14 @@ def getVCenterList(sphereSolsD):
     vCenterList=[]
     for sphereString in sphereSolsD:
         for velLists in sphereSolsD[sphereString]["velSols"]:
+            print("Inside getVCenterList the second nested for")
+            print("velLists = ", velLists)
+            print("")
             for velSolSet in velLists:
+                print("velSolSet = ", velSolSet)
                 for velocitySol in velSolSet:
                     vCenterList.append(velocitySol)
     return vCenterList
-
 
 def fillSphereLineIdxSolsInNode(treeNode,vSCent,vSRad):
     nodeVLines=treeNode["vLines"]
@@ -729,6 +736,11 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
     if "sphereSols" not in treeNode:
         return None
     sphereSolsDict=treeNode["sphereSols"]
+    print("inside fillSolVelsEnergiesEtcInNode about to go in a loop")
+    print("the index sols here are ")
+    for sphereStr in sphereSolsDict:
+        indexSolLists=sphereSolsDict[sphereStr]["indexSols"]
+        print("sphereStr and indexSolsList = ", sphereStr, indexSolLists)
     myMass=treeNode["fMass"]
     for sphereStr in sphereSolsDict:
         velSolListOfLists=[]
