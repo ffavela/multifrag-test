@@ -675,6 +675,9 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
         newCent=vRad*normInvVelSol
         print("The filling branch node with name and newCent", branch2Solve["name"], newCent)
         fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
+        branch2Solve["redVcm"]=b2SolveRad
+        # binTreeDict["dictList"][branchIndex]=b2SolveRad
+
         fillBoolList.append(fillBool)
 
     if True in fillBoolList:
@@ -694,6 +697,7 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
 
         #Call the fill mayor sols here!!
         newBool=fillMayorSols(branch2Go,freePartRoute[1:],newSphereSolsD)
+        # branch2Go["redVcm"]=b2Go
         boolList.append(newBool)
 
     print("boolList = ", boolList)
