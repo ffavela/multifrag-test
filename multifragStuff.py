@@ -727,6 +727,8 @@ def fillSphereLineIdxSolsInNode(treeNode,vSCent,vSRad):
         return False
     if "sphereSols" not in treeNode:
         treeNode["sphereSols"]={}
+    #Getting rid of the -0. It messes with the string convertion
+    vSCent[vSCent==0.] = 0.
     sphereString=str([vSCent.tolist(),vSRad])
     treeNode["sphereSols"][sphereString]={"indexSols":solIdxList}
     return True

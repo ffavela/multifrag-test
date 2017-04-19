@@ -163,11 +163,11 @@ sphereSols=fillSolVelsEnergiesEtcInNode(oxyDict)
 print("sphereSols = ",sphereSols)
 
 ax.set_zlim3d(-5, 20)
-# mayorSolBool=fillMayorSols(initDict,generalList)
-# if mayorSolBool == False:
-#     print("Couldn't fill the tree :'-(")
-# else:
-#     print("Success in filling the tree!! :-)")
-# printTree(initDict)
+mayorSolBool=fillMayorSols(initDict,generalList)
+if mayorSolBool == False:
+    print("Couldn't fill the tree :'-(")
+else:
+    print("Success in filling the tree!! :-)")
+printTree(initDict)
 
 plt.show()
