@@ -6,8 +6,6 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
 c=299792458 #in m/s
 #Masses in MeV/c^2
 def getEcm(mE1,mE2,E1L):
@@ -156,7 +154,7 @@ def initSphereSols(binTreeDict):
         sphereString=str([sCenter.tolist(),vCM])
         binTreeDict["sphereSols"]={}
         binTreeDict["sphereSols"][sphereString]={}
-        binTreeDict["sphereSols"][sphereString]["velSols"]=[[[np.array([0.0,0.0,-vCM])]]]
+        binTreeDict["sphereSols"][sphereString]["velSols"]=[[np.array([0.0,0.0,-vCM])]]#put []
         #The minus is there for the velocity part to preserve program
         #structure, the function will invert the velocity value and
         #use the correct initial velocity.
@@ -657,26 +655,26 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
     b2SolveRad=branch2Solve["redVcm"]
     b2GoRad=branch2Go["redVcm"]
 
-    print("The name of the node is ", binTreeDict["name"])
+    # print("\n\n")
+    # print("The name of the node is ", binTreeDict["name"])
+    # print("\n\n")
+    # if binTreeDict["name"]== "8Be":
+    #     print("\n\n FOUND 8Be!!\n\n")
+
+    # if binTreeDict["name"]== "16O":
+    #     print("\n\n FOUND 16O!!\n\n")
+
     vCenterList=getVCenterList(sphereSolsD)
     nSphereSolsDList=[]
-    print("Printing the sphere strings and sols")
-    for sphereString in sphereSolsD:
-        print(sphereString+'\n')
-    for lastVCent in vCenterList:
-        print("lastVCent = ", lastVCent)
-
-    print("\n\n")
 
     fillBoolList=[]
+    print("vCenterList = ", vCenterList)
     for lastVCent in vCenterList:
-        print("lastVCent = ", lastVCent)
+        # print("lastVCent = ", lastVCent)
         normInvVelSol=-lastVCent/np.linalg.norm(lastVCent)
         newCent=vRad*normInvVelSol
-        print("The filling branch node with name and newCent", branch2Solve["name"], newCent)
+        # print("The filling branch node with name and newCent", branch2Solve["name"], newCent)
         fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
-        branch2Solve["redVcm"]=b2SolveRad
-        # binTreeDict["dictList"][branchIndex]=b2SolveRad
 
         fillBoolList.append(fillBool)
 
@@ -684,12 +682,17 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
         newSphereSolsD=fillSolVelsEnergiesEtcInNode(branch2Solve)
         nSphereSolsDList.append(newSphereSolsD)
 
-    boolList=[]
-    falseList=[False for e in newSphereSolsD]
+    binTreeDict["dictList"][branchIndex]=branch2Solve
+    # if binTreeDict["name"]== "8Be":
+    #     print("\n\n FOUND 8Be!!\n\n")
+    # print("branch2Solve = ", branch2Solve)
 
-    print("About to go in the direct loop")
+    boolList=[]
+    falseList=[False for e in nSphereSolsDList]
+
+    # print("About to go in the direct loop")
     for newSphereSolsD in nSphereSolsDList:
-        print("Inside the loop, newSphereSolsD = ", newSphereSolsD)
+        # print("Inside the loop, newSphereSolsD = ", newSphereSolsD)
         if newSphereSolsD == {}:
             #The corresponding bool value was False
             boolList.append(False)
@@ -697,13 +700,18 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
 
         #Call the fill mayor sols here!!
         newBool=fillMayorSols(branch2Go,freePartRoute[1:],newSphereSolsD)
-        # branch2Go["redVcm"]=b2Go
+        #If that value was true then make a dictionary entry in the
+        #current tree the with the corresponding radius. But what
+        #about the indices?...
         boolList.append(newBool)
 
-    print("boolList = ", boolList)
+    binTreeDict["dictList"][freePartIndex]=branch2Go
+    # print("boolList = ", boolList)
     if boolList == falseList:
         print("Returning a false value somewhere")
         return False
+
+    # localSphereSolsD=fillSolVelsEnergiesEtcInNode(binTreeDict)
 
     print("Made it to the last part")
     return True
@@ -716,7 +724,7 @@ def getVCenterList(sphereSolsD):
             print("velLists = ", velLists)
             print("")
             for velSolSet in velLists:
-                print("velSolSet = ", velSolSet)
+                # print("velSolSet = ", velSolSet)
                 for velocitySol in velSolSet:
                     vCenterList.append(velocitySol)
     return vCenterList
@@ -732,6 +740,7 @@ def fillSphereLineIdxSolsInNode(treeNode,vSCent,vSRad):
     if "sphereSols" not in treeNode:
         treeNode["sphereSols"]={}
     #Getting rid of the -0. It messes with the string convertion
+    print("vSCent = ", vSCent)
     vSCent[vSCent==0.] = 0.
     sphereString=str([vSCent.tolist(),vSRad])
     treeNode["sphereSols"][sphereString]={"indexSols":solIdxList}
@@ -742,11 +751,11 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
     if "sphereSols" not in treeNode:
         return None
     sphereSolsDict=treeNode["sphereSols"]
-    print("inside fillSolVelsEnergiesEtcInNode about to go in a loop")
-    print("the index sols here are ")
+    # print("inside fillSolVelsEnergiesEtcInNode about to go in a loop")
+    # print("the index sols here are ")
     for sphereStr in sphereSolsDict:
         indexSolLists=sphereSolsDict[sphereStr]["indexSols"]
-        print("sphereStr and indexSolsList = ", sphereStr, indexSolLists)
+        # print("sphereStr and indexSolsList = ", sphereStr, indexSolLists)
     myMass=treeNode["fMass"]
     for sphereStr in sphereSolsDict:
         velSolListOfLists=[]
@@ -778,7 +787,6 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
 
         sphereSolsDict[sphereStr]["energySols"].append(energySolListOfLists)
     return sphereSolsDict
-
 
 
 def getMidPOffsets(vLine1,vLine2,vRad):
@@ -871,9 +879,9 @@ def getSolListInParents(treeNode,solIdxList):
     parIdx=treeNode["lParentsIdxs"]
     sols4LeftNode=[]
     sols4RightNode=[]
-    print("solIdxList",solIdxList)
+    # print("solIdxList",solIdxList)
     for pIdx,oSet,solIdx in zip(parIdx,offS,solIdxList):
-        print("pIdx,oSet,solIdx = ",pIdx,oSet,solIdx)
+        # print("pIdx,oSet,solIdx = ",pIdx,oSet,solIdx)
         leftIdxStuff=[pIdx[0],oSet[0]+solIdx]
         sols4LeftNode.append(leftIdxStuff)
         rightIdxStuff=[pIdx[1],oSet[1]+solIdx]
