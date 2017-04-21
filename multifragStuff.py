@@ -154,7 +154,7 @@ def initSphereSols(binTreeDict):
         sphereString=str([sCenter.tolist(),vCM])
         binTreeDict["sphereSols"]={}
         binTreeDict["sphereSols"][sphereString]={}
-        binTreeDict["sphereSols"][sphereString]["velSols"]=[[np.array([0.0,0.0,-vCM])]]#put []
+        binTreeDict["sphereSols"][sphereString]["velSols"]=[[[np.array([0.0,0.0,-vCM])]]]#put []
         #The minus is there for the velocity part to preserve program
         #structure, the function will invert the velocity value and
         #use the correct initial velocity.
@@ -753,14 +753,57 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
     sphereSolsDict=treeNode["sphereSols"]
     # print("inside fillSolVelsEnergiesEtcInNode about to go in a loop")
     # print("the index sols here are ")
-    for sphereStr in sphereSolsDict:
-        indexSolLists=sphereSolsDict[sphereStr]["indexSols"]
-        # print("sphereStr and indexSolsList = ", sphereStr, indexSolLists)
     myMass=treeNode["fMass"]
     for sphereStr in sphereSolsDict:
         velSolListOfLists=[]
         energySolListOfLists=[]
         indexSolLists=sphereSolsDict[sphereStr]["indexSols"]
+        for i in range(len(indexSolLists)):
+            solIdxSubList=indexSolLists[i]
+            #Here the "i" index corresponds to an intersection with a
+            #line with the same index.
+            myVLine=treeNode["vLines"][i]
+            solVelList=[]
+            solEList=[]
+            for vSolIndex in solIdxSubList:
+                velSol=myVLine[vSolIndex]
+                solVelList.append(velSol)
+
+                vNorm=np.linalg.norm(velSol)
+                ESol=1.0/2.0*myMass*(vNorm/100.0)**2
+                solEList.append(ESol)
+
+            velSolListOfLists.append(solVelList)
+            energySolListOfLists.append(solEList)
+        if "velSols" not in sphereSolsDict[sphereStr]:
+            sphereSolsDict[sphereStr]["velSols"]=[]
+        sphereSolsDict[sphereStr]["velSols"].append(velSolListOfLists)
+
+        if "energySols" not in sphereSolsDict[sphereStr]:
+            sphereSolsDict[sphereStr]["energySols"]=[]
+
+        sphereSolsDict[sphereStr]["energySols"].append(energySolListOfLists)
+    return sphereSolsDict
+
+def noIdxFillSolVelsEnergiesEtcInNode(treeNode,velLists):
+    #Maybe the next if is misplaced... maybe need to make the sphere
+    #sols list by myself...
+    if "sphereSols" not in treeNode:
+        treeNode["sphereSols"] = {}
+    sphereSolsDict=treeNode["sphereSols"]
+    myMass=treeNode["fMass"]
+    # need to somehow create the sphereStr... from the velLists...
+    for vSCent in velLists:
+        # Getting rid of the -0. It messes with the string convertion
+        vSCent[vSCent==0.] = 0.
+        sphereString=str([vSCent.tolist(),vSRad])#Find out where this vSRad comes from...
+
+    for sphereStr in sphereSolsDict:
+        velSolListOfLists=[]
+        energySolListOfLists=[]
+        indexSolLists=sphereSolsDict[sphereStr]["indexSols"]
+        #This "for" gets the energies from the indices... maybe it
+        #would be better to get it from the velLists.
         for i in range(len(indexSolLists)):
             solIdxSubList=indexSolLists[i]
             #Here the "i" index corresponds to an intersection with a
