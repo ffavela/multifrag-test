@@ -635,7 +635,7 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
         i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
     return idxSols
 
-def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
+def fillMajorSols(binTreeDict,freePartRoute,sphereSolsD={}):
     #Do more error checking... please
     if len(freePartRoute)==0:
         return True
@@ -655,25 +655,17 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
     b2SolveRad=branch2Solve["redVcm"]
     b2GoRad=branch2Go["redVcm"]
 
-    # print("\n\n")
-    # print("The name of the node is ", binTreeDict["name"])
-    # print("\n\n")
-    # if binTreeDict["name"]== "8Be":
-    #     print("\n\n FOUND 8Be!!\n\n")
-
-    # if binTreeDict["name"]== "16O":
-    #     print("\n\n FOUND 16O!!\n\n")
-
     vCenterList=getVCenterList(sphereSolsD)
+
+
     nSphereSolsDList=[]
 
     fillBoolList=[]
-    print("vCenterList = ", vCenterList)
+    newCentList=[]
     for lastVCent in vCenterList:
-        # print("lastVCent = ", lastVCent)
         normInvVelSol=-lastVCent/np.linalg.norm(lastVCent)
         newCent=vRad*normInvVelSol
-        # print("The filling branch node with name and newCent", branch2Solve["name"], newCent)
+        newCentList.append(newCent)
         fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
 
         fillBoolList.append(fillBool)
@@ -682,24 +674,24 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
         newSphereSolsD=fillSolVelsEnergiesEtcInNode(branch2Solve)
         nSphereSolsDList.append(newSphereSolsD)
 
+    #Fill the current node
+    noIdxBool=noIdxFillSolVelsEnergiesEtcInNode(binTreeDict,newCentList)
+    if noIdxBool==False:
+        return False
+
     binTreeDict["dictList"][branchIndex]=branch2Solve
-    # if binTreeDict["name"]== "8Be":
-    #     print("\n\n FOUND 8Be!!\n\n")
-    # print("branch2Solve = ", branch2Solve)
 
     boolList=[]
     falseList=[False for e in nSphereSolsDList]
 
-    # print("About to go in the direct loop")
     for newSphereSolsD in nSphereSolsDList:
-        # print("Inside the loop, newSphereSolsD = ", newSphereSolsD)
         if newSphereSolsD == {}:
             #The corresponding bool value was False
             boolList.append(False)
             continue
 
-        #Call the fill mayor sols here!!
-        newBool=fillMayorSols(branch2Go,freePartRoute[1:],newSphereSolsD)
+        #Call the fill major sols here!!
+        newBool=fillMajorSols(branch2Go,freePartRoute[1:],newSphereSolsD)
         #If that value was true then make a dictionary entry in the
         #current tree the with the corresponding radius. But what
         #about the indices?...
@@ -710,8 +702,6 @@ def fillMayorSols(binTreeDict,freePartRoute,sphereSolsD={}):
     if boolList == falseList:
         print("Returning a false value somewhere")
         return False
-
-    # localSphereSolsD=fillSolVelsEnergiesEtcInNode(binTreeDict)
 
     print("Made it to the last part")
     return True
@@ -786,51 +776,24 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
     return sphereSolsDict
 
 def noIdxFillSolVelsEnergiesEtcInNode(treeNode,velLists):
-    #Maybe the next if is misplaced... maybe need to make the sphere
-    #sols list by myself...
-    if "sphereSols" not in treeNode:
-        treeNode["sphereSols"] = {}
-    sphereSolsDict=treeNode["sphereSols"]
+    solEList=[]
     myMass=treeNode["fMass"]
-    # need to somehow create the sphereStr... from the velLists...
-    for vSCent in velLists:
-        # Getting rid of the -0. It messes with the string convertion
-        vSCent[vSCent==0.] = 0.
-        sphereString=str([vSCent.tolist(),vSRad])#Find out where this vSRad comes from...
+    if velLists == []:
+        return False
 
-    for sphereStr in sphereSolsDict:
-        velSolListOfLists=[]
-        energySolListOfLists=[]
-        indexSolLists=sphereSolsDict[sphereStr]["indexSols"]
-        #This "for" gets the energies from the indices... maybe it
-        #would be better to get it from the velLists.
-        for i in range(len(indexSolLists)):
-            solIdxSubList=indexSolLists[i]
-            #Here the "i" index corresponds to an intersection with a
-            #line with the same index.
-            myVLine=treeNode["vLines"][i]
-            solVelList=[]
-            solEList=[]
-            for vSolIndex in solIdxSubList:
-                velSol=myVLine[vSolIndex]
-                solVelList.append(velSol)
+    for velVal in velLists:
+        vNorm=np.linalg.norm(velVal)
+        print("velVal,vNorm = ", velVal,vNorm)
+        ESol=1.0/2.0*myMass*(vNorm/100.0)**2
+        solEList.append(ESol)
 
-                vNorm=np.linalg.norm(velSol)
-                ESol=1.0/2.0*myMass*(vNorm/100.0)**2
-                solEList.append(ESol)
+    if "solutions" not in treeNode:
+        treeNode["solutions"]={}
 
-            velSolListOfLists.append(solVelList)
-            energySolListOfLists.append(solEList)
-        if "velSols" not in sphereSolsDict[sphereStr]:
-            sphereSolsDict[sphereStr]["velSols"]=[]
-        sphereSolsDict[sphereStr]["velSols"].append(velSolListOfLists)
+    treeNode["solutions"]["velocities"]=velLists
+    treeNode["solutions"]["energies"]=solEList
 
-        if "energySols" not in sphereSolsDict[sphereStr]:
-            sphereSolsDict[sphereStr]["energySols"]=[]
-
-        sphereSolsDict[sphereStr]["energySols"].append(energySolListOfLists)
-    return sphereSolsDict
-
+    return True
 
 def getMidPOffsets(vLine1,vLine2,vRad):
     j=0
