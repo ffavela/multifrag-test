@@ -162,6 +162,17 @@ def initSphereSols(binTreeDict):
         #I think this is enough for the initial system
         return binTreeDict["sphereSols"]
 
+def getInitSolsDict2(binTreeDict):
+    #This is our free CM solution, we at least know this one! ;-)
+    vCM=binTreeDict["redVcm"]
+    sCenter=np.array([0.0,0.0,0.0])
+    centerStr=str([sCenter.tolist()])
+    sphereSols={centerStr:{}}
+    sphereSols[centerStr]["vLabSols"]=[np.array([0.0,0.0,vCM])]
+
+    return sphereSols
+
+
 def fillInit(binTreeDict):
     if binTreeDict == {}:
         return
@@ -637,11 +648,25 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
 
 def fillMajorSols(binTreeDict,freePartRoute,sphereSolsD={}):
     #Do more error checking... please
-    if len(freePartRoute)==0:
-        return True
     if binTreeDict["type"]=="initial":
         sphereSolsD=initSphereSols(binTreeDict)
 
+    vRad=binTreeDict["redVcm"]
+    vCenterList=getVCenterList(sphereSolsD)
+    fillBoolList=[]
+    newCentList=[]
+    for lastVCent in vCenterList:
+        normInvVelSol=-lastVCent/np.linalg.norm(lastVCent)
+        newCent=vRad*normInvVelSol
+        newCentList.append(newCent)
+
+    #Fill the current node
+    noIdxBool=noIdxFillSolVelsEnergiesEtcInNode(binTreeDict,newCentList)
+    if noIdxBool==False:
+        return False
+
+    if len(freePartRoute)==0:
+        return True
     freePartIndex=freePartRoute[0]
     branchIndex=getOtherVal(freePartIndex)
 
@@ -650,34 +675,19 @@ def fillMajorSols(binTreeDict,freePartRoute,sphereSolsD={}):
     branch2Solve=binTreeDict["dictList"][branchIndex]
     branch2Go=binTreeDict["dictList"][freePartIndex]
 
-    vRad=binTreeDict["redVcm"]
     #Maybe these 2 are reduntant
     b2SolveRad=branch2Solve["redVcm"]
     b2GoRad=branch2Go["redVcm"]
 
-    vCenterList=getVCenterList(sphereSolsD)
-
-
     nSphereSolsDList=[]
 
-    fillBoolList=[]
-    newCentList=[]
-    for lastVCent in vCenterList:
-        normInvVelSol=-lastVCent/np.linalg.norm(lastVCent)
-        newCent=vRad*normInvVelSol
-        newCentList.append(newCent)
+    for newCent in newCentList:
         fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
-
         fillBoolList.append(fillBool)
 
     if True in fillBoolList:
         newSphereSolsD=fillSolVelsEnergiesEtcInNode(branch2Solve)
         nSphereSolsDList.append(newSphereSolsD)
-
-    #Fill the current node
-    noIdxBool=noIdxFillSolVelsEnergiesEtcInNode(binTreeDict,newCentList)
-    if noIdxBool==False:
-        return False
 
     binTreeDict["dictList"][branchIndex]=branch2Solve
 
@@ -705,6 +715,53 @@ def fillMajorSols(binTreeDict,freePartRoute,sphereSolsD={}):
 
     print("Made it to the last part")
     return True
+
+def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
+    if binTreeDic["type"] == "initial":
+        solsDict=getInitSolsDict2(binTreeDic)
+
+    #Filling the local node
+    binTreeDic["solsDict"]=solsDict
+
+    print("Current node status")
+    printNode(binTreeDic)
+
+    newCentList=getVCenterList2(solsDict)
+    print("newCentList = ", newCentList)
+
+    if len(freePartRoute)==0:
+        return True
+
+    if binTreeDic["type"]=="initial":
+        #Check whats up with this
+        #Dont't do the for stuff...
+        pass
+
+    #fill the dictionary with the indices
+    newSphSolsD={}
+    for newCent in newCentList:
+        print("The current newCent is ", newCent)
+        newSphSolsD=getDictWithIdxs2(binTreeDic,\
+                                     newCent,newSphSolsD)
+
+    #now given the dictionary is partially pre-filled we now fill it
+    #with the corresponding solutions
+    newSphereSolsD=getSolVelsEnergiesEtcInNode2(binTreeDic,\
+                                                newSphSolsD)
+
+
+
+
+
+
+
+def getVCenterList2(solsDict):
+    vCenterList=[]
+    for sphCentStr in solsDict:
+        for newVCenter in solsDict[sphCentStr]["vLabSols"]:
+            vCenterList.append(newVCenter)
+
+    return vCenterList
 
 def getVCenterList(sphereSolsD):
     vCenterList=[]
@@ -735,6 +792,69 @@ def fillSphereLineIdxSolsInNode(treeNode,vSCent,vSRad):
     sphereString=str([vSCent.tolist(),vSRad])
     treeNode["sphereSols"][sphereString]={"indexSols":solIdxList}
     return True
+
+def getDictWithIdxs(treeNode,vSCent):
+    nodeVLines=treeNode["vLines"]
+    vSRad=treeNode["redVcm"]
+    solIdxList=[]
+    for vLine in nodeVLines:
+        lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
+        solIdxList.append(lineInterIdxList)
+    #Getting rid of the -0. It messes with the string convertion
+    vSCent[vSCent==0.] = 0.
+    centerStr=str([vSCent.tolist()])
+    sphereSols={centerStr:{}}
+    sphereSols[centerStr]["solIdxList"]=solIdxList
+
+    return sphereSols
+
+def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
+    nodeVLines=treeNode["vLines"]
+    vSRad=treeNode["redVcm"]
+    solIdxList=[]
+    for vLine in nodeVLines:
+        lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
+        solIdxList.append(lineInterIdxList)
+    #Getting rid of the -0. It messes with the string convertion
+    vSCent[vSCent==0.] = 0.
+    centerStr=str([vSCent.tolist()])
+    sphSolsDict[centerStr]={}
+    sphSolsDict[centerStr]["solIdxList"]=solIdxList
+
+    return sphereSols
+
+def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
+    myMass=treeNode["fMass"]
+    for sphereCenterStr in sphereSolsDict:
+        velSolListOfLists=[]
+        energySolListOfLists=[]
+        indexSolLists=sphereSolsDict[sphereStr]["indexSols"]
+        for i in range(len(indexSolLists)):
+            solIdxSubList=indexSolLists[i]
+            #Here the "i" index corresponds to an intersection with a
+            #line with the same index.
+            myVLine=treeNode["vLines"][i]
+            solVelList=[]
+            solEList=[]
+            for vSolIndex in solIdxSubList:
+                velSol=myVLine[vSolIndex]
+                solVelList.append(velSol)
+
+                vNorm=np.linalg.norm(velSol)
+                ESol=1.0/2.0*myMass*(vNorm/100.0)**2
+                solEList.append(ESol)
+
+            velSolListOfLists.append(solVelList)
+            energySolListOfLists.append(solEList)
+        if "velSols" not in sphereSolsDict[sphereStr]:
+            sphereSolsDict[sphereStr]["velSols"]=[]
+        sphereSolsDict[sphereStr]["velSols"].append(velSolListOfLists)
+
+        if "energySols" not in sphereSolsDict[sphereStr]:
+            sphereSolsDict[sphereStr]["energySols"]=[]
+
+        sphereSolsDict[sphereStr]["energySols"].append(energySolListOfLists)
+    return sphereSolsDict
 
 def fillSolVelsEnergiesEtcInNode(treeNode):
     #fillSphereLineIdxSolsInNode has to be called b4 this one

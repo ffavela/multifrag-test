@@ -163,11 +163,13 @@ print(solListInParents)
 # print("sphereSols = ",sphereSols)
 
 ax.set_zlim3d(-5, 20)
-majorSolBool=fillMajorSols(initDict,generalList)
-if majorSolBool == False:
-    print("Couldn't fill the tree :'-(")
-else:
-    print("Success in filling the tree!! :-)")
-printTree(initDict)
+# majorSolBool=fillMajorSols(initDict,generalList)
+# if majorSolBool == False:
+#     print("Couldn't fill the tree :'-(")
+# else:
+#     print("Success in filling the tree!! :-)")
+# printTree(initDict)
 
-plt.show()
+fillMajorSols2(oxyDict,generalList)
+
+# plt.show()
