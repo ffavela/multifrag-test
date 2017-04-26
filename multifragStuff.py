@@ -145,6 +145,15 @@ def globalCompleteTree(binTreeDict):
     completeTree0(binTreeDict)
     completeTree1(binTreeDict)
     completeTree2(binTreeDict)
+    # print("Trying to pull every line automatically")
+    # boolPull=pullEveryLine(binTreeDict,generalList)
+    # if boolPull == True:
+    #     print("Success in pulling every line")
+    # else:
+    #     print("Unsuccessful pull :'-(")
+
+    #Put here the special vLine for the initial dict
+
 
 def initSphereSols(binTreeDict):
     #This is our free CM solution, we at least know this one! ;-)
@@ -166,9 +175,9 @@ def getInitSolsDict2(binTreeDict):
     #This is our free CM solution, we at least know this one! ;-)
     vCM=binTreeDict["redVcm"]
     sCenter=np.array([0.0,0.0,0.0])
-    centerStr=str([sCenter.tolist()])
+    centerStr=str(sCenter.tolist())
     sphereSols={centerStr:{}}
-    sphereSols[centerStr]["vLabSols"]=[np.array([0.0,0.0,vCM])]
+    sphereSols[centerStr]["vLabSols"]=[np.array([0.0,0.0,0.0])]
 
     return sphereSols
 
@@ -187,10 +196,17 @@ def fillInit(binTreeDict):
     binTreeDict["Ecm"]=initEcm
     #Saving the beta
     binTreeDict["BVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
-    binTreeDict["redVcm"]=binTreeDict["BVcm"]*100
+    redVcm=binTreeDict["BVcm"]*100
+    binTreeDict["redVcm"]=redVcm
     #This is only for setting a search range, the final vel won't be
     #this high. This criteria will be improved eventually.
     binTreeDict["BVLabMax"]=binTreeDict["redVcm"]
+
+    #Just forzing it to have a line so it doesn't mess with the rest
+    #of the code
+    epsilon=1.0
+    binTreeDict["vLines"]=[np.array([[0,0,redVcm-epsilon/2],\
+                                 [0,0,redVcm+epsilon/2]])]
 
 def completeTree0(binTreeDict):
     if binTreeDict == {}:
@@ -368,6 +384,9 @@ def getTrainStatus(aPoint,aVRad,train):
 def getTrainSolIdx(vPoint,vRad,vLine,i=0,\
                    direction="forward",tolerance=None,\
                    trainLen=2):
+    print("\n\n######################################################")
+    print("###############  inside getTrainSolIdx  ################")
+    print("######################################################")
     if direction == "forward":
         dIncr=1
     else:
@@ -392,6 +411,13 @@ def getTrainSolIdx(vPoint,vRad,vLine,i=0,\
         tolerance-=1
         train=vLine[i:i+trainLen]
         trainStatus=getTrainStatus(vPoint,vRad,train)
+
+    print("i = ", i)
+
+    print("######################################################")
+    print("###############  exiting getTrainSolIdx  ################")
+    print("######################################################\n\n")
+
     return i
 
 def getMidPointLine(vLine1,vLine2,vRad,frac=0.5):
@@ -639,11 +665,15 @@ def getSphereLineSols(vSCent,vSRad,vLine):
     return np.array(cmNormVects)
 
 def getSphereLineIdxSols(vSCent,vSRad,vLine):
+    print("######### inside getSphereLineIdxSols ############")
     i=getTrainSolIdx(vSCent,vSRad,vLine,i=0)
+    print("vSCent,vSRad,vLine = ",vSCent,vSRad,vLine)
+    print("i = ", i)
     idxSols=[]
     while i != None:
         idxSols.append(i)
         i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
+    print("######### exiting getSphereLineIdxSols ############")
     return idxSols
 
 def fillMajorSols(binTreeDict,freePartRoute,sphereSolsD={}):
@@ -743,6 +773,7 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
         print("The current newCent is ", newCent)
         newSphSolsD=getDictWithIdxs2(binTreeDic,\
                                      newCent,newSphSolsD)
+        print("newSphSolsD = ", newSphSolsD)
 
     #now given the dictionary is partially pre-filled we now fill it
     #with the corresponding solutions
@@ -802,33 +833,44 @@ def getDictWithIdxs(treeNode,vSCent):
         solIdxList.append(lineInterIdxList)
     #Getting rid of the -0. It messes with the string convertion
     vSCent[vSCent==0.] = 0.
-    centerStr=str([vSCent.tolist()])
+    centerStr=str(vSCent.tolist())
     sphereSols={centerStr:{}}
     sphereSols[centerStr]["solIdxList"]=solIdxList
 
     return sphereSols
 
 def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
+    #Getting rid of the -0. It messes with the string convertion
+    print("inside = getDictWithIdxs2")
+    vSCent[vSCent==0.] = 0.
+    centerStr=str(vSCent.tolist())
+    sphSolsDict[centerStr]={}
+    print("centerStr = ", centerStr)
+    
     nodeVLines=treeNode["vLines"]
     vSRad=treeNode["redVcm"]
     solIdxList=[]
     for vLine in nodeVLines:
+        print("vLine = ", vLine)
         lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
+        print("lineInterIdxList = ",lineInterIdxList)
         solIdxList.append(lineInterIdxList)
-    #Getting rid of the -0. It messes with the string convertion
-    vSCent[vSCent==0.] = 0.
-    centerStr=str([vSCent.tolist()])
-    sphSolsDict[centerStr]={}
+    
     sphSolsDict[centerStr]["solIdxList"]=solIdxList
 
-    return sphereSols
+    return sphSolsDict
 
 def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
     myMass=treeNode["fMass"]
+
+    if treeNode["type"] == "initial":
+        #Handle this!!
+        pass
+        
     for sphereCenterStr in sphereSolsDict:
         velSolListOfLists=[]
         energySolListOfLists=[]
-        indexSolLists=sphereSolsDict[sphereStr]["indexSols"]
+        indexSolLists=sphereSolsDict[sphereCenterStr]["solIdxList"]
         for i in range(len(indexSolLists)):
             solIdxSubList=indexSolLists[i]
             #Here the "i" index corresponds to an intersection with a
@@ -846,14 +888,14 @@ def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
 
             velSolListOfLists.append(solVelList)
             energySolListOfLists.append(solEList)
-        if "velSols" not in sphereSolsDict[sphereStr]:
-            sphereSolsDict[sphereStr]["velSols"]=[]
-        sphereSolsDict[sphereStr]["velSols"].append(velSolListOfLists)
+        if "velSols" not in sphereSolsDict[sphereCenterStr]:
+            sphereSolsDict[sphereCenterStr]["velSols"]=[]
+        sphereSolsDict[sphereCenterStr]["velSols"].append(velSolListOfLists)
 
-        if "energySols" not in sphereSolsDict[sphereStr]:
-            sphereSolsDict[sphereStr]["energySols"]=[]
+        if "energySols" not in sphereSolsDict[sphereCenterStr]:
+            sphereSolsDict[sphereCenterStr]["energySols"]=[]
 
-        sphereSolsDict[sphereStr]["energySols"].append(energySolListOfLists)
+        sphereSolsDict[sphereCenterStr]["energySols"].append(energySolListOfLists)
     return sphereSolsDict
 
 def fillSolVelsEnergiesEtcInNode(treeNode):

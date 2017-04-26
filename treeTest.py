@@ -163,13 +163,30 @@ print(solListInParents)
 # print("sphereSols = ",sphereSols)
 
 ax.set_zlim3d(-5, 20)
-# majorSolBool=fillMajorSols(initDict,generalList)
-# if majorSolBool == False:
+# mayorSolBool=fillMayorSols(initDict,generalList)
+# if mayorSolBool == False:
 #     print("Couldn't fill the tree :'-(")
 # else:
 #     print("Success in filling the tree!! :-)")
 # printTree(initDict)
 
-fillMajorSols2(oxyDict,generalList)
 
-# plt.show()
+fillMajorSols2(initDict,generalList)
+# fillMajorSols2(oxyDict,generalList)
+
+vPoint=np.array([0,0,0])
+vRad=7.326472906898222
+vLine=np.array([[ 0.,0., 6.82647291],[ 0.,0.,7.82647291]])
+# vLine=np.array([[ 0.,0., 5.82647291],[ 0.,0., 6.82647291],[ 0.,0.,7.82647291],[ 0.,0.,8.82647291]])
+myTrainSolIdx=getTrainSolIdx(vPoint,vRad,vLine,)
+
+print("myTrainSolIdx = ", myTrainSolIdx)
+
+i=0
+
+train=vLine[i:i+2]
+print("train = ",train)
+trainStatus=getTrainStatus(vPoint,vRad,train)
+print("trainStatus = ",trainStatus)
+
+plt.show()
