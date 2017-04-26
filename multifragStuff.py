@@ -204,7 +204,7 @@ def fillInit(binTreeDict):
 
     #Just forzing it to have a line so it doesn't mess with the rest
     #of the code
-    epsilon=1.0
+    epsilon=0.00000001
     binTreeDict["vLines"]=[np.array([[0,0,redVcm-epsilon/2],\
                                  [0,0,redVcm+epsilon/2]])]
 
@@ -384,9 +384,6 @@ def getTrainStatus(aPoint,aVRad,train):
 def getTrainSolIdx(vPoint,vRad,vLine,i=0,\
                    direction="forward",tolerance=None,\
                    trainLen=2):
-    print("\n\n######################################################")
-    print("###############  inside getTrainSolIdx  ################")
-    print("######################################################")
     if direction == "forward":
         dIncr=1
     else:
@@ -397,7 +394,7 @@ def getTrainSolIdx(vPoint,vRad,vLine,i=0,\
         tolerance=lineMax
 
     #Train derail
-    if i < 0 or i+trainLen >= lineMax:
+    if i < 0 or i+trainLen > lineMax:
         return None
     train=vLine[i:i+trainLen]
     trainStatus=getTrainStatus(vPoint,vRad,train)
@@ -411,12 +408,6 @@ def getTrainSolIdx(vPoint,vRad,vLine,i=0,\
         tolerance-=1
         train=vLine[i:i+trainLen]
         trainStatus=getTrainStatus(vPoint,vRad,train)
-
-    print("i = ", i)
-
-    print("######################################################")
-    print("###############  exiting getTrainSolIdx  ################")
-    print("######################################################\n\n")
 
     return i
 
@@ -665,7 +656,6 @@ def getSphereLineSols(vSCent,vSRad,vLine):
     return np.array(cmNormVects)
 
 def getSphereLineIdxSols(vSCent,vSRad,vLine):
-    print("######### inside getSphereLineIdxSols ############")
     i=getTrainSolIdx(vSCent,vSRad,vLine,i=0)
     print("vSCent,vSRad,vLine = ",vSCent,vSRad,vLine)
     print("i = ", i)
@@ -673,7 +663,7 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
     while i != None:
         idxSols.append(i)
         i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
-    print("######### exiting getSphereLineIdxSols ############")
+
     return idxSols
 
 def fillMajorSols(binTreeDict,freePartRoute,sphereSolsD={}):
@@ -846,7 +836,7 @@ def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
     centerStr=str(vSCent.tolist())
     sphSolsDict[centerStr]={}
     print("centerStr = ", centerStr)
-    
+
     nodeVLines=treeNode["vLines"]
     vSRad=treeNode["redVcm"]
     solIdxList=[]
@@ -855,7 +845,7 @@ def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
         lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
         print("lineInterIdxList = ",lineInterIdxList)
         solIdxList.append(lineInterIdxList)
-    
+
     sphSolsDict[centerStr]["solIdxList"]=solIdxList
 
     return sphSolsDict
@@ -866,7 +856,7 @@ def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
     if treeNode["type"] == "initial":
         #Handle this!!
         pass
-        
+
     for sphereCenterStr in sphereSolsDict:
         velSolListOfLists=[]
         energySolListOfLists=[]

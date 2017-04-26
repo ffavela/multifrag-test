@@ -178,15 +178,19 @@ vPoint=np.array([0,0,0])
 vRad=7.326472906898222
 vLine=np.array([[ 0.,0., 6.82647291],[ 0.,0.,7.82647291]])
 # vLine=np.array([[ 0.,0., 5.82647291],[ 0.,0., 6.82647291],[ 0.,0.,7.82647291],[ 0.,0.,8.82647291]])
+
+print("\n\nCALLING MY TRAIN SOL...")
 myTrainSolIdx=getTrainSolIdx(vPoint,vRad,vLine,)
 
 print("myTrainSolIdx = ", myTrainSolIdx)
 
+print("\n\n")
 i=0
 
 train=vLine[i:i+2]
 print("train = ",train)
 trainStatus=getTrainStatus(vPoint,vRad,train)
+print("treeTest: vPoint, vRad, train = ", vPoint,vRad,train)
 print("trainStatus = ",trainStatus)
 
-plt.show()
+# plt.show()
