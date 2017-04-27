@@ -152,9 +152,8 @@ totIndexSols=indexSols1+indexSols2
 myVar=len(initDict["dictList"][0]["vLines"])
 # print("num of lines",myVar)
 
-print("Now doing the new function")
 solListInParents=getSolListInParents(oxyDict,totIndexSols)
-print(solListInParents)
+# print(solListInParents)
 
 # print("Filling the oxygenNode with solutions")
 # print("oxyVelRad = ",oxyVelRad)
@@ -188,9 +187,9 @@ print("\n\n")
 i=0
 
 train=vLine[i:i+2]
-print("train = ",train)
-trainStatus=getTrainStatus(vPoint,vRad,train)
-print("treeTest: vPoint, vRad, train = ", vPoint,vRad,train)
-print("trainStatus = ",trainStatus)
+# print("train = ",train)
+# trainStatus=getTrainStatus(vPoint,vRad,train)
+# print("treeTest: vPoint, vRad, train = ", vPoint,vRad,train)
+# print("trainStatus = ",trainStatus)
 
 # plt.show()

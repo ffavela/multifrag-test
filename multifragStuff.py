@@ -204,7 +204,7 @@ def fillInit(binTreeDict):
 
     #Just forzing it to have a line so it doesn't mess with the rest
     #of the code
-    epsilon=0.00000001
+    epsilon=0.000000000000001
     binTreeDict["vLines"]=[np.array([[0,0,redVcm-epsilon/2],\
                                  [0,0,redVcm+epsilon/2]])]
 
@@ -657,8 +657,6 @@ def getSphereLineSols(vSCent,vSRad,vLine):
 
 def getSphereLineIdxSols(vSCent,vSRad,vLine):
     i=getTrainSolIdx(vSCent,vSRad,vLine,i=0)
-    print("vSCent,vSRad,vLine = ",vSCent,vSRad,vLine)
-    print("i = ", i)
     idxSols=[]
     while i != None:
         idxSols.append(i)
@@ -743,9 +741,6 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     #Filling the local node
     binTreeDic["solsDict"]=solsDict
 
-    print("Current node status")
-    printNode(binTreeDic)
-
     newCentList=getVCenterList2(solsDict)
     print("newCentList = ", newCentList)
 
@@ -770,9 +765,10 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     newSphereSolsD=getSolVelsEnergiesEtcInNode2(binTreeDic,\
                                                 newSphSolsD)
 
+    binTreeDic["majorSols"]=newSphereSolsD
 
-
-
+    print("Current node status")
+    printNode(binTreeDic)
 
 
 
@@ -853,16 +849,14 @@ def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
 def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
     myMass=treeNode["fMass"]
 
-    if treeNode["type"] == "initial":
-        #Handle this!!
-        pass
 
+    print("\n\n######## Inside getSolVelsEnergiesEtcInNode2 ########\n\n")
     for sphereCenterStr in sphereSolsDict:
-        velSolListOfLists=[]
-        energySolListOfLists=[]
         indexSolLists=sphereSolsDict[sphereCenterStr]["solIdxList"]
+        print("Inside first for loop sphereCenterStr = ", sphereCenterStr)
         for i in range(len(indexSolLists)):
             solIdxSubList=indexSolLists[i]
+            print("Inside second for loop i, solIdxSubList = ", i,solIdxSubList)
             #Here the "i" index corresponds to an intersection with a
             #line with the same index.
             myVLine=treeNode["vLines"][i]
@@ -870,22 +864,24 @@ def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
             solEList=[]
             for vSolIndex in solIdxSubList:
                 velSol=myVLine[vSolIndex]
+                print("Inside third loop vSolIndex, velSol = ", vSolIndex,velSol)
                 solVelList.append(velSol)
 
                 vNorm=np.linalg.norm(velSol)
                 ESol=1.0/2.0*myMass*(vNorm/100.0)**2
+                print("vNorm, ESol = ", vNorm, ESol)
                 solEList.append(ESol)
 
-            velSolListOfLists.append(solVelList)
-            energySolListOfLists.append(solEList)
-        if "velSols" not in sphereSolsDict[sphereCenterStr]:
-            sphereSolsDict[sphereCenterStr]["velSols"]=[]
-        sphereSolsDict[sphereCenterStr]["velSols"].append(velSolListOfLists)
 
-        if "energySols" not in sphereSolsDict[sphereCenterStr]:
-            sphereSolsDict[sphereCenterStr]["energySols"]=[]
+            if "velSols" not in sphereSolsDict[sphereCenterStr]:
+                sphereSolsDict[sphereCenterStr]["velSols"]=[]
+            sphereSolsDict[sphereCenterStr]["velSols"].append(solVelList)
 
-        sphereSolsDict[sphereCenterStr]["energySols"].append(energySolListOfLists)
+            if "energySols" not in sphereSolsDict[sphereCenterStr]:
+                sphereSolsDict[sphereCenterStr]["energySols"]=[]
+            sphereSolsDict[sphereCenterStr]["energySols"].append(solEList)
+
+        print("\n\n######## Exiting getSolVelsEnergiesEtcInNode2 ########\n\n")
     return sphereSolsDict
 
 def fillSolVelsEnergiesEtcInNode(treeNode):
