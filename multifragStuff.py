@@ -793,12 +793,13 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
         print("The corresponding string is ", newerCentStr)
         solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
                                        newerCent,solsD4B2Solve)
-        # fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
-        # fillBoolList.append(fillBool)
 
     #Put conditional here in case solsD4B2Solve is not properly
     #filled... make a function for this?... then fill up the
     #solsDictetc then attach it to the binTreeDict...
+    if solsD4B2Solve != {}:
+        #Do your tree filling stuff here!
+        pass
     print("solsD4B2Solv", solsD4B2Solve)
 
 def getVCenterList2(solsDict):
@@ -878,9 +879,12 @@ def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
         print("vLine = ", vLine)
         lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
         print("lineInterIdxList = ",lineInterIdxList)
-        solIdxList.append(lineInterIdxList)
 
-    sphSolsDict[centerStr]["solIdxList"]=solIdxList
+        if lineInterIdxList != []:
+            solIdxList.append(lineInterIdxList)
+
+    if solIdxList != []:
+        sphSolsDict[centerStr]["solIdxList"]=solIdxList
 
     return sphSolsDict
 
