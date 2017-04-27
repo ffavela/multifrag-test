@@ -203,7 +203,8 @@ def fillInit(binTreeDict):
     binTreeDict["BVLabMax"]=binTreeDict["redVcm"]
 
     #Just forzing it to have a line so it doesn't mess with the rest
-    #of the code
+    #of the code, in the future use one point, edit getDictWithIdxs2
+    #no epsilon needed...
     epsilon=0.000000000000001
     binTreeDict["vLines"]=[np.array([[0,0,redVcm-epsilon/2],\
                                  [0,0,redVcm+epsilon/2]])]
@@ -736,6 +737,7 @@ def fillMajorSols(binTreeDict,freePartRoute,sphereSolsD={}):
 
 def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     if binTreeDic["type"] == "initial":
+        #Maybe put this outside at the initialization stage..
         solsDict=getInitSolsDict2(binTreeDic)
 
     #Filling the local node
@@ -764,19 +766,55 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     #with the corresponding solutions
     newSphereSolsD=getSolVelsEnergiesEtcInNode2(binTreeDic,\
                                                 newSphSolsD)
-
     binTreeDic["majorSols"]=newSphereSolsD
 
-    print("Current node status")
-    printNode(binTreeDic)
+    if len(freePartRoute)==0:
+        return True
 
+    #Now figure out the branches to fill and 2 go, first we get the
+    #indices
+    freePartIndex=freePartRoute[0]
+    branchIndex=getOtherVal(freePartIndex)
 
+    if branchIndex==None:
+        return False
+
+    #The branches to fill (solve) and to go
+    branch2Solve=binTreeDic["dictList"][branchIndex]
+    branch2Go=binTreeDic["dictList"][freePartIndex]
+
+    vCenterList=getVCenterListBetter(newSphereSolsD)
+    print("vCenterList = ", vCenterList)
+
+    solsD4B2Solve={}
+    for newerCent in vCenterList:
+        print("Inside the LOOOOP newCent = ", newerCent)
+        newerCentStr=npArray2Str(newerCent)
+        print("The corresponding string is ", newerCentStr)
+        solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
+                                       newerCent,solsD4B2Solve)
+        # fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
+        # fillBoolList.append(fillBool)
+
+    #Put conditional here in case solsD4B2Solve is not properly
+    #filled... make a function for this?... then fill up the
+    #solsDictetc then attach it to the binTreeDict...
+    print("solsD4B2Solv", solsD4B2Solve)
 
 def getVCenterList2(solsDict):
-    vCenterList=[]
+    vCenterListofLists=[]
     for sphCentStr in solsDict:
         for newVCenter in solsDict[sphCentStr]["vLabSols"]:
-            vCenterList.append(newVCenter)
+            vCenterListofLists.append(newVCenter)
+
+    return vCenterListofLists
+
+def getVCenterListBetter(solsDict):
+    vCenterList=[]
+    for sphCentStr in solsDict:
+        for newVCenterList in solsDict[sphCentStr]["vLabSols"]:
+            for newVCenter in newVCenterList:
+                vCenterList.append(newVCenter)
 
     return vCenterList
 
@@ -850,38 +888,47 @@ def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
     myMass=treeNode["fMass"]
 
 
-    print("\n\n######## Inside getSolVelsEnergiesEtcInNode2 ########\n\n")
     for sphereCenterStr in sphereSolsDict:
+        print("\n\n sphereCenterStr = ", sphereCenterStr)
+        myNpCenter=str2NPArray(sphereCenterStr)
+        print("myNpCenter = ",myNpCenter)
+
+        print("\n\n")
         indexSolLists=sphereSolsDict[sphereCenterStr]["solIdxList"]
-        print("Inside first for loop sphereCenterStr = ", sphereCenterStr)
         for i in range(len(indexSolLists)):
             solIdxSubList=indexSolLists[i]
-            print("Inside second for loop i, solIdxSubList = ", i,solIdxSubList)
             #Here the "i" index corresponds to an intersection with a
             #line with the same index.
             myVLine=treeNode["vLines"][i]
             solVelList=[]
             solEList=[]
+            vCMSolList=[]
             for vSolIndex in solIdxSubList:
                 velSol=myVLine[vSolIndex]
-                print("Inside third loop vSolIndex, velSol = ", vSolIndex,velSol)
                 solVelList.append(velSol)
 
                 vNorm=np.linalg.norm(velSol)
                 ESol=1.0/2.0*myMass*(vNorm/100.0)**2
-                print("vNorm, ESol = ", vNorm, ESol)
                 solEList.append(ESol)
 
+                vCMSol=velSol-myNpCenter
+                vCMSolList.append(vCMSol)
 
-            if "velSols" not in sphereSolsDict[sphereCenterStr]:
-                sphereSolsDict[sphereCenterStr]["velSols"]=[]
-            sphereSolsDict[sphereCenterStr]["velSols"].append(solVelList)
+                #ECM energies should be the same as in the first
+                #calculation... I'll corroborate later
 
-            if "energySols" not in sphereSolsDict[sphereCenterStr]:
-                sphereSolsDict[sphereCenterStr]["energySols"]=[]
-            sphereSolsDict[sphereCenterStr]["energySols"].append(solEList)
+            if "vLabSols" not in sphereSolsDict[sphereCenterStr]:
+                sphereSolsDict[sphereCenterStr]["vLabSols"]=[]
+            sphereSolsDict[sphereCenterStr]["vLabSols"].append(solVelList)
 
-        print("\n\n######## Exiting getSolVelsEnergiesEtcInNode2 ########\n\n")
+            if "energyLabSols" not in sphereSolsDict[sphereCenterStr]:
+                sphereSolsDict[sphereCenterStr]["energyLabSols"]=[]
+            sphereSolsDict[sphereCenterStr]["energyLabSols"].append(solEList)
+
+            if "vCMSols" not in sphereSolsDict[sphereCenterStr]:
+                sphereSolsDict[sphereCenterStr]["vCMSols"]=[]
+            sphereSolsDict[sphereCenterStr]["vCMSols"].append(solVelList)
+
     return sphereSolsDict
 
 def fillSolVelsEnergiesEtcInNode(treeNode):
@@ -1041,3 +1088,15 @@ def getSolListInParents(treeNode,solIdxList):
         rightIdxStuff=[pIdx[1],oSet[1]+solIdx]
         sols4RightNode.append(sols4RightNode)
     return [leftIdxStuff,rightIdxStuff]
+
+def str2NPArray(myString):
+    #In principle, all the strings were numpy arrays that where pre
+    #converted to lists b4 the string convertion.
+    myNPArray=np.array([float(t) for t in myString[1:-1].split(",")])
+    return myNPArray
+
+def npArray2Str(myNpArray):
+    #Getting rid of the -0. It messes with the string convertion
+    myNpArray[myNpArray==0.] = 0.
+    myString=str(myNpArray.tolist())
+    return myString
