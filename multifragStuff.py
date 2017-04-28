@@ -788,9 +788,8 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
 
     solsD4B2Solve={}
     for newerCent in vCenterList:
-        print("Inside the LOOOOP newCent = ", newerCent)
         newerCentStr=npArray2Str(newerCent)
-        print("The corresponding string is ", newerCentStr)
+        print("Inside newerCentLoop, newerCentStr = ", newerCentStr)
         solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
                                        newerCent,solsD4B2Solve)
 
@@ -798,8 +797,11 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     #filled... make a function for this?... then fill up the
     #solsDictetc then attach it to the binTreeDict...
     if solsD4B2Solve != {}:
-        #Do your tree filling stuff here!
-        pass
+        solsD4B2Solve=getSolVelsEnergiesEtcInNode2(branch2Solve,\
+                                                   solsD4B2Solve)
+
+    #Now call recursively the function with the branch2go dict... I
+    #need a return value... maybe
     print("solsD4B2Solv", solsD4B2Solve)
 
 def getVCenterList2(solsDict):
@@ -866,31 +868,26 @@ def getDictWithIdxs(treeNode,vSCent):
 
 def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
     #Getting rid of the -0. It messes with the string convertion
-    print("inside = getDictWithIdxs2")
     vSCent[vSCent==0.] = 0.
     centerStr=str(vSCent.tolist())
     sphSolsDict[centerStr]={}
-    print("centerStr = ", centerStr)
 
     nodeVLines=treeNode["vLines"]
     vSRad=treeNode["redVcm"]
     solIdxList=[]
     for vLine in nodeVLines:
-        print("vLine = ", vLine)
         lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
-        print("lineInterIdxList = ",lineInterIdxList)
+        solIdxList.append(lineInterIdxList)
 
-        if lineInterIdxList != []:
-            solIdxList.append(lineInterIdxList)
+    emptyListOfLists=[[] for e in solIdxList]
 
-    if solIdxList != []:
+    if solIdxList != emptyListOfLists:
         sphSolsDict[centerStr]["solIdxList"]=solIdxList
 
     return sphSolsDict
 
 def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
     myMass=treeNode["fMass"]
-
 
     for sphereCenterStr in sphereSolsDict:
         print("\n\n sphereCenterStr = ", sphereCenterStr)
@@ -931,7 +928,7 @@ def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
 
             if "vCMSols" not in sphereSolsDict[sphereCenterStr]:
                 sphereSolsDict[sphereCenterStr]["vCMSols"]=[]
-            sphereSolsDict[sphereCenterStr]["vCMSols"].append(solVelList)
+            sphereSolsDict[sphereCenterStr]["vCMSols"].append(vCMSolList)
 
     return sphereSolsDict
 
