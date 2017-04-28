@@ -746,9 +746,6 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     newCentList=getVCenterList2(solsDict)
     print("newCentList = ", newCentList)
 
-    if len(freePartRoute)==0:
-        return True
-
     if binTreeDic["type"]=="initial":
         #Check whats up with this
         #Dont't do the for stuff...
@@ -766,7 +763,7 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     #with the corresponding solutions
     newSphereSolsD=getSolVelsEnergiesEtcInNode2(binTreeDic,\
                                                 newSphSolsD)
-    binTreeDic["majorSols"]=newSphereSolsD
+    binTreeDic["majorSols"]=newSphereSolsD#Maybe redundant
 
     if len(freePartRoute)==0:
         return True
@@ -796,13 +793,29 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     #Put conditional here in case solsD4B2Solve is not properly
     #filled... make a function for this?... then fill up the
     #solsDictetc then attach it to the binTreeDict...
-    if solsD4B2Solve != {}:
-        solsD4B2Solve=getSolVelsEnergiesEtcInNode2(branch2Solve,\
+    if solsD4B2Solve == {}:
+        return False
+
+    solsD4B2Solve=getSolVelsEnergiesEtcInNode2(branch2Solve,\
                                                    solsD4B2Solve)
 
-    #Now call recursively the function with the branch2go dict... I
-    #need a return value... maybe
+    branch2Solve["majorSols"]=solsD4B2Solve
+
+    # print("Printing branch2Solve")
+    # printNode(binTreeDic["dictList"][branchIndex])
+
+    #Do a function to get the newestCenters
+    vMagnitude=branch2Go["redVcm"]
+    newestCenterList=getVCenterListNewest(solsD4B2Solve,vMagnitude)
+
+    #Now call recursively the function in an loop with the branch2go
+    #dict... I need a return value... maybe
+
     print("solsD4B2Solv", solsD4B2Solve)
+    for newestCentLab in newestCenterList:
+        #Create a dictionary here using the newestCentLab elements
+        # fillMajorBool2=fillMajorSols2(branch2Go,freePartRoute[1:],solsD4B2SolveorSomething)
+        pass
 
 def getVCenterList2(solsDict):
     vCenterListofLists=[]
@@ -818,6 +831,22 @@ def getVCenterListBetter(solsDict):
         for newVCenterList in solsDict[sphCentStr]["vLabSols"]:
             for newVCenter in newVCenterList:
                 vCenterList.append(newVCenter)
+
+    return vCenterList
+
+def getVCenterListNewest(solsDict,vMagnitude):
+    vCenterList=[]
+    for sphCentStr in solsDict:
+        #Convert this string to an np array
+        vCenter=str2NPArray(sphCentStr)
+
+        myNormalizedVCMList=solsDict[sphCentStr]["vCMSolsNL"]
+        for vNormCMSubL in myNormalizedVCMList:
+            for vNormCM in vNormCMSubL:
+                # print("vNormCM = ", vNormCM)
+                newestCentCM=-vNormCM*vMagnitude
+                newestCentLab=vCenter+newestCentCM
+                vCenterList.append(newestCentLab)
 
     return vCenterList
 
@@ -904,6 +933,7 @@ def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
             solVelList=[]
             solEList=[]
             vCMSolList=[]
+            vCMNormList=[]
             for vSolIndex in solIdxSubList:
                 velSol=myVLine[vSolIndex]
                 solVelList.append(velSol)
@@ -915,6 +945,8 @@ def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
                 vCMSol=velSol-myNpCenter
                 vCMSolList.append(vCMSol)
 
+                vCMNorm=vCMSol/np.linalg.norm(vCMSol)
+                vCMNormList.append(vCMNorm)
                 #ECM energies should be the same as in the first
                 #calculation... I'll corroborate later
 
@@ -929,6 +961,10 @@ def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
             if "vCMSols" not in sphereSolsDict[sphereCenterStr]:
                 sphereSolsDict[sphereCenterStr]["vCMSols"]=[]
             sphereSolsDict[sphereCenterStr]["vCMSols"].append(vCMSolList)
+
+            if "vCMSolsNL" not in sphereSolsDict[sphereCenterStr]:
+                sphereSolsDict[sphereCenterStr]["vCMSolsNL"]=[]
+            sphereSolsDict[sphereCenterStr]["vCMSolsNL"].append(vCMNormList)
 
     return sphereSolsDict
 
