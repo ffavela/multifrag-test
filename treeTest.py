@@ -192,4 +192,7 @@ train=vLine[i:i+2]
 # print("treeTest: vPoint, vRad, train = ", vPoint,vRad,train)
 # print("trainStatus = ",trainStatus)
 
+
+print("Now printing the filled tree")
+printTree(initDict)
 # plt.show()

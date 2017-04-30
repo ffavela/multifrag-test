@@ -177,9 +177,31 @@ def getInitSolsDict2(binTreeDict):
     sCenter=np.array([0.0,0.0,0.0])
     centerStr=str(sCenter.tolist())
     sphereSols={centerStr:{}}
-    sphereSols[centerStr]["vLabSols"]=[np.array([0.0,0.0,0.0])]
+    sphereSols[centerStr]["vLabSols"]=[np.array([0.0,0.0,vCM])]
 
     return sphereSols
+
+def getCompletedSolTree(treeNode,solsDict):
+    myMass=treeNode["fMass"]
+
+    for vCenterStr in solsDict:
+        #Get the CM vel of the system
+        sysCMVel=str2NPArray(vCenterStr)
+
+        myLabVelList=solsDict[vCenterStr]["vLabSols"]
+        solsDict[vCenterStr]["labEnergy"]=[]
+        solsDict[vCenterStr]["cmVel"]=[]
+        for myLabVel in myLabVelList:
+            vCentNorm=np.linalg.norm(myLabVel)
+            ECentSol=1.0/2.0*myMass*(vCentNorm/100.0)**2
+            solsDict[vCenterStr]["labEnergy"].append(ECentSol)
+
+            #Now the vel @ the CM system
+            myCMVel=myLabVel-sysCMVel
+            solsDict[vCenterStr]["cmVel"].append(myCMVel)
+
+    return solsDict
+
 
 
 def fillInit(binTreeDict):
@@ -743,27 +765,16 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     #Filling the local node
     binTreeDic["solsDict"]=solsDict
 
-    newCentList=getVCenterList2(solsDict)
-    print("newCentList = ", newCentList)
-
-    if binTreeDic["type"]=="initial":
-        #Check whats up with this
-        #Dont't do the for stuff...
-        pass
-
-    #fill the dictionary with the indices
-    newSphSolsD={}
-    for newCent in newCentList:
-        print("The current newCent is ", newCent)
-        newSphSolsD=getDictWithIdxs2(binTreeDic,\
-                                     newCent,newSphSolsD)
-        print("newSphSolsD = ", newSphSolsD)
-
     #now given the dictionary is partially pre-filled we now fill it
     #with the corresponding solutions
-    newSphereSolsD=getSolVelsEnergiesEtcInNode2(binTreeDic,\
-                                                newSphSolsD)
-    binTreeDic["majorSols"]=newSphereSolsD#Maybe redundant
+
+    solsDict=getCompletedSolTree(binTreeDic,solsDict)
+
+    newCentList=getVCenterList2(solsDict)
+
+    # newSphereSolsD=getSolVelsEnergiesEtcInNode2(binTreeDic,\
+    #                                             newSphSolsD)
+    # binTreeDic["majorSols"]=newSphereSolsD#Maybe redundant
 
     if len(freePartRoute)==0:
         return True
@@ -780,16 +791,19 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     branch2Solve=binTreeDic["dictList"][branchIndex]
     branch2Go=binTreeDic["dictList"][freePartIndex]
 
-    vCenterList=getVCenterListBetter(newSphereSolsD)
+    vCenterList=getVCenterList2(solsDict)
     print("vCenterList = ", vCenterList)
 
     solsD4B2Solve={}
     for newerCent in vCenterList:
+        print("newerCent = ", newerCent)
         newerCentStr=npArray2Str(newerCent)
         print("Inside newerCentLoop, newerCentStr = ", newerCentStr)
         solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
                                        newerCent,solsD4B2Solve)
 
+    print("solsD4B2Solve = ")
+    print(solsD4B2Solve)
     #Put conditional here in case solsD4B2Solve is not properly
     #filled... make a function for this?... then fill up the
     #solsDictetc then attach it to the binTreeDict...
@@ -798,24 +812,25 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
 
     solsD4B2Solve=getSolVelsEnergiesEtcInNode2(branch2Solve,\
                                                    solsD4B2Solve)
+    print("solsD4B2Solve = ",solsD4B2Solve)
 
-    branch2Solve["majorSols"]=solsD4B2Solve
+    # branch2Solve["majorSols"]=solsD4B2Solve
 
-    # print("Printing branch2Solve")
-    # printNode(binTreeDic["dictList"][branchIndex])
+    # # print("Printing branch2Solve")
+    # # printNode(binTreeDic["dictList"][branchIndex])
 
     #Do a function to get the newestCenters
     vMagnitude=branch2Go["redVcm"]
-    newestCenterList=getVCenterListNewest(solsD4B2Solve,vMagnitude)
+    # newestCenterList=getVCenterListNewest(solsD4B2Solve,vMagnitude)
+    dict4Branch2Go=getCompSolsDict(solsD4B2Solve,vMagnitude)
 
-    #Now call recursively the function in an loop with the branch2go
-    #dict... I need a return value... maybe
+    print("########Now printing dict4Branch2Go ########")
+    print(dict4Branch2Go)
 
-    print("solsD4B2Solv", solsD4B2Solve)
-    for newestCentLab in newestCenterList:
-        #Create a dictionary here using the newestCentLab elements
-        # fillMajorBool2=fillMajorSols2(branch2Go,freePartRoute[1:],solsD4B2SolveorSomething)
-        pass
+
+    fillBool=fillMajorSols2(branch2Go,freePartRoute[1:],dict4Branch2Go)
+
+    return fillBool
 
 def getVCenterList2(solsDict):
     vCenterListofLists=[]
@@ -849,6 +864,22 @@ def getVCenterListNewest(solsDict,vMagnitude):
                 vCenterList.append(newestCentLab)
 
     return vCenterList
+
+def getCompSolsDict(solsDict,vMagnitude):
+    compSolsDict={}
+    for sphCentStr in solsDict:
+        #Convert this string to an np array
+        vCenter=str2NPArray(sphCentStr)
+        compSolsDict[sphCentStr]={"vLabSols":[]}
+        myNormalizedVCMList=solsDict[sphCentStr]["vCMSolsNL"]
+        for vNormCMSubL in myNormalizedVCMList:
+            for vNormCM in vNormCMSubL:
+                newestCentCM=-vNormCM*vMagnitude
+                newestCentLab=vCenter+newestCentCM
+                compSolsDict[sphCentStr]["vLabSols"]\
+                    .append(newestCentLab)
+
+    return compSolsDict
 
 def getVCenterList(sphereSolsD):
     vCenterList=[]
@@ -899,18 +930,18 @@ def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
     #Getting rid of the -0. It messes with the string convertion
     vSCent[vSCent==0.] = 0.
     centerStr=str(vSCent.tolist())
-    sphSolsDict[centerStr]={}
 
     nodeVLines=treeNode["vLines"]
     vSRad=treeNode["redVcm"]
     solIdxList=[]
     for vLine in nodeVLines:
         lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
+        if lineInterIdxList == []:
+            continue
         solIdxList.append(lineInterIdxList)
 
-    emptyListOfLists=[[] for e in solIdxList]
-
-    if solIdxList != emptyListOfLists:
+    if solIdxList != []:
+        sphSolsDict[centerStr]={}
         sphSolsDict[centerStr]["solIdxList"]=solIdxList
 
     return sphSolsDict
