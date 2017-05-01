@@ -155,22 +155,6 @@ def globalCompleteTree(binTreeDict):
     #Put here the special vLine for the initial dict
 
 
-def initSphereSols(binTreeDict):
-    #This is our free CM solution, we at least know this one! ;-)
-    if binTreeDict["type"]=="initial":
-        vCM=binTreeDict["redVcm"]
-        sCenter=np.array([0.0,0.0,0.0])
-        sphereString=str([sCenter.tolist(),vCM])
-        binTreeDict["sphereSols"]={}
-        binTreeDict["sphereSols"][sphereString]={}
-        binTreeDict["sphereSols"][sphereString]["velSols"]=[[[np.array([0.0,0.0,-vCM])]]]#put []
-        #The minus is there for the velocity part to preserve program
-        #structure, the function will invert the velocity value and
-        #use the correct initial velocity.
-
-        #I think this is enough for the initial system
-        return binTreeDict["sphereSols"]
-
 def getInitSolsDict2(binTreeDict):
     #This is our free CM solution, we at least know this one! ;-)
     vCM=binTreeDict["redVcm"]
@@ -687,76 +671,6 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
 
     return idxSols
 
-def fillMajorSols(binTreeDict,freePartRoute,sphereSolsD={}):
-    #Do more error checking... please
-    if binTreeDict["type"]=="initial":
-        sphereSolsD=initSphereSols(binTreeDict)
-
-    vRad=binTreeDict["redVcm"]
-    vCenterList=getVCenterList(sphereSolsD)
-    fillBoolList=[]
-    newCentList=[]
-    for lastVCent in vCenterList:
-        normInvVelSol=-lastVCent/np.linalg.norm(lastVCent)
-        newCent=vRad*normInvVelSol
-        newCentList.append(newCent)
-
-    #Fill the current node
-    noIdxBool=noIdxFillSolVelsEnergiesEtcInNode(binTreeDict,newCentList)
-    if noIdxBool==False:
-        return False
-
-    if len(freePartRoute)==0:
-        return True
-    freePartIndex=freePartRoute[0]
-    branchIndex=getOtherVal(freePartIndex)
-
-    if branchIndex==None:
-        return False
-    branch2Solve=binTreeDict["dictList"][branchIndex]
-    branch2Go=binTreeDict["dictList"][freePartIndex]
-
-    #Maybe these 2 are reduntant
-    b2SolveRad=branch2Solve["redVcm"]
-    b2GoRad=branch2Go["redVcm"]
-
-    nSphereSolsDList=[]
-
-    for newCent in newCentList:
-        fillBool=fillSphereLineIdxSolsInNode(branch2Solve,newCent,b2SolveRad)
-        fillBoolList.append(fillBool)
-
-    if True in fillBoolList:
-        newSphereSolsD=fillSolVelsEnergiesEtcInNode(branch2Solve)
-        nSphereSolsDList.append(newSphereSolsD)
-
-    binTreeDict["dictList"][branchIndex]=branch2Solve
-
-    boolList=[]
-    falseList=[False for e in nSphereSolsDList]
-
-    for newSphereSolsD in nSphereSolsDList:
-        if newSphereSolsD == {}:
-            #The corresponding bool value was False
-            boolList.append(False)
-            continue
-
-        #Call the fill major sols here!!
-        newBool=fillMajorSols(branch2Go,freePartRoute[1:],newSphereSolsD)
-        #If that value was true then make a dictionary entry in the
-        #current tree the with the corresponding radius. But what
-        #about the indices?...
-        boolList.append(newBool)
-
-    binTreeDict["dictList"][freePartIndex]=branch2Go
-    # print("boolList = ", boolList)
-    if boolList == falseList:
-        print("Returning a false value somewhere")
-        return False
-
-    print("Made it to the last part")
-    return True
-
 def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     if binTreeDic["type"] == "initial":
         #Maybe put this outside at the initialization stage..
@@ -1037,26 +951,6 @@ def fillSolVelsEnergiesEtcInNode(treeNode):
 
         sphereSolsDict[sphereStr]["energySols"].append(energySolListOfLists)
     return sphereSolsDict
-
-def noIdxFillSolVelsEnergiesEtcInNode(treeNode,velLists):
-    solEList=[]
-    myMass=treeNode["fMass"]
-    if velLists == []:
-        return False
-
-    for velVal in velLists:
-        vNorm=np.linalg.norm(velVal)
-        print("velVal,vNorm = ", velVal,vNorm)
-        ESol=1.0/2.0*myMass*(vNorm/100.0)**2
-        solEList.append(ESol)
-
-    if "solutions" not in treeNode:
-        treeNode["solutions"]={}
-
-    treeNode["solutions"]["velocities"]=velLists
-    treeNode["solutions"]["energies"]=solEList
-
-    return True
 
 def getMidPOffsets(vLine1,vLine2,vRad):
     j=0
