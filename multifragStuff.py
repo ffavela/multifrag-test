@@ -208,13 +208,6 @@ def fillInit(binTreeDict):
     #this high. This criteria will be improved eventually.
     binTreeDict["BVLabMax"]=binTreeDict["redVcm"]
 
-    #Just forzing it to have a line so it doesn't mess with the rest
-    #of the code, in the future use one point, edit getDictWithIdxs2
-    #no epsilon needed...
-    epsilon=0.000000000000001
-    binTreeDict["vLines"]=[np.array([[0,0,redVcm-epsilon/2],\
-                                 [0,0,redVcm+epsilon/2]])]
-
 def completeTree0(binTreeDict):
     if binTreeDict == {}:
         return
@@ -671,7 +664,7 @@ def getSphereLineIdxSols(vSCent,vSRad,vLine):
 
     return idxSols
 
-def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
+def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     if binTreeDic["type"] == "initial":
         solsDict=getInitSolsDict2(binTreeDic)
 
@@ -682,12 +675,10 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     #with the corresponding solutions
     solsDict=getCompletedSolTree(binTreeDic,solsDict)
 
-    newCentList=getVCenterList2(solsDict)
-
     if len(freePartRoute)==0:
         return True
 
-    #Now figure out the branches to fill and 2 go, first we get the
+    #Now figure out the branches to fill and to go, first we get the
     #indices
     freePartIndex=freePartRoute[0]
     branchIndex=getOtherVal(freePartIndex)
@@ -699,37 +690,29 @@ def fillMajorSols2(binTreeDic,freePartRoute,solsDict={}):
     branch2Solve=binTreeDic["dictList"][branchIndex]
     branch2Go=binTreeDic["dictList"][freePartIndex]
 
-    vCenterList=getVCenterList2(solsDict)
-    print("vCenterList = ", vCenterList)
+    vCenterList=getVCenterList(solsDict)
 
     solsD4B2Solve={}
-    for newerCent in vCenterList:
-        print("newerCent = ", newerCent)
-        newerCentStr=npArray2Str(newerCent)
-        print("Inside newerCentLoop, newerCentStr = ", newerCentStr)
+    for newCent in vCenterList:
+        newCentStr=npArray2Str(newCent)
         solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
-                                       newerCent,solsD4B2Solve)
+                                       newCent,solsD4B2Solve)
 
     if solsD4B2Solve == {}:
         return False
 
-    solsD4B2Solve=getSolVelsEnergiesEtcInNode2(branch2Solve,\
+    solsD4B2Solve=getSolVelsEnergiesEtcInNode(branch2Solve,\
                                                    solsD4B2Solve)
-    print("solsD4B2Solve = ",solsD4B2Solve)
 
     vMagnitude=branch2Go["redVcm"]
 
     dict4Branch2Go=getCompSolsDict(solsD4B2Solve,vMagnitude)
 
-    print("########Now printing dict4Branch2Go ########")
-    print(dict4Branch2Go)
-
-
-    fillBool=fillMajorSols2(branch2Go,freePartRoute[1:],dict4Branch2Go)
+    fillBool=fillMajorSols(branch2Go,freePartRoute[1:],dict4Branch2Go)
 
     return fillBool
 
-def getVCenterList2(solsDict):
+def getVCenterList(solsDict):
     vCenterListofLists=[]
     for sphCentStr in solsDict:
         for newVCenter in solsDict[sphCentStr]["vLabSols"]:
@@ -773,7 +756,7 @@ def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
 
     return sphSolsDict
 
-def getSolVelsEnergiesEtcInNode2(treeNode,sphereSolsDict):
+def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
     myMass=treeNode["fMass"]
 
     for sphereCenterStr in sphereSolsDict:

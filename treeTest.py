@@ -163,8 +163,8 @@ solListInParents=getSolListInParents(oxyDict,totIndexSols)
 
 ax.set_zlim3d(-5, 20)
 
-fillMajorSols2(initDict,generalList)
-# fillMajorSols2(oxyDict,generalList)
+fillMajorSols(initDict,generalList)
+# fillMajorSols(oxyDict,generalList)
 
 vPoint=np.array([0,0,0])
 vRad=7.326472906898222
