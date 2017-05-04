@@ -703,6 +703,7 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
 
     solsD4B2Solve=getSolVelsEnergiesEtcInNode(branch2Solve,\
                                                    solsD4B2Solve)
+    branch2Solve["solsDict"]=solsD4B2Solve
 
     vMagnitude=branch2Go["redVcm"]
 
@@ -711,6 +712,35 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     fillBool=fillMajorSols(branch2Go,freePartRoute[1:],dict4Branch2Go)
 
     return fillBool
+
+def cleanDict(binTreeDict,freePartRoute):
+    #Reached the node b4 the free part
+    if len(freePartRoute)==1:
+        print("Made it! Printing the node info")
+        printNode(binTreeDict)
+
+        print("Doing a for in solsDict elements")
+        mySolsDict=binTreeDict["solsDict"]
+        for e in mySolsDict:
+            print("e = ",e)
+            for vCenter in mySolsDict[e]["vLabSols"]:
+                print(vCenter)
+        return True
+
+    #Now figure out the branches to fill and to go, first we get the
+    #indices
+    freePartIndex=freePartRoute[0]
+    branchIndex=getOtherVal(freePartIndex)
+    #The branches to fill (solve) and to go
+    branch2Solve=binTreeDict["dictList"][branchIndex]
+    branch2Go=binTreeDict["dictList"][freePartIndex]
+
+
+    if branchIndex==None:
+        return False
+
+    aBool=cleanDict(branch2Go,freePartRoute[1:])
+
 
 def getVCenterList(solsDict):
     vCenterListofLists=[]
@@ -725,14 +755,19 @@ def getCompSolsDict(solsDict,vMagnitude):
     for sphCentStr in solsDict:
         #Convert this string to an np array
         vCenter=str2NPArray(sphCentStr)
-        compSolsDict[sphCentStr]={"vLabSols":[]}
+        compSolsDict[sphCentStr]={"vLabSols":[],"vPairL":[]}
+        # compSolsDict[sphCentStr]={"vPair":[]}
         myNormalizedVCMList=solsDict[sphCentStr]["vCMSolsNL"]
-        for vNormCMSubL in myNormalizedVCMList:
-            for vNormCM in vNormCMSubL:
+        myVCMList=solsDict[sphCentStr]["vCMSols"]
+        for vNormCMSubL,vCMSubL in zip(myNormalizedVCMList,myVCMList):
+            for vNormCM,vCM in zip(vNormCMSubL,vCMSubL):
                 newestCentCM=-vNormCM*vMagnitude
                 newestCentLab=vCenter+newestCentCM
                 compSolsDict[sphCentStr]["vLabSols"]\
                     .append(newestCentLab)
+
+                compSolsDict[sphCentStr]["vPairL"]\
+                    .append([vCM,newestCentLab])
 
     return compSolsDict
 
@@ -760,11 +795,8 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
     myMass=treeNode["fMass"]
 
     for sphereCenterStr in sphereSolsDict:
-        print("\n\n sphereCenterStr = ", sphereCenterStr)
         myNpCenter=str2NPArray(sphereCenterStr)
-        print("myNpCenter = ",myNpCenter)
 
-        print("\n\n")
         indexSolLists=sphereSolsDict[sphereCenterStr]["solIdxList"]
         for i in range(len(indexSolLists)):
             solIdxSubList=indexSolLists[i]

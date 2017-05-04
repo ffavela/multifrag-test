@@ -188,4 +188,7 @@ train=vLine[i:i+2]
 
 print("Now printing the filled tree")
 printTree(initDict)
+
+print("Now the new cleanDict function")
+cleanDict(initDict,generalList)
 # plt.show()
