@@ -174,7 +174,7 @@ def getCompletedSolTree(treeNode,solsDict):
 
         myLabVelList=solsDict[vCenterStr]["vLabSols"]
         solsDict[vCenterStr]["labEnergy"]=[]
-        solsDict[vCenterStr]["cmVel"]=[]
+        solsDict[vCenterStr]["vCMSols"]=[]
         for myLabVel in myLabVelList:
             vCentNorm=np.linalg.norm(myLabVel)
             ECentSol=1.0/2.0*myMass*(vCentNorm/100.0)**2
@@ -182,7 +182,7 @@ def getCompletedSolTree(treeNode,solsDict):
 
             #Now the vel @ the CM system
             myCMVel=myLabVel-sysCMVel
-            solsDict[vCenterStr]["cmVel"].append(myCMVel)
+            solsDict[vCenterStr]["vCMSols"].append(myCMVel)
 
     return solsDict
 
@@ -741,6 +741,18 @@ def cleanDict(binTreeDict,freePartRoute):
 
     aBool=cleanDict(branch2Go,freePartRoute[1:])
 
+def getLocalCleanDict(b2SolD,b2GD,referenceDict):
+    #All of the dicts need a solsDict entry, the b2GD needs a vCMPairL sub entry
+    pass
+
+def getCleanB2Sol1(initB2Sol,refDict):
+    cleanB2Sol={}
+    for b2SolEStr in initB2Sol:
+        print("Current element is ",b2SolEStr)
+        if b2SolEStr in refDict:
+            cleanB2Sol[b2SolEStr]=initB2Sol[b2SolEStr]
+
+    return cleanB2Sol
 
 def getVCenterList(solsDict):
     vCenterListofLists=[]
@@ -755,7 +767,8 @@ def getComplementarySolsDict(solsDict,vMagnitude):
     for sphCentStr in solsDict:
         #Convert this string to an np array
         vCenter=str2NPArray(sphCentStr)
-        compSolsDict[sphCentStr]={"vLabSols":[],"vPairL":[]}
+        compSolsDict[sphCentStr]={"vLabSols":[],\
+                                  "vCMPairL":[]}
         # compSolsDict[sphCentStr]={"vPair":[]}
         myNormalizedVCMList=solsDict[sphCentStr]["vCMSolsNL"]
         myVCMList=solsDict[sphCentStr]["vCMSols"]
@@ -770,8 +783,8 @@ def getComplementarySolsDict(solsDict,vMagnitude):
                 compSolsDict[sphCentStr]["vLabSols"]\
                     .append(newestCentLab)
 
-                compSolsDict[sphCentStr]["vPairL"]\
-                    .append([vCM,newestCentLab])
+                compSolsDict[sphCentStr]["vCMPairL"]\
+                    .append([vCM,newestCentCM])
 
     return compSolsDict
 

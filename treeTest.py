@@ -192,3 +192,38 @@ printTree(initDict)
 print("Now the new cleanDict function")
 cleanDict(initDict,generalList)
 # plt.show()
+
+
+#The solsDict in 8Be part
+branch2DExample={'[0.0, 0.0, 7.326472906898222]': {'vLabSols': [np.array([-5.06079704, -1.80118882, -0.53115942]), np.array([ -0.46283112,  -0.11266832,  16.83286165]), np.array([-4.11187163, -1.38103808, -1.14604615])], 'vCMPairL': [[np.array([ 2.53279206,  0.9014463 ,  3.93253249]), np.array([-5.06079704, -1.80118882, -7.85763233])], [np.array([ 0.23188185,  0.05644767, -4.76277182]), np.array([-0.46283112, -0.11266832,  9.50638874])], [np.array([ 2.05634119,  0.69065519,  4.2370948 ]), np.array([-4.11187163, -1.38103808, -8.47251906])]], 'labEnergy': [10.868407689819756, 105.77147837329898, 7.5077437904099806], 'vCMSols': [np.array([-5.06079704, -1.80118882, -7.85763233]), np.array([-0.46283112, -0.11266832,  9.50638874]), np.array([-4.11187163, -1.38103808, -8.47251906])]}}
+
+print("\nThe dict example is\n")
+
+print(branch2DExample)
+
+#Now the branch 2 solve example
+branch2SolEx={'[-5.060797038972749, -1.8011888219091063, -0.5311594227023049]': {'solIdxList': [[436]], 'vLabSols': [[np.array([ 3.53024544,  1.28490426, -4.47719029])]], 'energyLabSols': [[6.3678940771927639]], 'vCMSols': [[np.array([ 8.59104247,  3.08609308, -3.94603087])]], 'vCMSolsNL': [[np.array([ 0.86386368,  0.310319  , -0.39678919])]]}, '[-4.1118716290864, -1.3810380759437186, -1.146046152256326]': {'solIdxList': [[535]], 'vLabSols': [[np.array([ 4.33183786,  1.57666004, -5.49380002])]], 'energyLabSols': [[9.5880527851427662]], 'vCMSols': [[np.array([ 8.44370949,  2.95769812, -4.34775386])]], 'vCMSolsNL': [[np.array([ 0.84885125,  0.29733919, -0.43708234])]]}}
+
+
+print("\nThe b2SSolExDict\n")
+
+print(branch2SolEx)
+
+#The dict that comes from the wentBranch
+
+returnedDict={'[-5.060797038972749, -1.8011888219091063, -0.5311594227023049]': {'vLabSols': [np.array([-13.65770943,  -4.88939051,   3.41756761])], 'vCMPairL': [[np.array([ 8.59104247,  3.08609308, -3.94603087]), np.array([-8.59691239, -3.08820168,  3.94872704])]], 'labEnergy': [41.407426435663112], 'vCMSols': [np.array([-8.59691239, -3.08820168,  3.94872704])]}}
+
+
+
+print("\nThe returnedDict\n")
+
+print(returnedDict)
+
+print("\nThe indices are\n")
+for e in returnedDict:
+    print(e)
+
+
+cleanB2Sol1=getCleanB2Sol1(branch2SolEx,returnedDict)
+print("The new dictionary after the first clean is:")
+print(cleanB2Sol1)
