@@ -187,7 +187,6 @@ def getCompletedSolTree(treeNode,solsDict):
     return solsDict
 
 
-
 def fillInit(binTreeDict):
     if binTreeDict == {}:
         return
@@ -767,11 +766,18 @@ def getComplementarySolsDict(solsDict,vMagnitude):
     for sphCentStr in solsDict:
         #Convert this string to an np array
         vCenter=str2NPArray(sphCentStr)
-        compSolsDict[sphCentStr]={"vLabSols":[],\
-                                  "vCMPairL":[]}
         # compSolsDict[sphCentStr]={"vPair":[]}
         myNormalizedVCMList=solsDict[sphCentStr]["vCMSolsNL"]
         myVCMList=solsDict[sphCentStr]["vCMSols"]
+
+        baseStructL=[[] for vCMSubL in myVCMList]
+
+        # compSolsDict[sphCentStr]={"vLabSols":baseStructL[:],\
+        #                           "vCMPairL":baseStructL[:]}
+
+        compSolsDict[sphCentStr]={"vLabSols":[],\
+                                  "vCMPairL":[]}
+
         for vNormCMSubL,vCMSubL in zip(myNormalizedVCMList,myVCMList):
             #Maybe create here empty stuff for it to be filled in the
             #next for... maybe this is enough for preserving the
