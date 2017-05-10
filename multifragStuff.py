@@ -707,7 +707,7 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
 
     vMagnitude=branch2Go["redVcm"]
 
-    dict4Branch2Go=getCompSolsDict(solsD4B2Solve,vMagnitude)
+    dict4Branch2Go=getComplementarySolsDict(solsD4B2Solve,vMagnitude)
 
     fillBool=fillMajorSols(branch2Go,freePartRoute[1:],dict4Branch2Go)
 
@@ -750,7 +750,7 @@ def getVCenterList(solsDict):
 
     return vCenterListofLists
 
-def getCompSolsDict(solsDict,vMagnitude):
+def getComplementarySolsDict(solsDict,vMagnitude):
     compSolsDict={}
     for sphCentStr in solsDict:
         #Convert this string to an np array
@@ -760,9 +760,13 @@ def getCompSolsDict(solsDict,vMagnitude):
         myNormalizedVCMList=solsDict[sphCentStr]["vCMSolsNL"]
         myVCMList=solsDict[sphCentStr]["vCMSols"]
         for vNormCMSubL,vCMSubL in zip(myNormalizedVCMList,myVCMList):
+            #Maybe create here empty stuff for it to be filled in the
+            #next for... maybe this is enough for preserving the
+            #structure...
             for vNormCM,vCM in zip(vNormCMSubL,vCMSubL):
                 newestCentCM=-vNormCM*vMagnitude
                 newestCentLab=vCenter+newestCentCM
+                # Clean this!! The structure has to be preserved...
                 compSolsDict[sphCentStr]["vLabSols"]\
                     .append(newestCentLab)
 
