@@ -761,6 +761,49 @@ def getVCenterList(solsDict):
 
     return vCenterListofLists
 
+def getComplementarySolsDictNEW(solsDict,vMagnitude):
+    compSolsDict={}
+    for sphCentStr in solsDict:
+        #Convert this string to an np array
+        vCenter=str2NPArray(sphCentStr)
+        # compSolsDict[sphCentStr]={"vPair":[]}
+        myNormalizedVCMList=solsDict[sphCentStr]["vCMSolsNL"]
+        myVCMList=solsDict[sphCentStr]["vCMSols"]
+
+        baseStructL=[[] for vCMSubL in myVCMList]
+        print("baseStruct = ", baseStructL)
+
+        compSolsDict[sphCentStr]={"vLabSols":baseStructL[:],\
+                                  "vCMPairL":baseStructL[:]}
+
+        # compSolsDict[sphCentStr]={"vLabSols":[],\
+        #                           "vCMPairL":[]}
+
+        # for vNormCMSubL,vCMSubL in zip(myNormalizedVCMList,myVCMList):
+        for i in range(len(myVCMList)):
+            vNormCMSubL,vCMSubL=myNormalizedVCMList[i],myVCMList[i]
+            print("vNormCMSubL,vCMSubL = ",vNormCMSubL,vCMSubL)
+            #Maybe create here empty stuff for it to be filled in the
+            #next for... maybe this is enough for preserving the
+            #structure...
+            # for vNormCM,vCM in zip(vNormCMSubL,vCMSubL):
+            for j in range(len(vCMSubL)):
+                vNormCM,vCM=vNormCMSubL[j],vCMSubL[j]
+                newestCentCM=-vNormCM*vMagnitude
+                newestCentLab=vCenter+newestCentCM
+                # Clean this!! The structure has to be preserved...
+                print("i,j = ", i,j)
+                print("compSolsDict[sphCentStr][\"vLabSols\"] = ",compSolsDict[sphCentStr]["vLabSols"])
+                compSolsDict[sphCentStr]["vLabSols"][i]\
+                    .append(newestCentLab)
+
+                compSolsDict[sphCentStr]["vCMPairL"][i]\
+                    .append([vCM,newestCentCM])
+
+    return compSolsDict
+
+# The old version
+
 def getComplementarySolsDict(solsDict,vMagnitude):
     compSolsDict={}
     for sphCentStr in solsDict:
@@ -771,6 +814,7 @@ def getComplementarySolsDict(solsDict,vMagnitude):
         myVCMList=solsDict[sphCentStr]["vCMSols"]
 
         baseStructL=[[] for vCMSubL in myVCMList]
+        print("baseStruct = ", baseStructL)
 
         # compSolsDict[sphCentStr]={"vLabSols":baseStructL[:],\
         #                           "vCMPairL":baseStructL[:]}
@@ -779,13 +823,17 @@ def getComplementarySolsDict(solsDict,vMagnitude):
                                   "vCMPairL":[]}
 
         for vNormCMSubL,vCMSubL in zip(myNormalizedVCMList,myVCMList):
-            #Maybe create here empty stuff for it to be filled in the
-            #next for... maybe this is enough for preserving the
-            #structure...
+        # for i in range(len(myVCMList)):
+            # vNormCMSubL,vCMSubL=myNormalizedVCMList[i],myVCMList[i]
+            # print("vNormCMSubL,vCMSubL = ",vNormCMSubL,vCMSubL)
             for vNormCM,vCM in zip(vNormCMSubL,vCMSubL):
+            # for j in range(len(vCMSubL)):
+                # vNormCM,vCM=vNormCMSubL[j],vCMSubL[j]
                 newestCentCM=-vNormCM*vMagnitude
                 newestCentLab=vCenter+newestCentCM
                 # Clean this!! The structure has to be preserved...
+                # print("i,j = ", i,j)
+                # print("compSolsDict[sphCentStr][\"vLabSols\"] = ",compSolsDict[sphCentStr]["vLabSols"])
                 compSolsDict[sphCentStr]["vLabSols"]\
                     .append(newestCentLab)
 
