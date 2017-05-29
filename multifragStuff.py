@@ -98,21 +98,43 @@ def printTree(binTreeDict):
         return
 
     for e in binTreeDict:
-        if e != "name" and e != "dictList" and e != "sphereSols":
+        if e != "name" and e != "dictList" and e != "solsDict":
             print(e,binTreeDict[e])
 
-    if  "sphereSols" in binTreeDict:
-        print("sphereSols")
-        for sphereString in binTreeDict["sphereSols"]:
+    if  "solsDict" in binTreeDict:
+        print("solsDict")
+        for sphereString in binTreeDict["solsDict"]:
             print("sphereString = ", sphereString)
-            for subVal in binTreeDict["sphereSols"][sphereString]:
+            for subVal in binTreeDict["solsDict"][sphereString]:
                 print(subVal)
-                print(binTreeDict["sphereSols"][sphereString][subVal])
+                print(binTreeDict["solsDict"][sphereString][subVal])
     print("The child names are")
     printChildNames(binTreeDict["dictList"])
 
     for e in binTreeDict["dictList"]:
         printTree(e)
+
+def printTreeOnlySolsPart(binTreeDict):
+    if binTreeDict == {}:
+        return
+
+    # print(binTreeDict)
+    if "dictList" not in binTreeDict:
+        return
+
+    if  "solsDict" in binTreeDict:
+        print("")
+        print("name is ", binTreeDict["name"])
+
+        print("solsDict")
+        for sphereString in binTreeDict["solsDict"]:
+            print("sphereString = ", sphereString)
+            for subVal in binTreeDict["solsDict"][sphereString]:
+                print(subVal)
+                print(binTreeDict["solsDict"][sphereString][subVal])
+
+    for e in binTreeDict["dictList"]:
+        printTreeOnlySolsPart(e)
 
 def printChildNames(dictList):
     for i in range(len(dictList)):
