@@ -208,7 +208,6 @@ def getCompletedSolTree(treeNode,solsDict):
 
     return solsDict
 
-
 def fillInit(binTreeDict):
     if binTreeDict == {}:
         return
@@ -495,11 +494,8 @@ def getLinSolPoint(vP,vRad,train):
     return myP
 
 def pullEveryLine(binTreeDict,freePartListRoute):
-    print("Inside pullEveryLine")
-    print("freePartListRoute = ",freePartListRoute)
     if len(freePartListRoute)==0:
         return True
-    print("This should be printed at least once")
     freePartIndex=freePartListRoute[0]
     branchIndex=getOtherVal(freePartIndex)
     if branchIndex==None:
@@ -513,7 +509,6 @@ def pullEveryLine(binTreeDict,freePartListRoute):
 
 def pullLinesFromNode(binTreeDict):
     emptyNpA=np.array([])
-    print("Inside pullLinesFromNode")
     if binTreeDict == {}:
         return emptyNpA
     if checkIfLastPartNode(binTreeDict) == True:
@@ -718,11 +713,14 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     branch2Solve=binTreeDic["dictList"][branchIndex]
     branch2Go=binTreeDic["dictList"][freePartIndex]
 
+    print("The current node name is ",binTreeDic["name"])
     vCenterList=getVCenterListOfLists(solsDict)
 
     solsD4B2Solve={}
     for newCentSubL in vCenterList:
+        print("newCentSubL = ", newCentSubL)
         for newCent in newCentSubL:
+            print("newCent = ", newCent)
             newCentStr=npArray2Str(newCent)
             solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
                                            newCent,solsD4B2Solve)
@@ -736,7 +734,7 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
 
     vMagnitude=branch2Go["redVcm"]
 
-    dict4Branch2Go=getComplementarySolsDict(solsD4B2Solve,vMagnitude)
+    dict4Branch2Go=getComplementarySolsDictNEW(solsD4B2Solve,vMagnitude)
 
     fillBool=fillMajorSols(branch2Go,freePartRoute[1:],dict4Branch2Go)
 

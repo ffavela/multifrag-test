@@ -1,7 +1,7 @@
 from multifragStuff import *
 
 #print all energies in MeV
-beamE=60.0
+beamE=120.0
 
 m12C=11177.9292
 m16O=14899.168598161144
@@ -20,7 +20,7 @@ tD="detector"
 tI="initial"
 
 ##############################################
-##########Particle dict quaternary############
+##########Particle dict ternary sequential####
 ##############################################
 
 # initDict={"type":tI,"name":"12C+12C","massP":m12C,
@@ -56,7 +56,7 @@ tI="initial"
 # initDict["dictList"]=[oxyDict,beDict]
 
 ##############################################
-##########Particle dict end quaternary########
+####Particle dict end ternary sequential######
 ##############################################
 
 ##############################################
@@ -78,6 +78,7 @@ d2Dict={"type":tD,"name":"d2","angles":[radians(130),radians(0)]}
 #Completing the dictionaries
 oxyDict["dictList"]=[d1Dict,{}]
 alphaADict["dictList"]=[d2Dict,{}]
+alphaBDict["dictList"]=[{},{}]
 
 alphaSysDict["dictList"]=[alphaADict,alphaBDict]
 
@@ -128,28 +129,21 @@ print("\n\nNow testing the free part route stuff\n")
 generalList=getDirectFreeRoute(initDict)
 print(generalList)
 
-# print("trying to fill the oxyDict tree")
-# boolPull=pullLinesFromNode(oxyDict)
-# print(boolPull)
-# printTree(initDict)
 
-# print("Testing the Q val function")
-# print(getQVal(initDict))
 print("Trying to pull every line automatically")
 boolPull=pullEveryLine(initDict,generalList)
 
-print("Printing the entire tree, without major sols")
-printTree(initDict)
+# print("Printing the entire tree, without major sols")
+# printTree(initDict)
 
 fillMajorSols(initDict,generalList)
-# fillMajorSols(oxyDict,generalList)
 
-print("Now printing only the tree sols part")
-printTreeOnlySolsPart(initDict)
+# print("Now printing only the tree sols part")
+# printTreeOnlySolsPart(initDict)
 
 
-print("Now the entire filled tree")
-printTree(initDict)
+# print("Now the entire filled tree")
+# printTree(initDict)
 
 # print("Now the new cleanDict function")
 # cleanDict(initDict,generalList)
