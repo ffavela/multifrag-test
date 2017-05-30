@@ -183,7 +183,7 @@ def getInitSolsDict2(binTreeDict):
     sCenter=np.array([0.0,0.0,0.0])
     centerStr=str(sCenter.tolist())
     sphereSols={centerStr:{}}
-    sphereSols[centerStr]["vLabSols"]=[np.array([0.0,0.0,vCM])]
+    sphereSols[centerStr]["vLabSols"]=[[np.array([0.0,0.0,vCM])]]
 
     return sphereSols
 
@@ -338,6 +338,7 @@ def getNodeQVal(dictNode):
         daugthersMass+=e["fMass"]
 
     Q=finalMass-daugthersMass
+
     return Q
 
 def checkIfNodeIsFreePart(dictNode):
@@ -492,8 +493,11 @@ def getLinSolPoint(vP,vRad,train):
     return myP
 
 def pullEveryLine(binTreeDict,freePartListRoute):
+    print("Inside pullEveryLine")
+    print("freePartListRoute = ",freePartListRoute)
     if len(freePartListRoute)==0:
         return True
+    print("This should be printed at least once")
     freePartIndex=freePartListRoute[0]
     branchIndex=getOtherVal(freePartIndex)
     if branchIndex==None:
@@ -507,6 +511,7 @@ def pullEveryLine(binTreeDict,freePartListRoute):
 
 def pullLinesFromNode(binTreeDict):
     emptyNpA=np.array([])
+    print("Inside pullLinesFromNode")
     if binTreeDict == {}:
         return emptyNpA
     if checkIfLastPartNode(binTreeDict) == True:
@@ -711,13 +716,14 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     branch2Solve=binTreeDic["dictList"][branchIndex]
     branch2Go=binTreeDic["dictList"][freePartIndex]
 
-    vCenterList=getVCenterList(solsDict)
+    vCenterList=getVCenterListOfLists(solsDict)
 
     solsD4B2Solve={}
-    for newCent in vCenterList:
-        newCentStr=npArray2Str(newCent)
-        solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
-                                       newCent,solsD4B2Solve)
+    for newCentSubL in vCenterList:
+        for newCent in newCentSubL:
+            newCentStr=npArray2Str(newCent)
+            solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
+                                           newCent,solsD4B2Solve)
 
     if solsD4B2Solve == {}:
         return False
@@ -775,10 +781,11 @@ def getCleanB2Sol1(initB2Sol,refDict):
 
     return cleanB2Sol
 
-def getVCenterList(solsDict):
+def getVCenterListOfLists(solsDict):
     vCenterListofLists=[]
     for sphCentStr in solsDict:
         for newVCenter in solsDict[sphCentStr]["vLabSols"]:
+            #Please note that the vLabSols are the new centers.
             vCenterListofLists.append(newVCenter)
 
     return vCenterListofLists
