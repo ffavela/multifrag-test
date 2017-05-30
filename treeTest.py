@@ -125,7 +125,7 @@ globalCompleteTree(initDict)
 # printTree(initDict)
 
 print("\n\nNow testing the free part route stuff\n")
-getDirectFreeRoute(initDict)
+generalList=getDirectFreeRoute(initDict)
 print(generalList)
 
 # print("trying to fill the oxyDict tree")

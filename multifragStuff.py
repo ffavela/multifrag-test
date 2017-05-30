@@ -376,6 +376,8 @@ def getFreePartRoute(binTreeDict):
 def getDirectFreeRoute(binTreeDict):
     getFreePartRoute(binTreeDict)
     generalList.reverse()
+    directFreeRoute=generalList
+    return generalList
 
 def spherToCart(r,theta,phi):
     x=r*sin(theta)*cos(phi)
