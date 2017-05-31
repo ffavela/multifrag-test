@@ -1,5 +1,7 @@
 from multifragStuff import *
 
+easyStr="#"*50
+print(colored(easyStr,"blue"))
 #print all energies in MeV
 beamE=120.0
 
@@ -150,6 +152,8 @@ printTreeOnlySolsPart(initDict)
 
 # print("Now the new cleanDict function")
 # cleanDict(initDict,generalList)
+
+print(colored(easyStr,"red"))
 
 ############################################
 ####The plotting part#######################

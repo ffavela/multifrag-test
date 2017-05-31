@@ -109,7 +109,7 @@ def printTree(binTreeDict):
             print("sphereCenterStr = ", sphereCenterStr)
             for subVal in binTreeDict["solsDict"][sphereCenterStr]:
                 if subVal == "vLabSols":
-                    print(colored(subVal,"red"))
+                    print(colored(subVal,"yellow"))
                 else:
                     print(subVal)
                 print(binTreeDict["solsDict"][sphereCenterStr][subVal])
@@ -129,7 +129,8 @@ def printTreeOnlySolsPart(binTreeDict):
 
     if  "solsDict" in binTreeDict:
         print("")
-        print("name is ", binTreeDict["name"])
+        print(colored("name is "+ binTreeDict["name"],"magenta"))
+        print(colored("structType = "+binTreeDict["structType"],"magenta"))
 
         print("solsDict")
         for sphereCenterStr in binTreeDict["solsDict"]:
@@ -137,9 +138,12 @@ def printTreeOnlySolsPart(binTreeDict):
             for subVal in binTreeDict["solsDict"][sphereCenterStr]:
                 if subVal == "vLabSols":
                     print(colored(subVal,"red"))
+                elif subVal == "vCMSols":
+                    print(colored(subVal,"green"))
                 else:
                     print(subVal)
                 print(binTreeDict["solsDict"][sphereCenterStr][subVal])
+
 
     for e in binTreeDict["dictList"]:
         printTreeOnlySolsPart(e)
@@ -191,12 +195,14 @@ def getInitSolsDict2(binTreeDict):
     sCenter=np.array([0.0,0.0,0.0])
     centerStr=str(sCenter.tolist())
     sphereSols={centerStr:{}}
-    sphereSols[centerStr]["vLabSols"]=[[np.array([0.0,0.0,vCM])]]
+    sphereSols[centerStr]["vLabSols"]=[np.array([0.0,0.0,vCM])]
+    # sphereSols[centerStr]["vCMPair"]=[np.array([0.0,0.0,vCM])]
 
     return sphereSols
 
 def getCompletedSolTree(treeNode,solsDict):
     myMass=treeNode["fMass"]
+    treeNode["structType"]="goType"
 
     for vCenterStr in solsDict:
         #Get the CM vel of the system
@@ -708,11 +714,11 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
 
     name2Stop="4He+4He"
     currentName=binTreeDic["name"]
-    print(colored("Current name is ","red"), currentName)
+    # print(colored("Current name is ","red"), currentName)
 
-    if currentName == name2Stop:
-        print(colored("Reached the condition name is ","blue"),name2Stop)
-        return True
+    # if currentName == name2Stop:
+    #     print(colored("Reached the condition name is ","blue"),name2Stop)
+    #     return True
 
     #now given the dictionary is partially pre-filled we now fill it
     #with the corresponding solutions
@@ -737,13 +743,19 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     vCenterList=getVCenterListOfLists(solsDict)
 
     solsD4B2Solve={}
-    for newCentSubL in vCenterList:
-        print("newCentSubL = ", newCentSubL)
-        for newCent in newCentSubL:
-            print("newCent = ", newCent)
-            newCentStr=npArray2Str(newCent)
-            solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
-                                           newCent,solsD4B2Solve)
+    for newCent in vCenterList:
+        newCentStr=npArray2Str(newCent)
+        solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
+                                       newCent,solsD4B2Solve)
+
+
+    # for newCentSubL in vCenterList:
+    #     print("newCentSubL = ", newCentSubL)
+    #     for newCent in newCentSubL:
+    #         print("newCent = ", newCent)
+    #         newCentStr=npArray2Str(newCent)
+    #         solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
+    #                                        newCent,solsD4B2Solve)
 
     if solsD4B2Solve == {}:
         return False
@@ -754,7 +766,7 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
 
     vMagnitude=branch2Go["redVcm"]
 
-    dict4Branch2Go=getComplementarySolsDictNEW(solsD4B2Solve,vMagnitude)
+    dict4Branch2Go=getComplementarySolsDict(solsD4B2Solve,vMagnitude)
 
     fillBool=fillMajorSols(branch2Go,freePartRoute[1:],dict4Branch2Go)
 
@@ -847,7 +859,7 @@ def getComplementarySolsDictNEW(solsDict,vMagnitude):
                     .append(newestCentLab)
 
                 compSolsDict[sphCentStr]["vCMPairL"][i]\
-                    .append([vCM,newestCentCM])
+                    .append([newestCentCM,vCM])
 
     return compSolsDict
 
@@ -913,6 +925,7 @@ def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
 
 def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
     myMass=treeNode["fMass"]
+    treeNode["structType"]="solveType"
 
     for sphereCenterStr in sphereSolsDict:
         myNpCenter=str2NPArray(sphereCenterStr)
