@@ -127,7 +127,10 @@ globalCompleteTree(initDict)
 
 print("\n\nNow testing the free part route stuff\n")
 generalList=getDirectFreeRoute(initDict)
-print(generalList)
+print(colored(generalList,'red'))
+if generalList == []:
+    print("Error!!! Are you sure you filled \
+    the free part dict correctly?!")
 
 
 print("Trying to pull every line automatically")
@@ -136,10 +139,10 @@ boolPull=pullEveryLine(initDict,generalList)
 # print("Printing the entire tree, without major sols")
 # printTree(initDict)
 
-fillMajorSols(initDict,generalList)
+fillBool=fillMajorSols(initDict,generalList)
 
-# print("Now printing only the tree sols part")
-# printTreeOnlySolsPart(initDict)
+print("Now printing only the tree sols part")
+printTreeOnlySolsPart(initDict)
 
 
 # print("Now the entire filled tree")

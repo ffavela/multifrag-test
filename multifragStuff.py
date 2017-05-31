@@ -6,6 +6,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
 
+from termcolor import colored
+
 c=299792458 #in m/s
 #Masses in MeV/c^2
 def getEcm(mE1,mE2,E1L):
@@ -106,7 +108,10 @@ def printTree(binTreeDict):
         for sphereString in binTreeDict["solsDict"]:
             print("sphereString = ", sphereString)
             for subVal in binTreeDict["solsDict"][sphereString]:
-                print(subVal)
+                if subVal == "vLabSols":
+                    print(colored(subVal,"red"))
+                else:
+                    print(subVal)
                 print(binTreeDict["solsDict"][sphereString][subVal])
     print("The child names are")
     printChildNames(binTreeDict["dictList"])
@@ -130,7 +135,10 @@ def printTreeOnlySolsPart(binTreeDict):
         for sphereString in binTreeDict["solsDict"]:
             print("sphereString = ", sphereString)
             for subVal in binTreeDict["solsDict"][sphereString]:
-                print(subVal)
+                if subVal == "vLabSols":
+                    print(colored(subVal,"red"))
+                else:
+                    print(subVal)
                 print(binTreeDict["solsDict"][sphereString][subVal])
 
     for e in binTreeDict["dictList"]:
@@ -691,6 +699,13 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     if binTreeDic["type"] == "initial":
         solsDict=getInitSolsDict2(binTreeDic)
 
+    name2Stop="4He+4He"
+    currentName=binTreeDic["name"]
+    print(colored("Current name is ","red"), currentName)
+
+    if currentName == name2Stop:
+        print(colored("Reached the condition name is ","blue"),name2Stop)
+        return True
     #Filling the local node
     binTreeDic["solsDict"]=solsDict
 
