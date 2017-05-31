@@ -105,14 +105,14 @@ def printTree(binTreeDict):
 
     if  "solsDict" in binTreeDict:
         print("solsDict")
-        for sphereString in binTreeDict["solsDict"]:
-            print("sphereString = ", sphereString)
-            for subVal in binTreeDict["solsDict"][sphereString]:
+        for sphereCenterStr in binTreeDict["solsDict"]:
+            print("sphereCenterStr = ", sphereCenterStr)
+            for subVal in binTreeDict["solsDict"][sphereCenterStr]:
                 if subVal == "vLabSols":
                     print(colored(subVal,"red"))
                 else:
                     print(subVal)
-                print(binTreeDict["solsDict"][sphereString][subVal])
+                print(binTreeDict["solsDict"][sphereCenterStr][subVal])
     print("The child names are")
     printChildNames(binTreeDict["dictList"])
 
@@ -132,14 +132,14 @@ def printTreeOnlySolsPart(binTreeDict):
         print("name is ", binTreeDict["name"])
 
         print("solsDict")
-        for sphereString in binTreeDict["solsDict"]:
-            print("sphereString = ", sphereString)
-            for subVal in binTreeDict["solsDict"][sphereString]:
+        for sphereCenterStr in binTreeDict["solsDict"]:
+            print("sphereCenterStr = ", sphereCenterStr)
+            for subVal in binTreeDict["solsDict"][sphereCenterStr]:
                 if subVal == "vLabSols":
                     print(colored(subVal,"red"))
                 else:
                     print(subVal)
-                print(binTreeDict["solsDict"][sphereString][subVal])
+                print(binTreeDict["solsDict"][sphereCenterStr][subVal])
 
     for e in binTreeDict["dictList"]:
         printTreeOnlySolsPart(e)
@@ -686,7 +686,11 @@ def getSphereLineSols(vSCent,vSRad,vLine):
         i=getTrainSolIdx(vSCent,vSRad,vLine,i+1)
     return np.array(cmNormVects)
 
-def getSphereLineIdxSols(vSCent,vSRad,vLine):
+def getSphereLineIdxSolsList(vSCent,vSRad,vLine):
+    """Gets a list of all the solution indices in the line with the given
+sphere
+
+    """
     i=getTrainSolIdx(vSCent,vSRad,vLine,i=0)
     idxSols=[]
     while i != None:
@@ -699,6 +703,9 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     if binTreeDic["type"] == "initial":
         solsDict=getInitSolsDict2(binTreeDic)
 
+    #Filling the local node
+    binTreeDic["solsDict"]=solsDict
+
     name2Stop="4He+4He"
     currentName=binTreeDic["name"]
     print(colored("Current name is ","red"), currentName)
@@ -706,8 +713,6 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     if currentName == name2Stop:
         print(colored("Reached the condition name is ","blue"),name2Stop)
         return True
-    #Filling the local node
-    binTreeDic["solsDict"]=solsDict
 
     #now given the dictionary is partially pre-filled we now fill it
     #with the corresponding solutions
@@ -895,7 +900,7 @@ def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
     vSRad=treeNode["redVcm"]
     solIdxList=[]
     for vLine in nodeVLines:
-        lineInterIdxList=getSphereLineIdxSols(vSCent,vSRad,vLine)
+        lineInterIdxList=getSphereLineIdxSolsList(vSCent,vSRad,vLine)
         if lineInterIdxList == []:
             continue
         solIdxList.append(lineInterIdxList)

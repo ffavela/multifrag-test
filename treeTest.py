@@ -141,7 +141,7 @@ boolPull=pullEveryLine(initDict,generalList)
 
 fillBool=fillMajorSols(initDict,generalList)
 
-print("Now printing only the tree sols part")
+print(colored("Now printing only the tree sols part","red"))
 printTreeOnlySolsPart(initDict)
 
 
