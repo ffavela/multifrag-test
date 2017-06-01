@@ -189,14 +189,18 @@ def globalCompleteTree(binTreeDict):
     #Put here the special vLine for the initial dict
 
 
-def getInitSolsDict2(binTreeDict):
+def getInitSolsDict(binTreeDict):
     #This is our free CM solution, we at least know this one! ;-)
     vCM=binTreeDict["redVcm"]
     sCenter=np.array([0.0,0.0,0.0])
     centerStr=str(sCenter.tolist())
     sphereSols={centerStr:{}}
-    sphereSols[centerStr]["vLabSols"]=[np.array([0.0,0.0,vCM])]
-    # sphereSols[centerStr]["vCMPair"]=[np.array([0.0,0.0,vCM])]
+    vCMVect=np.array([0.0,0.0,vCM])
+    sphereSols[centerStr]["vLabSols"]=[vCMVect]
+
+    #The only case when lab and cm solutions are the same
+    sphereSols[centerStr]["vCMSols"]=[vCMVect]
+    sphereSols[centerStr]["vCMPair"]=[sCenter,vCMVect]
 
     return sphereSols
 
@@ -707,18 +711,10 @@ sphere
 
 def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     if binTreeDic["type"] == "initial":
-        solsDict=getInitSolsDict2(binTreeDic)
+        solsDict=getInitSolsDict(binTreeDic)
 
     #Filling the local node
     binTreeDic["solsDict"]=solsDict
-
-    name2Stop="4He+4He"
-    currentName=binTreeDic["name"]
-    # print(colored("Current name is ","red"), currentName)
-
-    # if currentName == name2Stop:
-    #     print(colored("Reached the condition name is ","blue"),name2Stop)
-    #     return True
 
     #now given the dictionary is partially pre-filled we now fill it
     #with the corresponding solutions
@@ -739,23 +735,15 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     branch2Solve=binTreeDic["dictList"][branchIndex]
     branch2Go=binTreeDic["dictList"][freePartIndex]
 
-    print("The current node name is ",binTreeDic["name"])
-    vCenterList=getVCenterListOfLists(solsDict)
+    vInfoList=getVInfoList(solsDict)
 
     solsD4B2Solve={}
-    for newCent in vCenterList:
+    for importantL in vInfoList:
+        newCent=importantL[0]
+        pairCM=importantL[1]
         newCentStr=npArray2Str(newCent)
-        solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
-                                       newCent,solsD4B2Solve)
-
-
-    # for newCentSubL in vCenterList:
-    #     print("newCentSubL = ", newCentSubL)
-    #     for newCent in newCentSubL:
-    #         print("newCent = ", newCent)
-    #         newCentStr=npArray2Str(newCent)
-    #         solsD4B2Solve=getDictWithIdxs2(branch2Solve,\
-    #                                        newCent,solsD4B2Solve)
+        solsD4B2Solve=getDictWithIdxs(branch2Solve,\
+                                      newCent,solsD4B2Solve)
 
     if solsD4B2Solve == {}:
         return False
@@ -813,15 +801,16 @@ def getCleanB2Sol1(initB2Sol,refDict):
 
     return cleanB2Sol
 
-def getVCenterListOfLists(solsDict):
-    vCenterListofLists=[]
+def getVInfoList(solsDict):
+    vInfoList=[]
     for sphCentStr in solsDict:
-        for newVCenter in solsDict[sphCentStr]["vLabSols"]:
+        centList=solsDict[sphCentStr]["vLabSols"]
+        vCMPairL=solsDict[sphCentStr]["vCMPair"]
+        for newVCenter,newPair in zip(centList,vCMPairL):
             #Please note that the vLabSols are the new centers.
-            vCenterListofLists.append(newVCenter)
+            vInfoList.append([newVCenter,newPair])
 
-    return vCenterListofLists
-
+    return vInfoList
 
 def getComplementarySolsDict(solsDict,vMagL):
     compSolsDict={}
@@ -832,9 +821,6 @@ def getComplementarySolsDict(solsDict,vMagL):
 
         myVCMList=solsDict[sphCentStr]["vCMSols"]
 
-        baseStructL=[[] for vCMSub in myVCMList]
-        print("baseStruct = ", baseStructL)
-
         compSolsDict[sphCentStr]={"vLabSols":[],\
                                   "vCMPair":[]}
 
@@ -843,6 +829,7 @@ def getComplementarySolsDict(solsDict,vMagL):
                 vNormCM=vCM/np.linalg.norm(vCM)
                 newestCentCM=-vNormCM*vMag2Go
                 newestCentLab=vCenter+newestCentCM
+
                 compSolsDict[sphCentStr]["vLabSols"]\
                     .append(newestCentLab)
 
@@ -851,7 +838,7 @@ def getComplementarySolsDict(solsDict,vMagL):
 
     return compSolsDict
 
-def getDictWithIdxs2(treeNode,vSCent,sphSolsDict):
+def getDictWithIdxs(treeNode,vSCent,sphSolsDict):
     #Getting rid of the -0. It messes with the string convertion
     vSCent[vSCent==0.] = 0.
     centerStr=str(vSCent.tolist())
