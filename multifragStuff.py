@@ -764,9 +764,9 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
                                                    solsD4B2Solve)
     branch2Solve["solsDict"]=solsD4B2Solve
 
-    vMagnitude=branch2Go["redVcm"]
+    vMagL=[branch2Solve["redVcm"],branch2Go["redVcm"]]
 
-    dict4Branch2Go=getComplementarySolsDict(solsD4B2Solve,vMagnitude)
+    dict4Branch2Go=getComplementarySolsDict(solsD4B2Solve,vMagL)
 
     fillBool=fillMajorSols(branch2Go,freePartRoute[1:],dict4Branch2Go)
 
@@ -822,83 +822,31 @@ def getVCenterListOfLists(solsDict):
 
     return vCenterListofLists
 
-def getComplementarySolsDictNEW(solsDict,vMagnitude):
+
+def getComplementarySolsDict(solsDict,vMagL):
     compSolsDict={}
+    vMag2Sol,vMag2Go=vMagL
     for sphCentStr in solsDict:
         #Convert this string to an np array
         vCenter=str2NPArray(sphCentStr)
-        # compSolsDict[sphCentStr]={"vPair":[]}
-        myNormalizedVCMList=solsDict[sphCentStr]["vCMSolsNL"]
+
         myVCMList=solsDict[sphCentStr]["vCMSols"]
 
-        baseStructL=[[] for vCMSubL in myVCMList]
+        baseStructL=[[] for vCMSub in myVCMList]
         print("baseStruct = ", baseStructL)
-
-        compSolsDict[sphCentStr]={"vLabSols":baseStructL[:],\
-                                  "vCMPairL":baseStructL[:]}
-
-        # compSolsDict[sphCentStr]={"vLabSols":[],\
-        #                           "vCMPairL":[]}
-
-        # for vNormCMSubL,vCMSubL in zip(myNormalizedVCMList,myVCMList):
-        for i in range(len(myVCMList)):
-            vNormCMSubL,vCMSubL=myNormalizedVCMList[i],myVCMList[i]
-            print("vNormCMSubL,vCMSubL = ",vNormCMSubL,vCMSubL)
-            #Maybe create here empty stuff for it to be filled in the
-            #next for... maybe this is enough for preserving the
-            #structure...
-            # for vNormCM,vCM in zip(vNormCMSubL,vCMSubL):
-            for j in range(len(vCMSubL)):
-                vNormCM,vCM=vNormCMSubL[j],vCMSubL[j]
-                newestCentCM=-vNormCM*vMagnitude
-                newestCentLab=vCenter+newestCentCM
-                # Clean this!! The structure has to be preserved...
-                print("i,j = ", i,j)
-                print("compSolsDict[sphCentStr][\"vLabSols\"] = ",compSolsDict[sphCentStr]["vLabSols"])
-                compSolsDict[sphCentStr]["vLabSols"][i]\
-                    .append(newestCentLab)
-
-                compSolsDict[sphCentStr]["vCMPairL"][i]\
-                    .append([newestCentCM,vCM])
-
-    return compSolsDict
-
-# The old version
-
-def getComplementarySolsDict(solsDict,vMagnitude):
-    compSolsDict={}
-    for sphCentStr in solsDict:
-        #Convert this string to an np array
-        vCenter=str2NPArray(sphCentStr)
-        # compSolsDict[sphCentStr]={"vPair":[]}
-        myNormalizedVCMList=solsDict[sphCentStr]["vCMSolsNL"]
-        myVCMList=solsDict[sphCentStr]["vCMSols"]
-
-        baseStructL=[[] for vCMSubL in myVCMList]
-        print("baseStruct = ", baseStructL)
-
-        # compSolsDict[sphCentStr]={"vLabSols":baseStructL[:],\
-        #                           "vCMPairL":baseStructL[:]}
 
         compSolsDict[sphCentStr]={"vLabSols":[],\
-                                  "vCMPairL":[]}
+                                  "vCMPair":[]}
 
-        for vNormCMSubL,vCMSubL in zip(myNormalizedVCMList,myVCMList):
-        # for i in range(len(myVCMList)):
-            # vNormCMSubL,vCMSubL=myNormalizedVCMList[i],myVCMList[i]
-            # print("vNormCMSubL,vCMSubL = ",vNormCMSubL,vCMSubL)
-            for vNormCM,vCM in zip(vNormCMSubL,vCMSubL):
-            # for j in range(len(vCMSubL)):
-                # vNormCM,vCM=vNormCMSubL[j],vCMSubL[j]
-                newestCentCM=-vNormCM*vMagnitude
+        for vCMSub in myVCMList:
+            for vCM in vCMSub:
+                vNormCM=vCM/np.linalg.norm(vCM)
+                newestCentCM=-vNormCM*vMag2Go
                 newestCentLab=vCenter+newestCentCM
-                # Clean this!! The structure has to be preserved...
-                # print("i,j = ", i,j)
-                # print("compSolsDict[sphCentStr][\"vLabSols\"] = ",compSolsDict[sphCentStr]["vLabSols"])
                 compSolsDict[sphCentStr]["vLabSols"]\
                     .append(newestCentLab)
 
-                compSolsDict[sphCentStr]["vCMPairL"]\
+                compSolsDict[sphCentStr]["vCMPair"]\
                     .append([vCM,newestCentCM])
 
     return compSolsDict
@@ -928,6 +876,8 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
     treeNode["structType"]="solveType"
 
     for sphereCenterStr in sphereSolsDict:
+        #Surely some numerical errors lying around but I'll live with
+        #it for now
         myNpCenter=str2NPArray(sphereCenterStr)
 
         indexSolLists=sphereSolsDict[sphereCenterStr]["solIdxList"]
@@ -939,7 +889,6 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
             solVelList=[]
             solEList=[]
             vCMSolList=[]
-            vCMNormList=[]
             for vSolIndex in solIdxSubList:
                 velSol=myVLine[vSolIndex]
                 solVelList.append(velSol)
@@ -951,8 +900,6 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
                 vCMSol=velSol-myNpCenter
                 vCMSolList.append(vCMSol)
 
-                vCMNorm=vCMSol/np.linalg.norm(vCMSol)
-                vCMNormList.append(vCMNorm)
                 #ECM energies should be the same as in the first
                 #calculation... I'll corroborate later
 
@@ -967,10 +914,6 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
             if "vCMSols" not in sphereSolsDict[sphereCenterStr]:
                 sphereSolsDict[sphereCenterStr]["vCMSols"]=[]
             sphereSolsDict[sphereCenterStr]["vCMSols"].append(vCMSolList)
-
-            if "vCMSolsNL" not in sphereSolsDict[sphereCenterStr]:
-                sphereSolsDict[sphereCenterStr]["vCMSolsNL"]=[]
-            sphereSolsDict[sphereCenterStr]["vCMSolsNL"].append(vCMNormList)
 
     return sphereSolsDict
 
