@@ -769,9 +769,24 @@ def cleanDict(binTreeDict,freePartRoute):
         print("Doing a for in solsDict elements")
         mySolsDict=binTreeDict["solsDict"]
         for e in mySolsDict:
-            print("e = ",e)
+            print("centerStr = ",e)
             for vCenter in mySolsDict[e]["vLabSols"]:
                 print(vCenter)
+
+        #Get the solsDict of branch2Go
+        print("Now getting the index using the new function")
+        print("freePartRoute[0] = ",freePartRoute[0])
+        branch2Go=binTreeDict["dictList"][freePartRoute[0]]
+        goSolsDict=branch2Go["solsDict"]
+        indexL=[]
+        for centerStr in goSolsDict:
+            print("centerStr = ",centerStr)
+
+            i=getVLabIndex(centerStr,mySolsDict)
+            indexL.append(i)
+            print(colored(i,"red"))
+
+        print(colored(indexL,"yellow"))
         return True
 
     #Now figure out the branches to fill and to go, first we get the
@@ -994,3 +1009,17 @@ def npArray2Str(myNpArray):
     myNpArray[myNpArray==0.] = 0.
     myString=str(myNpArray.tolist())
     return myString
+
+def getVLabIndex(vCentStr,solsDict):
+    for centStr in solsDict:
+        vList=solsDict[centStr]["vLabSols"]
+        for i in range(len(vList)):
+            v=vList[i]
+            #I think is better to change all the vals to str rather than
+            #converting back a single string to a np.array.
+            vStr=npArray2Str(v)
+            if vStr == vCentStr:
+                return i
+
+    print("This should not be printed")
+    return None

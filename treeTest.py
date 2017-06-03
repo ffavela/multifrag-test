@@ -150,8 +150,8 @@ printTreeOnlySolsPart(initDict)
 # print("Now the entire filled tree")
 # printTree(initDict)
 
-# print("Now the new cleanDict function")
-# cleanDict(initDict,generalList)
+print("Now the new cleanDict function")
+cleanDict(initDict,generalList)
 
 print(colored(easyStr,"red"))
 
