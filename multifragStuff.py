@@ -763,30 +763,18 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
 def cleanDict(binTreeDict,freePartRoute):
     #Reached the node b4 the free part
     if len(freePartRoute)==1:
-        print("Made it! Printing the node info")
-        printNode(binTreeDict)
+        # print("Made it! Printing the node info")
+        # printNode(binTreeDict)
 
-        print("Doing a for in solsDict elements")
+        # print("Doing a for in solsDict elements")
         mySolsDict=binTreeDict["solsDict"]
-        for e in mySolsDict:
-            print("centerStr = ",e)
-            for vCenter in mySolsDict[e]["vLabSols"]:
-                print(vCenter)
+        # for e in mySolsDict:
+        #     print("centerStr = ",e)
+        #     for vCenter in mySolsDict[e]["vLabSols"]:
+        #         print(vCenter)
 
-        #Get the solsDict of branch2Go
-        print("Now getting the index using the new function")
-        print("freePartRoute[0] = ",freePartRoute[0])
-        branch2Go=binTreeDict["dictList"][freePartRoute[0]]
-        goSolsDict=branch2Go["solsDict"]
-        indexL=[]
-        for centerStr in goSolsDict:
-            print("centerStr = ",centerStr)
-
-            i=getVLabIndex(centerStr,mySolsDict)
-            indexL.append(i)
-            print(colored(i,"red"))
-
-        print(colored(indexL,"yellow"))
+        clnD=getVCent4IdxSearchD(binTreeDict,freePartRoute)
+        print(colored(clnD,"red"))
         return True
 
     #Now figure out the branches to fill and to go, first we get the
@@ -1010,7 +998,7 @@ def npArray2Str(myNpArray):
     myString=str(myNpArray.tolist())
     return myString
 
-def getVLabIndex(vCentStr,solsDict):
+def getVLabCIdxP(vCentStr,solsDict):
     for centStr in solsDict:
         vList=solsDict[centStr]["vLabSols"]
         for i in range(len(vList)):
@@ -1019,7 +1007,24 @@ def getVLabIndex(vCentStr,solsDict):
             #converting back a single string to a np.array.
             vStr=npArray2Str(v)
             if vStr == vCentStr:
-                return i
+                return [centStr,i]
 
     print("This should not be printed")
     return None
+
+def getVCent4IdxSearchD(binTreeDict,freePartRoute):
+    #Get the solsDict of branch2Go
+    mySolsDict=binTreeDict["solsDict"]
+    branch2Go=binTreeDict["dictList"][freePartRoute[0]]
+    goSolsDict=branch2Go["solsDict"]
+    clnDict={}
+    for centerStr in goSolsDict:
+        print("My looping centerStr = "+centerStr)
+
+        cIdxP=getVLabCIdxP(centerStr,mySolsDict)
+        if cIdxP != None:
+            upperCStr,i=cIdxP
+            if upperCStr not in clnDict:
+                clnDict[upperCStr]=[]
+            clnDict[upperCStr].append(i)
+    return clnDict
