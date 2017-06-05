@@ -155,6 +155,10 @@ cleanDict(initDict,generalList)
 
 print(colored(easyStr,"red"))
 
+# print("")
+# print("Now printing the last node to check the clnDict part")
+# printNode(alphaBDict)
+
 ############################################
 ####The plotting part#######################
 ############################################

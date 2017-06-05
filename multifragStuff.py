@@ -6,6 +6,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
 
+import copy
+
 from termcolor import colored
 
 c=299792458 #in m/s
@@ -761,29 +763,36 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     return fillBool
 
 def cleanDict(binTreeDict,freePartRoute):
-    #Reached the node b4 the free part
-    if len(freePartRoute)==1:
-        # print("Made it! Printing the node info")
-        # printNode(binTreeDict)
-
-        # print("Doing a for in solsDict elements")
-        mySolsDict=binTreeDict["solsDict"]
-        # for e in mySolsDict:
-        #     print("centerStr = ",e)
-        #     for vCenter in mySolsDict[e]["vLabSols"]:
-        #         print(vCenter)
-
-        clnD=getVCent4IdxSearchD(binTreeDict,freePartRoute)
-        print(colored(clnD,"red"))
-        return True
-
-    #Now figure out the branches to fill and to go, first we get the
+    #Figure out the branches to fill and to go, first we get the
     #indices
     freePartIndex=freePartRoute[0]
     branchIndex=getOtherVal(freePartIndex)
+
     #The branches to fill (solve) and to go
     branch2Solve=binTreeDict["dictList"][branchIndex]
     branch2Go=binTreeDict["dictList"][freePartIndex]
+
+    #Reached the node b4 the free part
+    if len(freePartRoute)==1:
+        mySolsDict=binTreeDict["solsDict"]
+
+        #The cleanded dictionary reference
+        clnDR=getVCent4IdxSearchD(binTreeDict,freePartRoute)
+        print(colored("clnDR = ","red"))
+        print(colored(clnDR,"red"))
+        #Incorporating it in the current node.
+        binTreeDict["clnDR"]=clnDR
+
+        #Pushing the clnDict in branch2Go, this is the only case it is
+        #done. Also, it happens to be an exact copy of the branch2Go
+        #solsDict.
+        childClnDict=copy.copy(branch2Go["solsDict"])
+        #The pushing...
+        branch2Go["clnDict"]=childClnDict
+
+        #Now, the childClnDict should be used to clean the current
+        #node and also the branch2Solve solutions node.
+        return True
 
 
     if branchIndex==None:
@@ -1017,14 +1026,33 @@ def getVCent4IdxSearchD(binTreeDict,freePartRoute):
     mySolsDict=binTreeDict["solsDict"]
     branch2Go=binTreeDict["dictList"][freePartRoute[0]]
     goSolsDict=branch2Go["solsDict"]
-    clnDict={}
+    clnDictRef={}
     for centerStr in goSolsDict:
         print("My looping centerStr = "+centerStr)
 
         cIdxP=getVLabCIdxP(centerStr,mySolsDict)
         if cIdxP != None:
             upperCStr,i=cIdxP
-            if upperCStr not in clnDict:
-                clnDict[upperCStr]=[]
-            clnDict[upperCStr].append(i)
-    return clnDict
+            if upperCStr not in clnDictRef:
+                clnDictRef[upperCStr]=[]
+            clnDictRef[upperCStr].append([i,centerStr])
+    return clnDictRef
+
+def getClnD(nodeDict,clnDR):
+    clnD={}
+
+    #clnDR={strC:[[idx,childCmStr],...],...}
+    for centStr in clnDR:
+        myListOfPairs=clnDR[centStr]
+
+        clnD[centStr]={}
+
+        specificSolsD=nodeDict[centStr]["solsDict"]
+
+        for e in specificSolsD:
+            clnD[centStr][e]=[]
+            for pairL in myListOfPairs:
+                i=pairL[0]
+                clnD[centStr][e].append(specificSolsD[e][i])
+
+    return clnD
