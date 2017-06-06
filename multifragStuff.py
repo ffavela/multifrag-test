@@ -150,6 +150,36 @@ def printTreeOnlySolsPart(binTreeDict):
     for e in binTreeDict["dictList"]:
         printTreeOnlySolsPart(e)
 
+
+def printTreeOnlyCleanSolsPart(binTreeDict):
+    if binTreeDict == {}:
+        return
+
+    # print(binTreeDict)
+    if "dictList" not in binTreeDict:
+        return
+
+    if  "clnSD" in binTreeDict:
+        print("")
+        print(colored("name is "+ binTreeDict["name"],"magenta"))
+        print(colored("structType = "+binTreeDict["structType"],"magenta"))
+
+        print("clnSD")
+        for sphereCenterStr in binTreeDict["clnSD"]:
+            print("sphereCenterStr = ", sphereCenterStr)
+            for subVal in binTreeDict["clnSD"][sphereCenterStr]:
+                if subVal == "vLabSols":
+                    print(colored(subVal,"red"))
+                elif subVal == "vCMSols":
+                    print(colored(subVal,"green"))
+                else:
+                    print(subVal)
+                print(binTreeDict["clnSD"][sphereCenterStr][subVal])
+
+
+    for e in binTreeDict["dictList"]:
+        printTreeOnlyCleanSolsPart(e)
+
 def printChildNames(dictList):
     for i in range(len(dictList)):
         if "name" not in dictList[i]:
@@ -767,6 +797,8 @@ def cleanDict(binTreeDict,freePartRoute):
     #indices
     freePartIndex=freePartRoute[0]
     branchIndex=getOtherVal(freePartIndex)
+    if branchIndex==None:
+        return False
 
     #The branches to fill (solve) and to go
     branch2Solve=binTreeDict["dictList"][branchIndex]
@@ -774,31 +806,47 @@ def cleanDict(binTreeDict,freePartRoute):
 
     #Reached the node b4 the free part
     if len(freePartRoute)==1:
-        mySolsDict=binTreeDict["solsDict"]
-
-        #The cleanded dictionary reference
-        clnDR=getVCent4IdxSearchD(binTreeDict,freePartRoute)
-        print(colored("clnDR = ","red"))
-        print(colored(clnDR,"red"))
-        #Incorporating it in the current node.
-        binTreeDict["clnDR"]=clnDR
-
         #Pushing the clnDict in branch2Go, this is the only case it is
         #done. Also, it happens to be an exact copy of the branch2Go
         #solsDict.
-        childClnDict=copy.copy(branch2Go["solsDict"])
+        childClnSDict=copy.copy(branch2Go["solsDict"])
         #The pushing...
-        branch2Go["clnDict"]=childClnDict
+        branch2Go["clnSD"]=childClnSDict
 
-        #Now, the childClnDict should be used to clean the current
+        #The cleanded solutions dictionary reference
+        clnSDR=getVCent4IdxSearchD(binTreeDict,freePartRoute)
+        print(colored("clnSDR = ","red"))
+        print(colored(clnSDR,"red"))
+        #Incorporating it in the current node.
+        binTreeDict["clnSDR"]=clnSDR
+
+
+        #Now, the childClnSDict should be used to clean the current
         #node and also the branch2Solve solutions node.
+        clnSD=getClnSD(binTreeDict,clnSDR)
+        binTreeDict["clnSD"]=clnSD
+
+        print(colored("clnSD = ","blue"))
+        print(colored(clnSD,"blue"))
         return True
 
-
-    if branchIndex==None:
-        return False
-
     aBool=cleanDict(branch2Go,freePartRoute[1:])
+    clnSDR=getVCent4IdxSearchD(binTreeDict,freePartRoute)
+    print(colored("After a recursive call","magenta"))
+    print(colored("clnSDR = ","blue"))
+    print(colored(clnSDR,"blue"))
+    #Incorporating it in the current node.
+    binTreeDict["clnSDR"]=clnSDR
+
+    #Now, the childClnSDict should be used to clean the current
+    #node and also the branch2Solve solutions node.
+    clnSD=getClnSD(binTreeDict,clnSDR)
+    binTreeDict["clnSD"]=clnSD
+    return True
+
+    # clnSD=getClnSD(binTreeDict,clnSDR)
+    # print(colored(clnSD,"blue"))
+
 
 def getLocalCleanDict(b2SolD,b2GD,referenceDict):
     #All of the dicts need a solsDict entry, the b2GD needs a vCMPairL sub entry
@@ -858,15 +906,23 @@ def getDictWithIdxs(treeNode,vSCent,sphSolsDict):
     nodeVLines=treeNode["vLines"]
     vSRad=treeNode["redVcm"]
     solIdxList=[]
-    for vLine in nodeVLines:
+    pairIdxLineList=[]
+    j=0
+    for i in range(len(nodeVLines)):
+        vLine=nodeVLines[i]
         lineInterIdxList=getSphereLineIdxSolsList(vSCent,vSRad,vLine)
         if lineInterIdxList == []:
             continue
         solIdxList.append(lineInterIdxList)
+        pairIdxLineList.append([i,j])
+        #this ensures the j var gets the correct index in the
+        #solIdxList
+        j+=1
 
     if solIdxList != []:
         sphSolsDict[centerStr]={}
         sphSolsDict[centerStr]["solIdxList"]=solIdxList
+        sphSolsDict[centerStr]["pairIdxLineList"]=pairIdxLineList
 
     return sphSolsDict
 
@@ -1025,9 +1081,9 @@ def getVCent4IdxSearchD(binTreeDict,freePartRoute):
     #Get the solsDict of branch2Go
     mySolsDict=binTreeDict["solsDict"]
     branch2Go=binTreeDict["dictList"][freePartRoute[0]]
-    goSolsDict=branch2Go["solsDict"]
+    goClnSolsDict=branch2Go["clnSD"]
     clnDictRef={}
-    for centerStr in goSolsDict:
+    for centerStr in goClnSolsDict:
         print("My looping centerStr = "+centerStr)
 
         cIdxP=getVLabCIdxP(centerStr,mySolsDict)
@@ -1038,21 +1094,21 @@ def getVCent4IdxSearchD(binTreeDict,freePartRoute):
             clnDictRef[upperCStr].append([i,centerStr])
     return clnDictRef
 
-def getClnD(nodeDict,clnDR):
-    clnD={}
+def getClnSD(nodeDict,clnSDR):
+    clnSD={}
 
-    #clnDR={strC:[[idx,childCmStr],...],...}
-    for centStr in clnDR:
-        myListOfPairs=clnDR[centStr]
+    #clnSDR={strC:[[idx,childCmStr],...],...}
+    for centStr in clnSDR:
+        myListOfPairs=clnSDR[centStr]
 
-        clnD[centStr]={}
+        clnSD[centStr]={}
 
-        specificSolsD=nodeDict[centStr]["solsDict"]
+        specificSolsD=nodeDict["solsDict"][centStr]
 
         for e in specificSolsD:
-            clnD[centStr][e]=[]
+            clnSD[centStr][e]=[]
             for pairL in myListOfPairs:
                 i=pairL[0]
-                clnD[centStr][e].append(specificSolsD[e][i])
+                clnSD[centStr][e].append(specificSolsD[e][i])
 
-    return clnD
+    return clnSD

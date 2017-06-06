@@ -150,15 +150,19 @@ printTreeOnlySolsPart(initDict)
 # print("Now the entire filled tree")
 # printTree(initDict)
 
-print("Now the new cleanDict function")
-cleanDict(initDict,generalList)
+# print("")
+# print("Now printing a node")
+# printNode(alphaSysDict)
 
+print("Now the new cleanDict function")
+myBool=cleanDict(initDict,generalList)
+print("The bool val is ", myBool)
 print(colored(easyStr,"red"))
 
-# print("")
-# print("Now printing the last node to check the clnDict part")
-# printNode(alphaBDict)
+print("Printing the entire tree, after cleaning")
+printTree(initDict)
 
+# printTreeOnlyCleanSolsPart(initDict)
 ############################################
 ####The plotting part#######################
 ############################################
