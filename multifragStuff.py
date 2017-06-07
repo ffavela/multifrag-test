@@ -10,6 +10,8 @@ import copy
 
 from termcolor import colored
 
+easyStr="#"*50
+
 c=299792458 #in m/s
 #Masses in MeV/c^2
 def getEcm(mE1,mE2,E1L):
@@ -828,6 +830,9 @@ def cleanDict(binTreeDict,freePartRoute):
 
         print(colored("clnSD = ","blue"))
         print(colored(clnSD,"blue"))
+
+        getIdxL4B2Solve(branch2Go,branch2Solve)
+        cleanRestB2Solve(branch2Solve)
         return True
 
     aBool=cleanDict(branch2Go,freePartRoute[1:])
@@ -842,6 +847,9 @@ def cleanDict(binTreeDict,freePartRoute):
     #node and also the branch2Solve solutions node.
     clnSD=getClnSD(binTreeDict,clnSDR)
     binTreeDict["clnSD"]=clnSD
+
+    getIdxL4B2Solve(branch2Go,branch2Solve)
+    cleanRestB2Solve(branch2Solve)
     return True
 
     # clnSD=getClnSD(binTreeDict,clnSDR)
@@ -1112,3 +1120,91 @@ def getClnSD(nodeDict,clnSDR):
                 clnSD[centStr][e].append(specificSolsD[e][i])
 
     return clnSD
+
+def getB2SolClnSolsIdxs(b2SSolsD,vCM2Search):
+    vCML=b2SSolsD["vCMSols"]
+    for i in range(len(vCML)):
+        print(colored("Inside getB2SolClnSolsIdxs","magenta"))
+        lineSolCML=vCML[i]
+        print(colored(lineSolCML,"magenta"))
+        for j in range(len(lineSolCML)):
+            vCM=lineSolCML[j]
+            print("vCM = ",vCM)
+            if np.array_equal(vCM2Search,vCM):
+                return [i,j]
+
+    print("In getB2SolClnSolsIdxs this should not be printed")
+
+def getIdxL4B2Solve(branch2Go,branch2Solve):
+    #Need to loop through the centers of the child go node
+    childClnSDict=branch2Go["clnSD"]
+    clnSD={}
+    for centStr in childClnSDict:
+        clnSD[centStr]={"pairIdx4Cleaning":[]}
+        print(colored("The centerStr inside the cleanDict is: "+centStr,"yellow"))
+        print("childClnSDict = ",childClnSDict)
+        #Need to loop through the pair values in branch2go
+        for vCMSolPair in childClnSDict[centStr]["vCMPair"]:
+            print("The current vCMSolPair is",vCMSolPair)
+            print("The vCM to search in the branch2Go is")
+            vCMSol=vCMSolPair[0]
+            print(colored(vCMSol,"red"))
+            print(colored("The vCMSol is: ","yellow"))
+            print(colored(vCMSol,"yellow"))
+            b2SSolsD=branch2Solve["solsDict"][centStr]
+            print(b2SSolsD)
+            print("Printing the value to search",vCMSol)
+            print("Now calling the function")
+            indexPair=getB2SolClnSolsIdxs(b2SSolsD,vCMSol)
+            print(colored(indexPair,"red"))
+            clnSD[centStr]["pairIdx4Cleaning"].append(indexPair)
+
+    branch2Solve["clnSD"]=clnSD
+    print(colored("The local clnSD is","blue"))
+    print(colored(clnSD,"blue"))
+
+def cleanRestB2Solve(branch2Solve):
+    clnSD=branch2Solve["clnSD"]
+    allSols=branch2Solve["solsDict"]
+    print(colored("Starting printing in cleanRestB2Solve","yellow"))
+    print(colored("clnSD = ","blue"))
+    print(colored(clnSD,"blue"))
+
+    #Imprortant to run the loop through the clnSD indices and not the
+    #allSols. Since the former has the valid centers. These are always
+    #present in the allSols dict by construction.
+    for e in clnSD:
+        print(colored(e,"yellow"))
+        for idxPair in clnSD[e]["pairIdx4Cleaning"]:
+            print(colored("idxPair stuff","magenta"))
+            print(colored(idxPair,"magenta"))
+            i,j=idxPair
+            iListD={}
+            for ee in allSols[e]:
+                print(colored(ee,"magenta"))
+                if ee not in clnSD[e]:
+                    clnSD[e][ee]=[]
+
+                if ee not in iListD:
+                    iListD[ee]=[]
+
+                if i not in iListD[ee]:
+                    iListD[ee].append(i)
+                    print(colored(easyStr,"magenta"))
+                    clnSD[e][ee].append([])
+                    print(colored(clnSD,"magenta"))
+
+                print(colored(ee,"green"))
+                print(colored(allSols[e][ee],"green"))
+                print(colored("Using the index pair part!","red"))
+                print(colored(allSols[e][ee][i][j],"green"))
+                ii=iListD[ee].index(i)
+                print(colored("iListD","blue"))
+                print(colored(iListD,"blue"))
+                print(colored(easyStr,"yellow"))
+                print(colored(clnSD[e][ee][ii],"yellow"))
+                clnSD[e][ee][ii].append(allSols[e][ee][i][j])
+
+    print(colored("clnSD","red"))
+    print(colored(clnSD,"red"))
+    print(colored("Ending printing in cleanRestB2Solve","yellow"))
