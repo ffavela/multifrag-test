@@ -922,7 +922,8 @@ def getDictWithIdxs(treeNode,vSCent,sphSolsDict):
         if lineInterIdxList == []:
             continue
         solIdxList.append(lineInterIdxList)
-        pairIdxLineList.append([i,j])
+        temporalSubPairL=[[i,j] for e in lineInterIdxList]
+        pairIdxLineList.append(temporalSubPairL)
         #this ensures the j var gets the correct index in the
         #solIdxList
         j+=1
