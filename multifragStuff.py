@@ -249,6 +249,7 @@ def getCompletedSolTree(treeNode,solsDict):
         myLabVelList=solsDict[vCenterStr]["vLabSols"]
         solsDict[vCenterStr]["labEnergy"]=[]
         solsDict[vCenterStr]["vCMSols"]=[]
+        solsDict[vCenterStr]["thetaPhi"]=[]
         for myLabVel in myLabVelList:
             vCentNorm=np.linalg.norm(myLabVel)
             ECentSol=1.0/2.0*myMass*(vCentNorm/100.0)**2
@@ -257,6 +258,10 @@ def getCompletedSolTree(treeNode,solsDict):
             #Now the vel @ the CM system
             myCMVel=myLabVel-sysCMVel
             solsDict[vCenterStr]["vCMSols"].append(myCMVel)
+
+            #Getting the lab angles
+            thetaPhi=getThetaPhi(myLabVel)
+            solsDict[vCenterStr]["thetaPhi"].append(thetaPhi)
 
     return solsDict
 
@@ -953,6 +958,7 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
             solVelList=[]
             solEList=[]
             vCMSolList=[]
+            thetaPhiList=[]
             for vSolIndex in solIdxSubList:
                 velSol=myVLine[vSolIndex]
                 solVelList.append(velSol)
@@ -967,6 +973,9 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
                 #ECM energies should be the same as in the first
                 #calculation... I'll corroborate later
 
+                thetaPhi=getThetaPhi(velSol)
+                thetaPhiList.append(thetaPhi)
+
             if "vLabSols" not in sphereSolsDict[sphereCenterStr]:
                 sphereSolsDict[sphereCenterStr]["vLabSols"]=[]
             sphereSolsDict[sphereCenterStr]["vLabSols"].append(solVelList)
@@ -978,6 +987,11 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
             if "vCMSols" not in sphereSolsDict[sphereCenterStr]:
                 sphereSolsDict[sphereCenterStr]["vCMSols"]=[]
             sphereSolsDict[sphereCenterStr]["vCMSols"].append(vCMSolList)
+
+            if "thetaPhi" not in sphereSolsDict[sphereCenterStr]:
+                sphereSolsDict[sphereCenterStr]["thetaPhi"]=[]
+            sphereSolsDict[sphereCenterStr]["thetaPhi"].append(thetaPhiList)
+
 
     return sphereSolsDict
 
@@ -1209,3 +1223,11 @@ def cleanRestB2Solve(branch2Solve):
     print(colored("clnSD","red"))
     print(colored(clnSD,"red"))
     print(colored("Ending printing in cleanRestB2Solve","yellow"))
+
+def getThetaPhi(vLab):
+    x,y,z=vLab
+    vMag=np.linalg.norm(vLab)
+    theta=acos(z/vMag)
+    phi=atan2(y,x)
+    #Using degrees for now
+    return [degrees(theta),degrees(phi)]
