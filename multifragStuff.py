@@ -597,7 +597,7 @@ def pullLinesFromNode(binTreeDict):
     vRad=vLeft+vRight
     myFrac=vLeft/vRad
     vLineList=[]
-    lineParentsIdxList=[]
+    lineParentsIdxList=[[],[]]
     offsetList=[]
     #Sweep from line 1 to line 2
     for vLine1 in vLines1:
@@ -609,7 +609,7 @@ def pullLinesFromNode(binTreeDict):
 
             parentChildIdx1=vLines1.index(vLine1)
             parentChildIdx2=vLines2.index(vLine2)
-            lineParentsIdxList.append([parentChildIdx1,parentChildIdx2])
+            lineParentsIdxList[0].append([parentChildIdx1,parentChildIdx2])
 
     #Sweep from line 2 to line 1
     for vLine2 in vLines2:
@@ -626,7 +626,7 @@ def pullLinesFromNode(binTreeDict):
                 offsets=j,i
 
             offsetList.append(offsets)
-            lineParentsIdxList.append([parentChildIdx2,parentChildIdx1])
+            lineParentsIdxList[1].append([parentChildIdx2,parentChildIdx1])
 
 
     binTreeDict["vLines"]=vLineList
