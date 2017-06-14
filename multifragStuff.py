@@ -603,35 +603,32 @@ def pullLinesFromNode(binTreeDict):
     myFrac=vLeft/vRad
     vLineList=[]
     lineParentsIdxList=[[],[]]
-    offsetList=[]
+    offsetList=[[],[]]
     #Sweep from line 1 to line 2
     for vLine1 in vLines1:
         for vLine2 in vLines2:
             cmLine=getMidPointLine(vLine1,vLine2,vRad,myFrac)
             vLineList.append(cmLine)
+            vLLIdx=vLineList.index(cmLine)
             offsets=getMidPOffsets(vLine1,vLine2,vRad)
-            offsetList.append(offsets)
+            offsetList[0].append([vLLIdx,offsets])
 
             parentChildIdx1=vLines1.index(vLine1)
             parentChildIdx2=vLines2.index(vLine2)
-            lineParentsIdxList[0].append([parentChildIdx1,parentChildIdx2])
+            lineParentsIdxList[0].append([vLLIdx,[parentChildIdx1,parentChildIdx2]])
 
     #Sweep from line 2 to line 1
     for vLine2 in vLines2:
         for vLine1 in vLines1:
             cmLine=getMidPointLine(vLine2,vLine1,vRad,1-myFrac)
             vLineList.append(cmLine)
+            vLLIdx=vLineList.index(cmLine)
             offsets=getMidPOffsets(vLine2,vLine1,vRad)
             parentChildIdx1=vLines1.index(vLine1)
             parentChildIdx2=vLines2.index(vLine2)
-            #Inverting order so that when recalling this info the
-            #convention remains no matter the index in the lists.
-            if offsets != None:
-                i,j=offsets
-                offsets=j,i
 
-            offsetList.append(offsets)
-            lineParentsIdxList[1].append([parentChildIdx2,parentChildIdx1])
+            offsetList[1].append([vLLIdx,offsets])
+            lineParentsIdxList[1].append([vLLIdx,[parentChildIdx1,parentChildIdx2]])
 
 
     binTreeDict["vLines"]=vLineList
@@ -919,24 +916,22 @@ def getDictWithIdxs(treeNode,vSCent,sphSolsDict):
     nodeVLines=treeNode["vLines"]
     vSRad=treeNode["redVcm"]
     solIdxList=[]
-    pairIdxLineList=[]
-    j=0
+    #To properly connect the solIdxList to its corresponding vLine
+    idxLineList=[]
     for i in range(len(nodeVLines)):
         vLine=nodeVLines[i]
         lineInterIdxList=getSphereLineIdxSolsList(vSCent,vSRad,vLine)
         if lineInterIdxList == []:
             continue
         solIdxList.append(lineInterIdxList)
-        temporalSubPairL=[[i,j] for e in lineInterIdxList]
-        pairIdxLineList.append(temporalSubPairL)
+        idxLineList.append(i)
         #this ensures the j var gets the correct index in the
         #solIdxList
-        j+=1
 
     if solIdxList != []:
         sphSolsDict[centerStr]={}
         sphSolsDict[centerStr]["solIdxList"]=solIdxList
-        sphSolsDict[centerStr]["pairIdxLineList"]=pairIdxLineList
+        sphSolsDict[centerStr]["idxLineList"]=idxLineList
 
     return sphSolsDict
 
@@ -996,6 +991,10 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
     return sphereSolsDict
 
 def getMidPOffsets(vLine1,vLine2,vRad):
+    """Returns the i,j indices in line 1 and 2 where the first
+intersection is found using the CM values.
+
+    """
     j=0
     foundAny=False
     for i in range(len(vLine1)):
@@ -1231,3 +1230,55 @@ def getThetaPhi(vLab):
     phi=atan2(y,x)
     #Using degrees for now
     return [degrees(theta),degrees(phi)]
+
+def getLineParIdxsAndOffsets(lineIdx,treeNode):
+    if "lParentsIdxs" not in treeNode:
+        print(colored("getLineParIdxsAndOffsets called on wrong node!!","red"))
+        return None
+
+    lParIdxs=treeNode["lParentsIdxs"]
+    offsetList=treeNode["offsets"]
+    sweepStr=""
+    for val,offVal in zip(lParIdxs[0],offsetList[0]):
+        if lineIdx == val[0]:
+            sweepStr="normal"
+            parIdx1,parIdx2=val[1]
+            return [sweepStr,parIdx1,parIdx2,offVal[1]]
+
+    for val,offVal in zip(lParIdxs[1],offsetList[1]):
+        if lineIdx == val[0]:
+            sweepStr="inverse"
+            parIdx1,parIdx2=val[1]
+            return [sweepStr,parIdx1,parIdx2,offVal[1]]
+
+    print(colored("getLineParIdxsAndOffsets this should never be printed!!","red"))
+    return None
+
+def getLineIdxFromSolIdx(i,centerStr,treeNode):
+    if 'solsDict' not in treeNode:
+        print("Error in getLineIdxFromSolIdx")
+        print("'solsDict' not found in node")
+        return None
+
+    if centerStr not in treeNode["solsDict"]:
+        print("Error in getLineIdxFromSolIdx")
+        print("a center string was not found in node")
+        return None
+
+    if "solIdxList" not in treeNode["solsDict"][centerStr]:
+        print("Error in getLineIdxFromSolIdx")
+        print("solIdxList not found in node")
+        return None
+
+    if 'idxLineList' not in treeNode["solsDict"][centerStr]:
+        print("Error in getLineIdxFromSolIdx")
+        print("idxLineList not found in node")
+        return None
+
+    if i not in range(len(treeNode["solsDict"][centerStr]['idxLineList'])):
+        print("Error in getLineIdxFromSolIdx")
+        print("Index i out of range")
+        return None
+
+    myLineIdx=treeNode["solsDict"][centerStr]['idxLineList'][i]
+    return myLineIdx

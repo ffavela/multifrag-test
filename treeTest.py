@@ -21,45 +21,45 @@ tS="set" #particle set
 tD="detector"
 tI="initial"
 
-##############################################
+#################################################
 ##########Particle dict quaternary sequential####
-##############################################
+#################################################
 
-# initDict={"type":tI,"name":"12C+12C","massP":m12C,
-#           "massT":m12C,"ELab":beamE}
-# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
-# beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
-# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+initDict={"type":tI,"name":"12C+12C","massP":m12C,
+          "massT":m12C,"ELab":beamE}
+oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
+beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
+carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
 
-# # alphaSysDict={"type":tS,"name":"4He+4He"}
-# alphaADict={"type":tP,"name":"4HeA","mass":m4He}
-# alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
-# alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
-# # alphaDDict={"type":tP,"name":"4He","mass":m4He}
-# # alphaEDict={"type":tP,"name":"4He","mass":m4He}
+# alphaSysDict={"type":tS,"name":"4He+4He"}
+alphaADict={"type":tP,"name":"4HeA","mass":m4He}
+alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
+alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
+# alphaDDict={"type":tP,"name":"4He","mass":m4He}
+# alphaEDict={"type":tP,"name":"4He","mass":m4He}
 
-# #Defining the detectors
-# d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
-# d2Dict={"type":tD,"name":"d2","angles":[radians(15),radians(20)]}
-# d3Dict={"type":tD,"name":"d3","angles":[radians(140),radians(20)]}
-# # d4Dict={"type":tD,"name":"d4"}
+#Defining the detectors
+d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(15),radians(20)]}
+d3Dict={"type":tD,"name":"d3","angles":[radians(140),radians(20)]}
+# d4Dict={"type":tD,"name":"d4"}
 
-# #Completing the dictionaries
-# alphaBDict["dictList"]=[d3Dict,{}]
-# alphaADict["dictList"]=[{},{}]
-# alphaCDict["dictList"]=[d1Dict,{}]
+#Completing the dictionaries
+alphaBDict["dictList"]=[d3Dict,{}]
+alphaADict["dictList"]=[{},{}]
+alphaCDict["dictList"]=[d1Dict,{}]
 
-# oxyDict["dictList"]=[alphaCDict,carbonDict]
+oxyDict["dictList"]=[alphaCDict,carbonDict]
 
-# beDict["dictList"]=[alphaADict,alphaBDict]
-# # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
-# carbonDict["dictList"]=[d2Dict,{}]
+beDict["dictList"]=[alphaADict,alphaBDict]
+# alphaSysDict["dictList"]=[alphaADict,alphaBDict]
+carbonDict["dictList"]=[d2Dict,{}]
 
-# initDict["dictList"]=[oxyDict,beDict]
+initDict["dictList"]=[oxyDict,beDict]
 
-##############################################
+#################################################
 ####Particle dict end quaternary sequential######
-##############################################
+#################################################
 
 ##############################################
 ##########Particle dict ternary direct########
@@ -123,27 +123,27 @@ tI="initial"
 ##############################################
 ##########Particle dict ternary direct########
 ##############################################
-beamE=300 #Lucia's case
-initDict={"type":tI,"name":"12C+24Mg","massP":m12C,
-          "massT":m24Mg,"ELab":beamE}
-carbonADict={"type":tP,"name":"12C_A","mass":m12C,"exE":7.60}
+# beamE=350 #Lucia's case
+# initDict={"type":tI,"name":"12C+24Mg","massP":m12C,
+#           "massT":m24Mg,"ELab":beamE}
+# carbonADict={"type":tP,"name":"12C_A","mass":m12C,"exE":7.60}
 
-carbonSysDict={"type":tS,"name":"12C+12C"}
-carbonCDict={"type":tP,"name":"12C_C","mass":m12C}
-carbonBDict={"type":tP,"name":"12C_B","mass":m12C}
+# carbonSysDict={"type":tS,"name":"12C+12C"}
+# carbonCDict={"type":tP,"name":"12C_C","mass":m12C}
+# carbonBDict={"type":tP,"name":"12C_B","mass":m12C}
 
-#Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(17),radians(15.0)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(130),radians(50)]}
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(17),radians(15.0)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(130),radians(50)]}
 
-#Completing the dictionaries
-carbonADict["dictList"]=[d1Dict,{}]
-carbonBDict["dictList"]=[d2Dict,{}]
-carbonCDict["dictList"]=[{},{}]
+# #Completing the dictionaries
+# carbonADict["dictList"]=[d1Dict,{}]
+# carbonBDict["dictList"]=[d2Dict,{}]
+# carbonCDict["dictList"]=[{},{}]
 
-carbonSysDict["dictList"]=[carbonBDict,carbonCDict]
+# carbonSysDict["dictList"]=[carbonBDict,carbonCDict]
 
-initDict["dictList"]=[carbonADict,carbonSysDict]
+# initDict["dictList"]=[carbonADict,carbonSysDict]
 
 ##############################################
 ##########Particle end dict ternary direct####
@@ -206,20 +206,29 @@ print(colored("Now printing only the tree sols part","red"))
 printTreeOnlySolsPart(initDict)
 
 
-# print("Now the entire filled tree")
-# printTree(initDict)
+print("Now the entire filled tree")
+printTree(initDict)
 
-# print("")
-# print("Now printing a node")
-# printNode(alphaSysDict)
+print("")
+print("Now printing a node")
+printNode(oxyDict)
 
-print("Now the new cleanDict function")
-myBool=cleanDict(initDict,generalList)
-print("The bool val is ", myBool)
+print("Testing the getLineParIdxsAndOffsets function for 0 and 1")
+myVal=getLineParIdxsAndOffsets(0,oxyDict)
+print(colored(myVal,"blue"))
+myVal=getLineParIdxsAndOffsets(1,oxyDict)
+print(colored(myVal,"blue"))
+
+# print("Now the new cleanDict function")
+# myBool=cleanDict(initDict,generalList)
+# print("The bool val is ", myBool)
+print("Testing the getLineIdxFromSol function")
+myLocalLineIdx=getLineIdxFromSolIdx(1,'[0.0, 0.0, 7.326472906898222]',oxyDict)
+print("myLocalLineIdx = ", myLocalLineIdx)
 print(colored(easyStr,"red"))
 
-print("Printing the entire tree, after cleaning")
-printTree(initDict)
+# print("Printing the entire tree, after cleaning")
+# printTree(initDict)
 
 # printTreeOnlyCleanSolsPart(initDict)
 ############################################
