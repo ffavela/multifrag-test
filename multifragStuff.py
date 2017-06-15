@@ -1244,13 +1244,13 @@ def getLineParIdxsAndOffsets(lineIdx,treeNode):
     sweepStr=""
     for val,offVal in zip(lParIdxs[0],offsetList[0]):
         if lineIdx == val[0]:
-            sweepStr="normal"
+            sweepStr="left"
             parIdx1,parIdx2=val[1]
             return [sweepStr,parIdx1,parIdx2,offVal[1]]
 
     for val,offVal in zip(lParIdxs[1],offsetList[1]):
         if lineIdx == val[0]:
-            sweepStr="inverse"
+            sweepStr="right"
             parIdx1,parIdx2=val[1]
             return [sweepStr,parIdx1,parIdx2,offVal[1]]
 
