@@ -945,11 +945,14 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
         myNpCenter=str2NPArray(sphereCenterStr)
 
         indexSolLists=sphereSolsDict[sphereCenterStr]["solIdxList"]
+        #The proper indices on the outside list
+        idxLineList=sphereSolsDict[sphereCenterStr]["idxLineList"]
         for i in range(len(indexSolLists)):
             solIdxSubList=indexSolLists[i]
-            #Here the "i" index corresponds to an intersection with a
-            #line with the same index.
-            myVLine=treeNode["vLines"][i]
+            #Here the "j" index corresponds to an intersection with a
+            #line (that is outside this sub dict) with the same index.
+            j=idxLineList[i]
+            myVLine=treeNode["vLines"][j]
             solVelList=[]
             solEList=[]
             vCMSolList=[]
