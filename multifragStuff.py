@@ -1234,6 +1234,10 @@ def getThetaPhi(vLab):
     #Using degrees for now
     return [degrees(theta),degrees(phi)]
 
+###############################
+#The secondary solutions part##
+###############################
+
 def getLineParIdxsAndOffsets(lineIdx,treeNode):
     if "lParentsIdxs" not in treeNode:
         print(colored("getLineParIdxsAndOffsets called on wrong node!!","red"))
@@ -1285,3 +1289,16 @@ def getLineIdxFromSolIdx(i,centerStr,treeNode):
 
     myLineIdx=treeNode["solsDict"][centerStr]['idxLineList'][i]
     return myLineIdx
+
+def fillInitSecSols(treeNode):
+    if treeNode["structType"] != "solveType":
+        print("Error fillInitSecSols should only be called on solveType")
+        return
+
+    secSolsDict={}
+    solsDict=treeNode["solsDict"]
+    for centStr in solsDict:
+        #The next function has yet to be written
+        secSolsDict[centerStr]=getRawSolsEntry(centerStr,solsDict)
+
+    treeNode["secSolsDict"]=secSolsDict
