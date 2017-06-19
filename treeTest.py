@@ -210,8 +210,12 @@ print("Now the entire filled tree")
 printTree(initDict)
 
 print("")
-print("Now printing a node")
+print("Now printing the oxygen node")
 printNode(oxyDict)
+
+print("")
+print("Now printing the alpha B node")
+printNode(alphaBDict)
 
 print("Testing the getLineParIdxsAndOffsets function for 0 and 1")
 myVal=getLineParIdxsAndOffsets(0,oxyDict)
@@ -225,6 +229,28 @@ print(colored(myVal,"blue"))
 print("Testing the getLineIdxFromSol function")
 myLocalLineIdx=getLineIdxFromSolIdx(1,'[0.0, 0.0, 7.326472906898222]',oxyDict)
 print("myLocalLineIdx = ", myLocalLineIdx)
+
+print("")
+print("Testing the getSecSolL function")
+solsDict=oxyDict["solsDict"]
+print(getSecSolL('[0.0, 0.0, 7.326472906898222]',solsDict))
+
+print("")
+print("Testing the getSecSolParList function")
+secSolList=getSecSolParList('[0.0, 0.0, 7.326472906898222]',oxyDict)
+print(secSolList)
+
+print("")
+print("Testing the getVSecSolsList function")
+secSolList=getVSecSolsList(secSolList,oxyDict)
+for e in secSolList:
+    print(e)
+
+# print("")
+# print("Testing the getClosestIdx function")
+# vLines=oxyDict["vLines"][0]
+# print(getClosestIdx(np.array([2.63729793,0.93756194,11.78698489]),vLines))
+
 print(colored(easyStr,"red"))
 
 # print("Printing the entire tree, after cleaning")

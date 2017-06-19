@@ -1250,13 +1250,15 @@ def getLineParIdxsAndOffsets(lineIdx,treeNode):
         if lineIdx == val[0]:
             sweepStr="left"
             parIdx1,parIdx2=val[1]
-            return [sweepStr,parIdx1,parIdx2,offVal[1]]
+            offIdxVal=offVal[1][0]
+            return [sweepStr,parIdx1,parIdx2,offIdxVal]
 
     for val,offVal in zip(lParIdxs[1],offsetList[1]):
         if lineIdx == val[0]:
             sweepStr="right"
             parIdx1,parIdx2=val[1]
-            return [sweepStr,parIdx1,parIdx2,offVal[1]]
+            offIdxVal=offVal[1][0]
+            return [sweepStr,parIdx1,parIdx2,offIdxVal]
 
     print(colored("getLineParIdxsAndOffsets this should never be printed!!","red"))
     return None
@@ -1290,6 +1292,51 @@ def getLineIdxFromSolIdx(i,centerStr,treeNode):
     myLineIdx=treeNode["solsDict"][centerStr]['idxLineList'][i]
     return myLineIdx
 
+def getSecSolL(centerStr,solsDict):
+    solsEntry=solsDict[centerStr]
+    solIdxList=solsEntry["solIdxList"]
+    idxLineList=solsEntry["idxLineList"]
+
+    secSolL=[]
+
+    for i in range(len(solIdxList)):
+        solIdxSubL=solIdxList[i]
+        lineIdx=idxLineList[i]
+
+        for solIdx in solIdxSubL:
+            secSolL.append([i,solIdx])
+
+    return secSolL
+
+def getSecSolParList(centerStr,treeNode):
+    localSolsD=treeNode["solsDict"][centerStr]
+    solIdxList=localSolsD["solIdxList"]
+    #For relating the inner indices to the outer real line indices
+    idxLineList=localSolsD["idxLineList"]
+
+    secSolParL=[]
+    for i in range(len(solIdxList)):
+        lineParAndOffsets=getLineParIdxsAndOffsets(i,treeNode)
+        sweepStr,parIdx1,parIdx2,offIdxVal=lineParAndOffsets
+        solIdxSubL=solIdxList[i]
+
+        lineIdx=idxLineList[i]
+        for solIdx in solIdxSubL:
+            if sweepStr == "left":
+                theEntry=[sweepStr,
+                          [parIdx1,solIdx+offIdxVal],
+                          [lineIdx,solIdx],
+                          [parIdx2,None]]
+            else:
+                theEntry=[sweepStr,
+                          [parIdx1,None],
+                          [lineIdx,solIdx],
+                          [parIdx2,solIdx+offIdxVal]]
+
+            secSolParL.append(theEntry)
+
+    return secSolParL
+
 def fillInitSecSols(treeNode):
     if treeNode["structType"] != "solveType":
         print("Error fillInitSecSols should only be called on solveType")
@@ -1302,3 +1349,58 @@ def fillInitSecSols(treeNode):
         secSolsDict[centerStr]=getRawSolsEntry(centerStr,solsDict)
 
     treeNode["secSolsDict"]=secSolsDict
+
+
+def getVSecSolsList(secSolParL,treeNode):
+    leftN,rightN=treeNode["dictList"]
+
+    lVLines,rVLines=leftN["vLines"],rightN["vLines"]
+    nVLines=treeNode["vLines"]
+
+    lVMag,rVMag=leftN["redVcm"],rightN["redVcm"]
+
+    secSolsL=[]
+
+    for e in secSolParL:
+        sweepStr,lInfo,nInfo,rInfo=e
+
+        nLineIdx,nPointIdx=nInfo
+        nVel=nVLines[nLineIdx][nPointIdx]
+        nVInfo=[nLineIdx,nVel]
+
+        lLineIdx,lPointIdx=lInfo
+        rLineIdx,rPointIdx=rInfo
+
+        if sweepStr == "left":
+            lVel=lVLines[lLineIdx][lPointIdx]
+            lVcm=nVel-lVel
+            lVInfo=[lLineIdx,lVel]
+
+            vNormCM=lVcm/np.linalg.norm(lVcm)
+            rVcm=-vNormCM*rVMag
+
+            rVel=nVel+rVcm
+
+            rLineIdx=getClosestIdx(rVel,rVLines[rLineIdx])
+            rVInfo=[rLineIdx,rVel]
+        else:
+            rVel=rVLines[rLineIdx][rPointIdx]
+            rVcm=nVel-rVel
+            rVInfo=[rLineIdx,rVel]
+
+            vNormCM=rVcm/np.linalg.norm(rVcm)
+            lVcm=-vNormCM*lVMag
+
+            lVel=nVel+lVcm
+            lLineIdx=getClosestIdx(lVel,lVLines[lLineIdx])
+            lVInfo=[lLineIdx,lVel]
+
+        secSolsE=[sweepStr,lVInfo,nVInfo,rVInfo]
+        secSolsL.append(secSolsE)
+
+    return secSolsL
+
+
+def getClosestIdx(vPoint,vLine):
+    dist_2=np.sum((vPoint-vLine)**2,axis=1)
+    return np.argmin(dist_2)
