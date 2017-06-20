@@ -1292,7 +1292,7 @@ def getLineIdxFromSolIdx(i,centerStr,treeNode):
     myLineIdx=treeNode["solsDict"][centerStr]['idxLineList'][i]
     return myLineIdx
 
-def getSecSolL(centerStr,solsDict):
+def getSimpleSecSolIdxL(centerStr,solsDict):
     solsEntry=solsDict[centerStr]
     solIdxList=solsEntry["solIdxList"]
     idxLineList=solsEntry["idxLineList"]
@@ -1308,13 +1308,13 @@ def getSecSolL(centerStr,solsDict):
 
     return secSolL
 
-def getSecSolParList(centerStr,treeNode):
+def getSecSolParentIdxWithNonesL(centerStr,treeNode):
     localSolsD=treeNode["solsDict"][centerStr]
     solIdxList=localSolsD["solIdxList"]
     #For relating the inner indices to the outer real line indices
     idxLineList=localSolsD["idxLineList"]
 
-    secSolParL=[]
+    secSolParentIdxL=[]
     for i in range(len(solIdxList)):
         lineParAndOffsets=getLineParIdxsAndOffsets(i,treeNode)
         sweepStr,parIdx1,parIdx2,offIdxVal=lineParAndOffsets
@@ -1333,9 +1333,9 @@ def getSecSolParList(centerStr,treeNode):
                           [lineIdx,solIdx],
                           [parIdx2,solIdx+offIdxVal]]
 
-            secSolParL.append(theEntry)
+            secSolParentIdxL.append(theEntry)
 
-    return secSolParL
+    return secSolParentIdxL
 
 def fillInitSecSols(treeNode):
     if treeNode["structType"] != "solveType":
@@ -1345,13 +1345,28 @@ def fillInitSecSols(treeNode):
     secSolsDict={}
     solsDict=treeNode["solsDict"]
     for centStr in solsDict:
-        #The next function has yet to be written
-        secSolsDict[centerStr]=getRawSolsEntry(centerStr,solsDict)
+        simpleSecSolIdxL,threeSecSolIdxL=getRawSecSolsLEntry(centStr,treeNode)
+        secSolsDict[centStr]={}
+        secSolsDict[centStr]["simpleSecSolIdxL"]=simpleSecSolIdxL
+
+        if threeSecSolIdxL != None:
+            secSolsDict[centStr]["threeSecSolIdxL"]=threeSecSolIdxL
 
     treeNode["secSolsDict"]=secSolsDict
 
+def getRawSecSolsLEntry(centerStr,treeNode):
+    solsDict=treeNode["solsDict"]
+    simpleSecSolIdxL=getSimpleSecSolIdxL(centerStr,solsDict)
 
-def getVSecSolsList(secSolParL,treeNode):
+    if checkIfLastPartNode(treeNode):
+        return [simpleSecSolIdxL,None]
+
+    secSolParentIdxWithNonesL=getSecSolParentIdxWithNonesL(centerStr,treeNode)
+    threeSecSolIdxL=getThreeSecSolsIdxL(secSolParentIdxWithNonesL,treeNode)
+
+    return [simpleSecSolIdxL,threeSecSolIdxL]
+
+def getThreeSecSolsIdxL(secSolParentIdxL,treeNode):
     leftN,rightN=treeNode["dictList"]
 
     lVLines,rVLines=leftN["vLines"],rightN["vLines"]
@@ -1361,12 +1376,13 @@ def getVSecSolsList(secSolParL,treeNode):
 
     secSolsL=[]
 
-    for e in secSolParL:
+    for e in secSolParentIdxL:
+        print("e = ",e)
         sweepStr,lInfo,nInfo,rInfo=e
 
         nLineIdx,nPointIdx=nInfo
         nVel=nVLines[nLineIdx][nPointIdx]
-        nVInfo=[nLineIdx,nVel]
+        nVInfo=[nLineIdx,nPointIdx]
 
         lLineIdx,lPointIdx=lInfo
         rLineIdx,rPointIdx=rInfo
@@ -1374,7 +1390,7 @@ def getVSecSolsList(secSolParL,treeNode):
         if sweepStr == "left":
             lVel=lVLines[lLineIdx][lPointIdx]
             lVcm=lVel-nVel
-            lVInfo=[lLineIdx,lVel]
+            lVInfo=[lLineIdx,lPointIdx]
 
             vNormCM=lVcm/np.linalg.norm(lVcm)
             rVcm=-vNormCM*rVMag
@@ -1383,14 +1399,11 @@ def getVSecSolsList(secSolParL,treeNode):
 
             rPointIdx=getClosestIdx(rVel,rVLines[rLineIdx])
 
-            print(colored("Exact vs aprox","red"))
-            print(rVel,rVLines[rLineIdx][rPointIdx])
-
-            rVInfo=[rLineIdx,rVel]
+            rVInfo=[rLineIdx,rPointIdx]
         else:
             rVel=rVLines[rLineIdx][rPointIdx]
             rVcm=rVel-nVel
-            rVInfo=[rLineIdx,rVel]
+            rVInfo=[rLineIdx,rPointIdx]
 
             vNormCM=rVcm/np.linalg.norm(rVcm)
             lVcm=-vNormCM*lVMag
@@ -1398,10 +1411,7 @@ def getVSecSolsList(secSolParL,treeNode):
             lVel=nVel+lVcm
             lPointIdx=getClosestIdx(lVel,lVLines[lLineIdx])
 
-            print(colored("Exact vs aprox","red"))
-            print(lVel,lVLines[lLineIdx][lPointIdx])
-
-            lVInfo=[lLineIdx,lVel]
+            lVInfo=[lLineIdx,lPointIdx]
 
         secSolsE=[sweepStr,lVInfo,nVInfo,rVInfo]
         secSolsL.append(secSolsE)

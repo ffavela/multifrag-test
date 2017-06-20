@@ -231,20 +231,32 @@ myLocalLineIdx=getLineIdxFromSolIdx(1,'[0.0, 0.0, 7.326472906898222]',oxyDict)
 print("myLocalLineIdx = ", myLocalLineIdx)
 
 print("")
-print("Testing the getSecSolL function")
+print("Testing the getSimpleSecSolIdxL function")
 solsDict=oxyDict["solsDict"]
-print(getSecSolL('[0.0, 0.0, 7.326472906898222]',solsDict))
+simpleSecSolL=getSimpleSecSolIdxL('[0.0, 0.0, 7.326472906898222]',solsDict)
+print(simpleSecSolL)
 
 print("")
-print("Testing the getSecSolParList function")
-secSolList=getSecSolParList('[0.0, 0.0, 7.326472906898222]',oxyDict)
-print(secSolList)
+print("Testing the getSimpleSecSolIdxWithNodesL function")
+secSolParentList=getSecSolParentIdxWithNonesL('[0.0, 0.0, 7.326472906898222]',oxyDict)
+print(secSolParentList)
 
 print("")
-print("Testing the getVSecSolsList function")
-secSolList=getVSecSolsList(secSolList,oxyDict)
+print("Testing the getThreeSecSolsIdxL function")
+secSolList=getThreeSecSolsIdxL(secSolParentList,oxyDict)
 for e in secSolList:
     print(e)
+
+
+print("")
+print("Now testing the fillInitSecSols function on the oxyDict")
+fillInitSecSols(oxyDict)
+printNode(oxyDict)
+
+print("")
+print("Now testing the fillInitSecSols function on the alphaB")
+fillInitSecSols(alphaBDict)
+printNode(alphaBDict)
 
 # print("")
 # print("Testing the getClosestIdx function")
