@@ -1373,7 +1373,7 @@ def getVSecSolsList(secSolParL,treeNode):
 
         if sweepStr == "left":
             lVel=lVLines[lLineIdx][lPointIdx]
-            lVcm=nVel-lVel
+            lVcm=lVel-nVel
             lVInfo=[lLineIdx,lVel]
 
             vNormCM=lVcm/np.linalg.norm(lVcm)
@@ -1381,18 +1381,26 @@ def getVSecSolsList(secSolParL,treeNode):
 
             rVel=nVel+rVcm
 
-            rLineIdx=getClosestIdx(rVel,rVLines[rLineIdx])
+            rPointIdx=getClosestIdx(rVel,rVLines[rLineIdx])
+
+            print(colored("Exact vs aprox","red"))
+            print(rVel,rVLines[rLineIdx][rPointIdx])
+
             rVInfo=[rLineIdx,rVel]
         else:
             rVel=rVLines[rLineIdx][rPointIdx]
-            rVcm=nVel-rVel
+            rVcm=rVel-nVel
             rVInfo=[rLineIdx,rVel]
 
             vNormCM=rVcm/np.linalg.norm(rVcm)
             lVcm=-vNormCM*lVMag
 
             lVel=nVel+lVcm
-            lLineIdx=getClosestIdx(lVel,lVLines[lLineIdx])
+            lPointIdx=getClosestIdx(lVel,lVLines[lLineIdx])
+
+            print(colored("Exact vs aprox","red"))
+            print(lVel,lVLines[lLineIdx][lPointIdx])
+
             lVInfo=[lLineIdx,lVel]
 
         secSolsE=[sweepStr,lVInfo,nVInfo,rVInfo]
