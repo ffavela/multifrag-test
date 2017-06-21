@@ -1377,7 +1377,6 @@ def getThreeSecSolsIdxL(secSolParentIdxL,treeNode):
     secSolsL=[]
 
     for e in secSolParentIdxL:
-        print("e = ",e)
         sweepStr,lInfo,nInfo,rInfo=e
 
         nLineIdx,nPointIdx=nInfo
@@ -1418,7 +1417,66 @@ def getThreeSecSolsIdxL(secSolParentIdxL,treeNode):
 
     return secSolsL
 
-
 def getClosestIdx(vPoint,vLine):
     dist_2=np.sum((vPoint-vLine)**2,axis=1)
     return np.argmin(dist_2)
+
+def fillSecSols(treeNode):
+    if treeNode["structType"] == "solveType":
+        fillInitSecSols(treeNode)
+
+    #completeSecSolNode(treeNode)
+
+    if checkIfLastPartNode(treeNode):
+        return
+
+    secSolsDict=treeNode["secSolsDict"]
+    lTreeNode,rTreeNode=treeNode["dictList"]
+    lSecSolsD,rSecSolsD={},{}
+    vLines=treeNode["vLines"]
+    lParentBool=checkIfLastPartNode(lTreeNode)
+    rParentBool=checkIfLastPartNode(rTreeNode)
+
+    for centerStr in secSolsDict:
+        threeSecSolIdxL=secSolsDict[centerStr]["threeSecSolIdxL"]
+        for threeSecSolIdx in threeSecSolIdxL:
+            sweepStr,lInfo,nInfo,rInfo=threeSecSolIdx
+            nLineIdx,nPointIdx=nInfo
+            newVel=vLines[nLineIdx][nPointIdx]
+            newCentStr=npArray2Str(newVel)
+
+            if newCentStr not in lSecSolsD:
+                if lParentBool:
+                    lSecSolsD[newCentStr]={"simpleSecSolIdxL":[]}
+                else:
+                    lSecSolsD[newCentStr]={"simpleSecSolIdxL":[],
+                                           "threeSecSolIdxL":[]}
+
+                if rParentBool:
+                    rSecSolsD[newCentStr]={"simpleSecSolIdxL":[]}
+                else:
+                    rSecSolsD[newCentStr]={"simpleSecSolIdxL":[],
+                                           "threeSecSolIdxL":[]}
+
+            lSecSolsD[newCentStr]["simpleSecSolIdxL"].append(lInfo)
+            rSecSolsD[newCentStr]["simpleSecSolIdxL"].append(rInfo)
+
+            if lParentBool:
+                lSecSolParentIdxWithNonesL=getSecSolParentIdxWithNonesL(centerStr,lTreeNode)
+                lThreeSecSolIdxL=getThreeSecSolsIdxL(lSecSolParentIdxWithNonesL,lTreeNode)
+                lSecSolsD[newCentStr]["threeSecSolIdxL"].append(lThreeSecSolIdxL)
+
+            if rParentBool:
+                rSecSolParentIdxWithNonesL=getSecSolParentIdxWithNonesL(centerStr,rTreeNode)
+                rThreeSecSolIdxL=getThreeSecSolsIdxL(lSecSolParentIdxWithNonesL,rTreeNode)
+                rSecSolsD[newCentStr]["threeSecSolIdxL"].append(rThreeSecSolIdxL)
+
+    #Pushing the values on the child nodes
+    print(colored(lTreeNode["name"],"magenta"))
+    lTreeNode["secSolsDict"]=lSecSolsD
+    print(colored(rTreeNode["name"],"magenta"))
+    rTreeNode["secSolsDict"]=rSecSolsD
+
+    #Doing the recursive call on both child nodes
+    fillSecSols(lTreeNode)
+    fillSecSols(rTreeNode)
