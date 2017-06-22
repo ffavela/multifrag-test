@@ -241,11 +241,11 @@ print("Testing the getSimpleSecSolIdxWithNonesL function")
 secSolParentList=getSecSolParentIdxWithNonesL('[0.0, 0.0, 7.326472906898222]',oxyDict)
 print(secSolParentList)
 
-print("")
-print("Testing the getThreeSecSolsIdxL function")
-secSolList=getThreeSecSolsIdxL(secSolParentList,oxyDict)
-for e in secSolList:
-    print(e)
+# print("")
+# print("Testing the getThreeSecSolsIdxL function")
+# secSolList=getThreeSecSolsIdxL(secSolParentList,oxyDict)
+# for e in secSolList:
+#     print(e)
 
 
 # print("")
@@ -258,21 +258,24 @@ for e in secSolList:
 # fillInitSecSols(alphaBDict)
 # printNode(alphaBDict)
 
-print("")
-print(colored("Now testing the fillSecSols function on the alphaB","red"))
-fillSecSols(alphaBDict)
-printNode(alphaBDict)
+# print("")
+# print(colored("Now testing the fillSecSols function on the alphaB","red"))
+# fillSecSols(alphaBDict)
+# printNode(alphaBDict)
+
+# print("")
+# print(colored("Now testing the fillSecSols function on the oxyDict","red"))
+# fillSecSols(oxyDict)
+# printNode(oxyDict)
+
+# print("")
+# print("Testing the getClosestIdx function")
+# vLines=oxyDict["vLines"][0]
+# print(getClosestIdx(np.array([2.63729793,0.93756194,11.78698489]),vLines))
 
 print("")
-print(colored("Now testing the fillSecSols function on the oxyDict","red"))
-fillSecSols(oxyDict)
-printNode(oxyDict)
-
-print("")
-print("Testing the getClosestIdx function")
-vLines=oxyDict["vLines"][0]
-print(getClosestIdx(np.array([2.63729793,0.93756194,11.78698489]),vLines))
-
+print("Calling the fillSecSolsAlongTree ")
+fillSecSolsAlongTree(initDict)
 #Printing the entire tree
 print("Printing the entire tree")
 printTree(initDict)

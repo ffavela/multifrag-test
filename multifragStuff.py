@@ -1448,8 +1448,31 @@ def getClosestIdx(vPoint,vLine):
     dist_2=np.sum((vPoint-vLine)**2,axis=1)
     return np.argmin(dist_2)
 
-def fillSecSols(treeNode):
+def fillSecSolsAlongTree(treeNode):
+    print("Entering the fillSecSolsAlongTree")
+    #Check if it has children
+    if "dictList" not in treeNode:
+        return
 
+    lNode,rNode=treeNode["dictList"]
+
+    if "structType" in lNode and lNode["structType"]=="solveType":
+        print("fillSecSolsAlongTree left node")
+        fillSecSols(lNode)
+        fillSecSolsAlongTree(rNode)
+        return
+    elif "structType" in rNode and rNode["structType"]=="solveType":
+        print("fillSecSolsAlongTree right node")
+        fillSecSols(rNode)
+        fillSecSolsAlongTree(lNode)
+        return
+
+    print(colored("In fillSecSolsAlongTree this should be printed once at the end!!","magenta"))
+
+    return
+
+
+def fillSecSols(treeNode):
     if "structType" in treeNode and treeNode["structType"] == "solveType":
         fillInitSecSols(treeNode)
 
