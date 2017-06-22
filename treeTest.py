@@ -268,10 +268,10 @@ print(colored("Now testing the fillSecSols function on the oxyDict","red"))
 fillSecSols(oxyDict)
 printNode(oxyDict)
 
-# print("")
-# print("Testing the getClosestIdx function")
-# vLines=oxyDict["vLines"][0]
-# print(getClosestIdx(np.array([2.63729793,0.93756194,11.78698489]),vLines))
+print("")
+print("Testing the getClosestIdx function")
+vLines=oxyDict["vLines"][0]
+print(getClosestIdx(np.array([2.63729793,0.93756194,11.78698489]),vLines))
 
 #Printing the entire tree
 print("Printing the entire tree")

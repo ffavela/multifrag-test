@@ -16,4 +16,9 @@ DONE
 
 - Make a plot, and a gif of the CM line of two particles. DONE
 
-- Solve completely a case with a binary tree.
+- Solve completely a case with a binary tree. DONE
+
+- Clean the TODO list
+
+- Test thoroughly the getSecSolParentIdxWithNonesL2 and the
+  fillSecSols do higher order fragmentations.
