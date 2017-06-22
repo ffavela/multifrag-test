@@ -1316,11 +1316,11 @@ def getSecSolParentIdxWithNonesL(centerStr,treeNode):
 
     secSolParentIdxL=[]
     for i in range(len(solIdxList)):
-        lineParAndOffsets=getLineParIdxsAndOffsets(i,treeNode)
+        lineIdx=idxLineList[i]
+        lineParAndOffsets=getLineParIdxsAndOffsets(lineIdx,treeNode)
         sweepStr,parIdx1,parIdx2,offIdxVal=lineParAndOffsets
         solIdxSubL=solIdxList[i]
 
-        lineIdx=idxLineList[i]
         for solIdx in solIdxSubL:
             if sweepStr == "left":
                 theEntry=[sweepStr,
