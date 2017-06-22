@@ -1472,11 +1472,34 @@ def fillSecSolsAlongTree(treeNode):
     return
 
 
+def completeSecSolNode(treeNode):
+    #make sure the tree node was "properly" prefilled
+    if "secSolsDict" not in treeNode:
+        print(colored("Something went really wrong, secSolsDict was not found","magenta"))
+        return
+
+    secSolsDict=treeNode["secSolsDict"]
+
+    fMass=treeNode["fMass"]
+    vLines=treeNode["vLines"]
+    for centerStr in secSolsDict:
+        secSolsDict[centerStr]["labVSols"]=[]
+        secSolsDict[centerStr]["labEnergy"]=[]
+        simpleSecSolL=secSolsDict[centerStr]["simpleSecSolIdxL"]
+        for sSecSol in simpleSecSolL:
+            lineIdx,pointIdx=sSecSol
+            vLabVal=vLines[lineIdx][pointIdx]
+            secSolsDict[centerStr]["labVSols"].append(vLabVal)
+
+            vLabValNorm=np.linalg.norm(vLabVal)
+            labEnergy=1.0/2.0*fMass*(vLabValNorm/100.0)**2
+            secSolsDict[centerStr]["labEnergy"].append(labEnergy)
+
 def fillSecSols(treeNode):
     if "structType" in treeNode and treeNode["structType"] == "solveType":
         fillInitSecSols(treeNode)
 
-    #completeSecSolNode(treeNode)
+    completeSecSolNode(treeNode)
 
     if checkIfLastPartNode(treeNode):
         return
