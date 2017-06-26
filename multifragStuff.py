@@ -1484,6 +1484,8 @@ def completeSecSolNode(treeNode):
     vLines=treeNode["vLines"]
     for centerStr in secSolsDict:
         secSolsDict[centerStr]["labVSols"]=[]
+        secSolsDict[centerStr]["vCML"]=[]
+        secSolsDict[centerStr]["vCMMag"]=[]
         secSolsDict[centerStr]["labEnergy"]=[]
         simpleSecSolL=secSolsDict[centerStr]["simpleSecSolIdxL"]
         for sSecSol in simpleSecSolL:
@@ -1494,6 +1496,13 @@ def completeSecSolNode(treeNode):
             vLabValNorm=np.linalg.norm(vLabVal)
             labEnergy=1.0/2.0*fMass*(vLabValNorm/100.0)**2
             secSolsDict[centerStr]["labEnergy"].append(labEnergy)
+
+            centerVcm=str2NPArray(centerStr)
+            vCM=vLabVal-centerVcm
+            secSolsDict[centerStr]["vCML"].append(vCM)
+
+            vCMMag=np.linalg.norm(vCM)
+            secSolsDict[centerStr]["vCMMag"].append(vCMMag)
 
 def fillSecSols(treeNode):
     if "structType" in treeNode and treeNode["structType"] == "solveType":
