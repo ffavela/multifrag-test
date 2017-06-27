@@ -305,27 +305,27 @@ class Arrow3D(FancyArrowPatch):
         FancyArrowPatch.draw(self, renderer)
 
 
-# fig = plt.figure()
-# ax = fig.gca(projection='3d')
+fig = plt.figure()
+ax = fig.gca(projection='3d')
 
-# plt.xlim(-15, 15)
-# plt.ylim(-15, 15)
+plt.xlim(-15, 15)
+plt.ylim(-15, 15)
 
-# plotAllLines(initDict,ax)
-# ax.legend()
+plotAllLines(initDict,ax)
+ax.legend()
 
-# firstVelMag=initDict["redVcm"]
-# a = Arrow3D([0, 0], [0, 0], [0, firstVelMag], mutation_scale=20,
-#             lw=1, arrowstyle="-|>", color="k")
+firstVelMag=initDict["redVcm"]
+a = Arrow3D([0, 0], [0, 0], [0, firstVelMag], mutation_scale=20,
+            lw=1, arrowstyle="-|>", color="k")
 
-# ax.add_artist(a)
+ax.add_artist(a)
 
-# u = np.linspace(0, 2 * np.pi, 100)
-# v = np.linspace(0, np.pi, 100)
+u = np.linspace(0, 2 * np.pi, 100)
+v = np.linspace(0, np.pi, 100)
 
-# ax.set_zlim3d(-5, 20)
+ax.set_zlim3d(-5, 20)
 
-# plt.show()
+plt.show()
 
 ############################################
 ####The plotting part finish################

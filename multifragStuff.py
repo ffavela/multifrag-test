@@ -6,207 +6,12 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import matplotlib.pyplot as plt
 
+from simpleKinematics import *
+from miscellaneous import *
 import copy
 
 from termcolor import colored
 
-easyStr="#"*50
-
-c=299792458 #in m/s
-#Masses in MeV/c^2
-def getEcm(mE1,mE2,E1L):
-    vels=getVelcm(mE1,mE2,E1L)
-    # mE1=getEMass(iso1)
-    # mE2=getEMass(iso2)
-    #Alternative way
-    # mu=mE1*mE2/(mE1+mE2)
-    # rVel=vels[0]-vels[1]
-    # print 1.0/2.0*mu*rVel**2
-    E1cm=0.5*(vels[0]/c)**2*mE1
-    E2cm=0.5*(vels[1]/c)**2*mE2
-    Ecm=E1cm+E2cm
-    return E1cm,E2cm,Ecm
-
-def getEcmsFromECM2(m1,m2,ECM):
-    #For example, in a decay ECM=Q
-    # m1=getEMass(iso1)
-    # m2=getEMass(iso2)
-    mu=1.0*m1*m2/(m1+m2)
-    P=sqrt(2.0*mu*ECM)/c
-    E1=0.5*(P*c)**2/m1
-    E2=0.5*(P*c)**2/m2
-    return E1,E2
-
-def getAvailEnergy(m1,m2,m3,m4,E1L,E2L=0):
-    E1cm,E2cm,Ecm=getEcm(m1,m2,E1L)
-    Q=getQVal(m1,m2,m3,m4)
-    return Ecm+Q
-
-def getAvailEnergy0(m1,me1,me2,Ecm):
-    Q=getQVal(m1,0,me2,me2)
-    return Ecm+Q
-
-def getAllVs(iso1,iso2,isoE,isoR,E1L):
-    v1cm,v2cm,Vcm=getVelcm(iso1,iso2,E1L)
-    EcmAvail=getAvailEnergy(iso1,iso2,isoE,isoR,E1L)
-    ejectE,resE=getEcmsFromECM(isoE,isoR,EcmAvail)
-    print(ejectE,resE)
-    vE=sqrt(2.0*ejectE/getEMass(isoE))*c
-    vR=sqrt(2.0*resE/getEMass(isoR))*c
-
-def getVelcm(m1,m2,E1):
-    # m1=getEMass(iso1)
-    # m2=getEMass(iso2)
-    v1=sqrt(2.0*E1/m1)*c
-    v2=0 #assuming it is still
-    Vcm=(1.0*v1*m1+1.0*v2*m2)/(m1+m2)
-    v1p=v1-Vcm
-    v2p=v2-Vcm
-    return v1p,v2p,Vcm
-
-def getQVal(m1,m2,m3,m4):
-    Q=(m1+m2-m3-m4)
-    return Q
-
-#Not using relativistic case here, these are betas (v/c)
-def getSimpleVels(m1,E1cm,m2,E2cm):
-    v1cm=sqrt(2.0*E1cm/m1)
-    v2cm=sqrt(2.0*E2cm/m2)
-    return v1cm,v2cm
-
-def printNode(nodeFromTree):
-    if nodeFromTree == {}:
-        return
-
-    # print(binTreeDict)
-    print("")
-    print("name is ", nodeFromTree["name"])
-
-    if "dictList" not in nodeFromTree:
-        return
-
-    for e in nodeFromTree:
-        if e != "name" and e != "dictList":
-            print(e,nodeFromTree[e])
-
-    print("The child names are")
-    printChildNames(nodeFromTree["dictList"])
-
-def printTree(binTreeDict):
-    if binTreeDict == {}:
-        return
-
-    # print(binTreeDict)
-    print("")
-    print("name is ", binTreeDict["name"])
-
-    if "dictList" not in binTreeDict:
-        return
-
-    for e in binTreeDict:
-        if e != "name" and e != "dictList" and e != "solsDict":
-            print(e,binTreeDict[e])
-
-    if  "solsDict" in binTreeDict:
-        print("solsDict")
-        for sphereCenterStr in binTreeDict["solsDict"]:
-            print("sphereCenterStr = ", sphereCenterStr)
-            for subVal in binTreeDict["solsDict"][sphereCenterStr]:
-                if subVal == "vLabSols":
-                    print(colored(subVal,"yellow"))
-                else:
-                    print(subVal)
-                print(binTreeDict["solsDict"][sphereCenterStr][subVal])
-    print("The child names are")
-    printChildNames(binTreeDict["dictList"])
-
-    for e in binTreeDict["dictList"]:
-        printTree(e)
-
-def printTreeOnlySolsPart(binTreeDict):
-    if binTreeDict == {}:
-        return
-
-    # print(binTreeDict)
-    if "dictList" not in binTreeDict:
-        return
-
-    if  "solsDict" in binTreeDict:
-        print("")
-        print(colored("name is "+ binTreeDict["name"],"magenta"))
-        print(colored("structType = "+binTreeDict["structType"],"magenta"))
-
-        print("solsDict")
-        for sphereCenterStr in binTreeDict["solsDict"]:
-            print("sphereCenterStr = ", sphereCenterStr)
-            for subVal in binTreeDict["solsDict"][sphereCenterStr]:
-                if subVal == "vLabSols":
-                    print(colored(subVal,"red"))
-                elif subVal == "vCMSols":
-                    print(colored(subVal,"green"))
-                else:
-                    print(subVal)
-                print(binTreeDict["solsDict"][sphereCenterStr][subVal])
-
-
-    for e in binTreeDict["dictList"]:
-        printTreeOnlySolsPart(e)
-
-
-def printTreeOnlyCleanSolsPart(binTreeDict):
-    if binTreeDict == {}:
-        return
-
-    # print(binTreeDict)
-    if "dictList" not in binTreeDict:
-        return
-
-    if  "clnSD" in binTreeDict:
-        print("")
-        print(colored("name is "+ binTreeDict["name"],"magenta"))
-        print(colored("structType = "+binTreeDict["structType"],"magenta"))
-
-        print("clnSD")
-        for sphereCenterStr in binTreeDict["clnSD"]:
-            print("sphereCenterStr = ", sphereCenterStr)
-            for subVal in binTreeDict["clnSD"][sphereCenterStr]:
-                if subVal == "vLabSols":
-                    print(colored(subVal,"red"))
-                elif subVal == "vCMSols":
-                    print(colored(subVal,"green"))
-                else:
-                    print(subVal)
-                print(binTreeDict["clnSD"][sphereCenterStr][subVal])
-
-
-    for e in binTreeDict["dictList"]:
-        printTreeOnlyCleanSolsPart(e)
-
-def printChildNames(dictList):
-    for i in range(len(dictList)):
-        if "name" not in dictList[i]:
-            continue
-        print(dictList[i]["name"])
-
-def getFinalMass(dictNode):
-    if "mass" not in dictNode:
-        if dictNode["type"] == "set":
-            leftDict=dictNode["dictList"][0]
-            rightDict=dictNode["dictList"][1]
-            mLeft=getFinalMass(leftDict)
-            mRight=getFinalMass(leftDict)
-            m=mLeft+mRight
-            return m
-        return None
-
-    m=dictNode["mass"]
-    if "exE" not in dictNode:
-        myExE=0
-    else:
-        myExE=dictNode["exE"]
-
-    m+=myExE
-    return m
 
 def globalCompleteTree(binTreeDict):
     fillInit(binTreeDict)
@@ -353,93 +158,6 @@ def pushNewEcmAndVels(E1cm,E2cm,dictNode,maxVel):
     dictNode[1]["BVcm"]=BVcm2
     dictNode[1]["redVcm"]=BVcm2*100
     dictNode[1]["BVLabMax"]=maxVel+BVcm2*100
-
-def getAvailE(dictNode):
-    if "Ecm" not in dictNode:
-        return None
-    eCm=dictNode["Ecm"]
-    if "Q" not in dictNode:
-        qVal=0
-    else:
-        qVal=dictNode["Q"]
-    eAvail=eCm+qVal
-    return eAvail
-
-def getChildMasses(dictNode):
-    if "dictList" not in dictNode:
-        return None
-    leftDict=dictNode["dictList"][0]
-    rightDict=dictNode["dictList"][1]
-
-    if "fMass" not in leftDict or "fMass" not in rightDict:
-        return None
-    leftMass=leftDict["fMass"]
-    rightMass=rightDict["fMass"]
-    return leftMass,rightMass
-
-def getNodeQVal(dictNode):
-    if "fMass" not in dictNode:
-        return None
-
-    if "dictList" not in dictNode:
-        return None
-
-    for e in dictNode["dictList"]:
-        if "fMass" not in e:
-            return None
-
-    finalMass=dictNode["fMass"]
-    daugthersMass=0
-    for e in dictNode["dictList"]:
-        daugthersMass+=e["fMass"]
-
-    Q=finalMass-daugthersMass
-
-    return Q
-
-def checkIfNodeIsFreePart(dictNode):
-    if dictNode == {}:
-        return None
-    if "type" not in dictNode:
-        return None
-    if "dictList" not in dictNode:
-        return None
-    dList=dictNode["dictList"]
-    if dList[0]=={} and dList[1]=={}:
-        return True
-    return None
-
-generalList=[]
-def getFreePartRoute(binTreeDict):
-    if binTreeDict == {}:
-        return None
-    if "dictList" not in binTreeDict:
-        return None
-
-    myDict=binTreeDict["dictList"]
-    for i in range(len(myDict)):
-        myVal=checkIfNodeIsFreePart(myDict[i])
-        if myVal != None:
-            generalList.append(i)
-            return True
-
-    for i in range(len(myDict)):
-        myVal=getFreePartRoute(myDict[i])
-        if myVal != None:
-            generalList.append(i)
-            return True
-
-def getDirectFreeRoute(binTreeDict):
-    getFreePartRoute(binTreeDict)
-    generalList.reverse()
-    directFreeRoute=generalList
-    return generalList
-
-def spherToCart(r,theta,phi):
-    x=r*sin(theta)*cos(phi)
-    y=r*sin(theta)*sin(phi)
-    z=r*cos(theta)
-    return x,y,z
 
 def getStraightLinePoints(theta,phi,vLabMax,part=2000):
     vArray=np.linspace(0,vLabMax,part)
@@ -636,90 +354,6 @@ def pullLinesFromNode(binTreeDict):
     binTreeDict["lParentsIdxs"]=lineParentsIdxList
     return True
 
-def checkIfAllAreEmpty(lines):
-    emptyNpA=np.array([])
-    myEmptyArrays=[emptyNpA for e in lines]
-    if lines == myEmptyArrays:
-        return True
-    return False
-
-def checkIfLastPartNode(dictNode):
-    childTypes=getChildTypes(dictNode)
-    if childTypes == None:
-        return None
-    #Important if there is a connection to a detector
-    if "detector" in childTypes:
-        return True
-    return False
-
-def getChildTypes(dictNode):
-    if "dictList" not in dictNode:
-        return None
-    leftDict=dictNode["dictList"][0]
-    rightDict=dictNode["dictList"][1]
-
-    if "type" not in leftDict:
-        leftType=None
-    else:
-        leftType=leftDict["type"]
-    if "type" not in rightDict:
-        rightType=None
-    else:
-        rightType=rightDict["type"]
-
-    return [rightType,leftType]
-
-
-def getChildVels(dictNode):
-    if "dictList" not in dictNode:
-        return None
-    leftDict=dictNode["dictList"][0]
-    rightDict=dictNode["dictList"][1]
-
-    if "redVcm" not in leftDict or "redVcm" not in rightDict:
-        return None
-    leftVel=leftDict["redVcm"]
-    rightVel=rightDict["redVcm"]
-    return [leftVel,rightVel]
-
-def findDetectIndex(aList):
-    for i in range(len(aList)):
-        if "type" not in aList[i]:
-            continue
-        if aList[i]["type"] == "detector":
-            return i
-    return None
-
-def getOtherVal(j):
-    if j not in [0,1]:
-        return None
-    if j==0:
-        return 1
-    return 0
-
-def plotAllLines(binTreeDict,ax):
-    if binTreeDict == {}:
-        return
-
-    if "dictList" not in binTreeDict:
-        return
-
-    if "vLines" in binTreeDict:
-        myVLines=binTreeDict["vLines"]
-    else:
-        myVLines=[]
-    for line in myVLines:
-        plotNoDisplay(ax,line,name=binTreeDict["name"])
-
-    for e in binTreeDict["dictList"]:
-        plotAllLines(e,ax)
-
-def plotNoDisplay(ax,lineArray,name="defaultName"):
-    x=lineArray[ : ,0]
-    y=lineArray[ : ,1]
-    z=lineArray[ : ,2]
-    ax.plot(x,y,z,label=name)
-
 def getSphereLineSols(vSCent,vSRad,vLine):
     i=getTrainSolIdx(vSCent,vSRad,vLine,i=0)
     cmNormVects=[]
@@ -787,11 +421,8 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     solsD4B2Solve=getSolVelsEnergiesEtcInNode(branch2Solve,\
                                                    solsD4B2Solve)
     branch2Solve["solsDict"]=solsD4B2Solve
-
     vMagL=[branch2Solve["redVcm"],branch2Go["redVcm"]]
-
     dict4Branch2Go=getComplementarySolsDict(solsD4B2Solve,vMagL)
-
     fillBool=fillMajorSols(branch2Go,freePartRoute[1:],dict4Branch2Go)
 
     return fillBool
@@ -990,7 +621,6 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
                 sphereSolsDict[sphereCenterStr]["thetaPhi"]=[]
             sphereSolsDict[sphereCenterStr]["thetaPhi"].append(thetaPhiList)
 
-
     return sphereSolsDict
 
 def getMidPOffsets(vLine1,vLine2,vRad):
@@ -1075,18 +705,6 @@ def getSolListInParents(treeNode,solIdxList):
         rightIdxStuff=[pIdx[1],oSet[1]+solIdx]
         sols4RightNode.append(sols4RightNode)
     return [leftIdxStuff,rightIdxStuff]
-
-def str2NPArray(myString):
-    #In principle, all the strings were numpy arrays that where pre
-    #converted to lists b4 the string convertion.
-    myNPArray=np.array([float(t) for t in myString[1:-1].split(",")])
-    return myNPArray
-
-def npArray2Str(myNpArray):
-    #Getting rid of the -0. It messes with the string convertion
-    myNpArray[myNpArray==0.] = 0.
-    myString=str(myNpArray.tolist())
-    return myString
 
 def getVLabCIdxP(vCentStr,solsDict):
     for centStr in solsDict:
@@ -1225,14 +843,6 @@ def cleanRestB2Solve(branch2Solve):
     print(colored("clnSD","red"))
     print(colored(clnSD,"red"))
     print(colored("Ending printing in cleanRestB2Solve","yellow"))
-
-def getThetaPhi(vLab):
-    x,y,z=vLab
-    vMag=np.linalg.norm(vLab)
-    theta=acos(z/vMag)
-    phi=atan2(y,x)
-    #Using degrees for now
-    return [degrees(theta),degrees(phi)]
 
 ###############################
 #The secondary solutions part##
@@ -1471,7 +1081,6 @@ def fillSecSolsAlongTree(treeNode):
 
     return
 
-
 def completeSecSolNode(treeNode):
     #make sure the tree node was "properly" prefilled
     if "secSolsDict" not in treeNode:
@@ -1487,6 +1096,7 @@ def completeSecSolNode(treeNode):
         secSolsDict[centerStr]["vCML"]=[]
         secSolsDict[centerStr]["vCMMag"]=[]
         secSolsDict[centerStr]["labEnergy"]=[]
+        secSolsDict[centerStr]["thetaPhi"]=[]
         simpleSecSolL=secSolsDict[centerStr]["simpleSecSolIdxL"]
         for sSecSol in simpleSecSolL:
             lineIdx,pointIdx=sSecSol
@@ -1503,6 +1113,11 @@ def completeSecSolNode(treeNode):
 
             vCMMag=np.linalg.norm(vCM)
             secSolsDict[centerStr]["vCMMag"].append(vCMMag)
+
+            #Getting the lab angles
+            thetaPhi=getThetaPhi(vLabVal)
+            secSolsDict[centerStr]["thetaPhi"].append(thetaPhi)
+
 
 def fillSecSols(treeNode):
     if "structType" in treeNode and treeNode["structType"] == "solveType":
