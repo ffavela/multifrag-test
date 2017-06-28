@@ -13,20 +13,33 @@ import copy
 from termcolor import colored
 
 
-def globalCompleteTree(binTreeDict):
+def makeTreeCompletion(binTreeDict):
+    makeInitialTreeCompletion(binTreeDict)
+    print("Trying to pull every line automatically")
+    generalList=getDirectFreeRoute(binTreeDict)
+    if generalList == []:
+        print("Error!!! Are you sure you filled \
+        the free part dict correctly?!")
+        return False
+
+    boolPull=pullEveryLine(binTreeDict,generalList)
+    if boolPull == True:
+        print("Success in pulling every line")
+    else:
+        print("Unsuccessful pull :'-(")
+        return False
+
+    fillBool=fillMajorSols(binTreeDict,generalList)
+    print("The fillBool is ",fillBool)
+    fillSecSolsAlongTree(binTreeDict)
+    #Put here the special vLine for the initial dict
+
+
+def makeInitialTreeCompletion(binTreeDict):
     fillInit(binTreeDict)
     completeTree0(binTreeDict)
     completeTree1(binTreeDict)
     completeTree2(binTreeDict)
-    # print("Trying to pull every line automatically")
-    # boolPull=pullEveryLine(binTreeDict,generalList)
-    # if boolPull == True:
-    #     print("Success in pulling every line")
-    # else:
-    #     print("Unsuccessful pull :'-(")
-
-    #Put here the special vLine for the initial dict
-
 
 def getInitSolsDict(binTreeDict):
     #This is our free CM solution, we at least know this one! ;-)
@@ -487,7 +500,6 @@ def cleanDict(binTreeDict,freePartRoute):
 
     # clnSD=getClnSD(binTreeDict,clnSDR)
     # print(colored(clnSD,"blue"))
-
 
 def getLocalCleanDict(b2SolD,b2GD,referenceDict):
     #All of the dicts need a solsDict entry, the b2GD needs a vCMPairL sub entry
@@ -1117,7 +1129,6 @@ def completeSecSolNode(treeNode):
             #Getting the lab angles
             thetaPhi=getThetaPhi(vLabVal)
             secSolsDict[centerStr]["thetaPhi"].append(thetaPhi)
-
 
 def fillSecSols(treeNode):
     if "structType" in treeNode and treeNode["structType"] == "solveType":
