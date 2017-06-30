@@ -132,10 +132,10 @@ def printFreePartProp(initDict):
     print("The name is "+freePartDict["name"])
     solsDict=freePartDict["solsDict"]
     for centStr in solsDict:
-        print(centStr)
+        print("center = "+centStr)
         centSol=solsDict[centStr]
         for energySol in centSol["labEnergy"]:
-            print(energySol)
+            print(colored(energySol,"magenta"))
 
 def getFreePartDict(treeNode,freePartRoute):
     if len(freePartRoute) == 1:
@@ -144,6 +144,12 @@ def getFreePartDict(treeNode,freePartRoute):
     freePartDict=getFreePartDict(newNode,freePartRoute[1:])
     return freePartDict
 
+def printLastNodes(binTreeDict):
+    print("Properties at last particle")
+    printFreePartProp(binTreeDict)
+    print("")
+    print("Properties at detectors")
+    printPropAtDetector(binTreeDict)
 #####################################
 ######printing stuff part end########
 #####################################
@@ -376,8 +382,6 @@ def fillDetectorRouteD(treeNode,detectorRouteD,currentRoute=[]):
         #Not interested here
         return
 
-    print("Current name is "+treeNode["name"])
-
     dictList=treeNode["dictList"]
     for i in range(len(dictList)):
         newNode=dictList[i]
@@ -395,7 +399,31 @@ def getDName(treeNode):
             return childD["name"]
     print("Error, should not have arrived here!!")
 
+def printPropAtDetector(binTreeDict):
+    dRouteD={}
+    fillDetectorRouteD(binTreeDict,dRouteD)
 
+    for dName in dRouteD:
+        print("detector "+dName)
+        routeL=dRouteD[dName]
+        myNode=getMyNode(binTreeDict,routeL)
+        print(colored("particle Name "+myNode["name"],"red"))
+        mySolsStr="solsDict"
+        if "secSolsDict" in myNode:
+            mySolsStr="secSolsDict"
+        mySolsD=myNode[mySolsStr]
+        for centStr in mySolsD:
+            print("center = "+centStr)
+            energyList=mySolsD[centStr]["labEnergy"]
+            print(colored(energyList,"magenta"))
+
+def getMyNode(treeNode,routeL):
+    if routeL == []:
+        return treeNode
+    i=routeL[0]
+    newTNode=treeNode["dictList"][i]
+    myNode=getMyNode(newTNode,routeL[1:])
+    return myNode
 
 #############################################
 #########simple tree operarions end##########
