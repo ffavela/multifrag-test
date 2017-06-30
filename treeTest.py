@@ -327,6 +327,10 @@ initDict["dictList"]=[helium3Dict,neutronDict]
 
 makeTreeCompletion(initDict)
 printTree(initDict)
+
+print("Testing the free part dict function")
+printFreePartProp(initDict)
+
 print(colored(easyStr,"red"))
 
 

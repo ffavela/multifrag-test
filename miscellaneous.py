@@ -121,6 +121,28 @@ def printChildNames(dictList):
             continue
         print(dictList[i]["name"])
 
+def printFreePartProp(initDict):
+    #First get the free part route.
+
+    # freePartRoute=getDirectFreeRoute(initDict)
+    freePartRoute=generalList #This should be improved
+    print("The freePartRoute is",freePartRoute)
+    #Now get the dictionary that is at the end of the route
+    freePartDict=getFreePartDict(initDict,freePartRoute)
+    print("The name is "+freePartDict["name"])
+    solsDict=freePartDict["solsDict"]
+    for centStr in solsDict:
+        print(centStr)
+        centSol=solsDict[centStr]
+        for energySol in centSol["labEnergy"]:
+            print(energySol)
+
+def getFreePartDict(treeNode,freePartRoute):
+    if len(freePartRoute) == 1:
+        return treeNode["dictList"][freePartRoute[0]]
+    newNode=treeNode["dictList"][freePartRoute[0]]
+    freePartDict=getFreePartDict(newNode,freePartRoute[1:])
+    return freePartDict
 
 #####################################
 ######printing stuff part end########
@@ -255,6 +277,8 @@ def checkIfNodeIsFreePart(dictNode):
         return True
     return None
 
+#This is dangerous, bad idea to use global variables, I'll leave it
+#for now.
 generalList=[]
 def getFreePartRoute(binTreeDict):
     if binTreeDict == {}:
@@ -340,6 +364,38 @@ def getOtherVal(j):
     if j==0:
         return 1
     return 0
+
+def fillDetectorRouteD(treeNode,detectorRouteD,currentRoute=[]):
+    #To be useful call it on a binary dict tree
+    if checkIfLastPartNode(treeNode):
+        #If here then it was connected to a detector
+        dName=getDName(treeNode)
+        detectorRouteD[dName]=currentRoute
+        return
+    if checkIfNodeIsFreePart(treeNode):
+        #Not interested here
+        return
+
+    print("Current name is "+treeNode["name"])
+
+    dictList=treeNode["dictList"]
+    for i in range(len(dictList)):
+        newNode=dictList[i]
+        newRoute=currentRoute+[i]
+        fillDetectorRouteD(newNode,detectorRouteD,newRoute)
+    return
+
+def getDName(treeNode):
+    #Only to be called on a fragment node that has a detector as a
+    #child!!!
+    dictList=treeNode["dictList"]
+    for e in range(len(dictList)):
+        childD=dictList[e]
+        if "type" in childD and childD["type"]=="detector":
+            return childD["name"]
+    print("Error, should not have arrived here!!")
+
+
 
 #############################################
 #########simple tree operarions end##########
