@@ -30,37 +30,37 @@ tI="initial"
 #################################################
 
 ####Working with this one 4 now################
-# initDict={"type":tI,"name":"12C+12C","massP":m12C,
-#           "massT":m12C,"ELab":beamE}
-# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
-# beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
-# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+initDict={"type":tI,"name":"12C+12C","massP":m12C,
+          "massT":m12C,"ELab":beamE}
+oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
+beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
+carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
 
-# # alphaSysDict={"type":tS,"name":"4He+4He"}
-# alphaADict={"type":tP,"name":"4HeA","mass":m4He}
-# alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
-# alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
-# # alphaDDict={"type":tP,"name":"4He","mass":m4He}
-# # alphaEDict={"type":tP,"name":"4He","mass":m4He}
+# alphaSysDict={"type":tS,"name":"4He+4He"}
+alphaADict={"type":tP,"name":"4HeA","mass":m4He}
+alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
+alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
+# alphaDDict={"type":tP,"name":"4He","mass":m4He}
+# alphaEDict={"type":tP,"name":"4He","mass":m4He}
 
-# #Defining the detectors
-# d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
-# d2Dict={"type":tD,"name":"d2","angles":[radians(15),radians(20)]}
-# d3Dict={"type":tD,"name":"d3","angles":[radians(140),radians(20)]}
-# # d4Dict={"type":tD,"name":"d4"}
+#Defining the detectors
+d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(35),radians(20)]}
+d3Dict={"type":tD,"name":"d3","angles":[radians(140),radians(40)]}
+# d4Dict={"type":tD,"name":"d4"}
 
-# #Completing the dictionaries
-# alphaBDict["dictList"]=[d3Dict,{}]
-# alphaADict["dictList"]=[{},{}]
-# alphaCDict["dictList"]=[d1Dict,{}]
+#Completing the dictionaries
+alphaBDict["dictList"]=[d3Dict,{}]
+alphaADict["dictList"]=[{},{}]
+alphaCDict["dictList"]=[d1Dict,{}]
 
-# oxyDict["dictList"]=[alphaCDict,carbonDict]
+oxyDict["dictList"]=[alphaCDict,carbonDict]
 
-# beDict["dictList"]=[alphaADict,alphaBDict]
-# # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
-# carbonDict["dictList"]=[d2Dict,{}]
+beDict["dictList"]=[alphaADict,alphaBDict]
+# alphaSysDict["dictList"]=[alphaADict,alphaBDict]
+carbonDict["dictList"]=[d2Dict,{}]
 
-# initDict["dictList"]=[oxyDict,beDict]
+initDict["dictList"]=[oxyDict,beDict]
 
 #################################################
 ####Particle dict end quaternary sequential######
@@ -183,29 +183,29 @@ tI="initial"
 ##################################################
 ##########Particle dict ternary seq dpn###########
 ##################################################
-beamE=100
+# beamE=100
 
-initDict={"type":tI,"name":"d+d","massP":m2H,
-          "massT":m2H,"ELab":beamE}
-helium3Dict={"type":tP,"name":"3He","mass":m3He,"exE":18.5}
+# initDict={"type":tI,"name":"d+d","massP":m2H,
+#           "massT":m2H,"ELab":beamE}
+# helium3Dict={"type":tP,"name":"3He","mass":m3He,"exE":18.5}
 
-protonDict={"type":tP,"name":"p","mass":m1H}
-deuteronDict={"type":tP,"name":"d","mass":m2H}
-neutronDict={"type":tP,"name":"n","mass":m1n}
+# protonDict={"type":tP,"name":"p","mass":m1H}
+# deuteronDict={"type":tP,"name":"d","mass":m2H}
+# neutronDict={"type":tP,"name":"n","mass":m1n}
 
-#Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(17),radians(20)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(10),radians(45)]}
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(17),radians(20)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(12),radians(49)]}
 
-#Completing the dictionaries
-protonDict["dictList"]=[{},{}]
-deuteronDict["dictList"]=[d1Dict,{}]
-neutronDict["dictList"]=[d2Dict,{}]
+# #Completing the dictionaries
+# protonDict["dictList"]=[{},{}]
+# deuteronDict["dictList"]=[d1Dict,{}]
+# neutronDict["dictList"]=[d2Dict,{}]
 
-helium3Dict["dictList"]=[deuteronDict,protonDict]
-# # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
+# helium3Dict["dictList"]=[deuteronDict,protonDict]
+# # # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
 
-initDict["dictList"]=[helium3Dict,neutronDict]
+# initDict["dictList"]=[helium3Dict,neutronDict]
 
 ##################################################
 ##########Particle end dict ternary seq dpn#######
@@ -332,6 +332,8 @@ print("")
 print(colored("The energy print out function","yellow"))
 printLastNodes(initDict)
 
+genSimpVCMD=getGeneralSimplifiedVCMD(initDict)
+print(genSimpVCMD)
 print(colored(easyStr,"red"))
 
 
@@ -343,42 +345,32 @@ print(colored(easyStr,"red"))
 ####The plotting part#######################
 ############################################
 
-from matplotlib.patches import FancyArrowPatch
-from mpl_toolkits.mplot3d import proj3d
-class Arrow3D(FancyArrowPatch):
-
-    def __init__(self, xs, ys, zs, *args, **kwargs):
-        FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
-        self._verts3d = xs, ys, zs
-
-    def draw(self, renderer):
-        xs3d, ys3d, zs3d = self._verts3d
-        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, renderer.M)
-        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
-        FancyArrowPatch.draw(self, renderer)
-
-
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 
 plt.xlim(-15, 15)
 plt.ylim(-15, 15)
 
-# plotAllLines(initDict,ax)
-# ax.legend()
+plotAllLines(initDict,ax)
+ax.legend()
 
+modifyAx4Arrows(ax,genSimpVCMD)
 # firstVelMag=initDict["redVcm"]
 # a = Arrow3D([0, 0], [0, 0], [0, firstVelMag], mutation_scale=20,
 #             lw=1, arrowstyle="-|>", color="k")
 
-# ax.add_artist(a)
+# b = Arrow3D([0, 0], [0, 0.3*firstVelMag], [0, firstVelMag], mutation_scale=20,
+#             lw=1, arrowstyle="-|>", color="k")
 
-# u = np.linspace(0, 2 * np.pi, 100)
-# v = np.linspace(0, np.pi, 100)
+# ax.add_artist(a)
+# ax.add_artist(b)
+
+u = np.linspace(0, 2 * np.pi, 100)
+v = np.linspace(0, np.pi, 100)
 
 # ax.set_zlim3d(-5, 20)
 
-# plt.show()
+plt.show()
 
 ############################################
 ####The plotting part finish################

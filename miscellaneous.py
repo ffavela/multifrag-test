@@ -157,6 +157,19 @@ def printLastNodes(binTreeDict):
 #############################################
 #########plotting part#######################
 #############################################
+from matplotlib.patches import FancyArrowPatch
+from mpl_toolkits.mplot3d import proj3d
+class Arrow3D(FancyArrowPatch):
+
+    def __init__(self, xs, ys, zs, *args, **kwargs):
+        FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
+        self._verts3d = xs, ys, zs
+
+    def draw(self, renderer):
+        xs3d, ys3d, zs3d = self._verts3d
+        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, renderer.M)
+        self.set_positions((xs[0], ys[0]), (xs[1], ys[1]))
+        FancyArrowPatch.draw(self, renderer)
 
 def plotAllLines(binTreeDict,ax):
     if binTreeDict == {}:
@@ -180,6 +193,21 @@ def plotNoDisplay(ax,lineArray,name="defaultName"):
     y=lineArray[ : ,1]
     z=lineArray[ : ,2]
     ax.plot(x,y,z,label=name)
+
+
+def modifyAx4Arrows(ax,genSimpVCMD):
+    for centStr in genSimpVCMD:
+        vVal=str2NPArray(centStr)
+        vXVal,vYVal,vZVal=vVal
+        for vCMVal in genSimpVCMD[centStr]:
+            newVLab=vCMVal+vVal
+            vCMX,vCMY,vCMZ=newVLab
+            vCMArrow=Arrow3D([vXVal, vCMX], [vYVal, vCMY],
+                             [vZVal, vCMZ],
+                             mutation_scale=20,
+                             lw=1,
+                             arrowstyle="-|>", color="k")
+            ax.add_artist(vCMArrow)
 
 #############################################
 #########plotting part end###################
@@ -327,6 +355,14 @@ def checkIfLastPartNode(dictNode):
         return True
     return False
 
+def checkIfLastFragment(treeNode):
+    freePartBool=checkIfNodeIsFreePart(treeNode)
+    lastPartBool=checkIfLastPartNode(treeNode)
+
+    if freePartBool == True or lastPartBool == True:
+        return True
+    return False
+
 def getChildTypes(dictNode):
     if "dictList" not in dictNode:
         return None
@@ -424,6 +460,33 @@ def getMyNode(treeNode,routeL):
     newTNode=treeNode["dictList"][i]
     myNode=getMyNode(newTNode,routeL[1:])
     return myNode
+
+def fillGeneralSimplifiedVCMD(binTreeDict,genSimpVCMD):
+    #The binTreeDict needs to be solved at this point
+    solsStr="solsDict"
+    if "secSolsDict" in binTreeDict:
+        solsStr="secSolsDict"
+    mySolsD=binTreeDict[solsStr]
+    for centStr in mySolsD:
+        myVCML=mySolsD[centStr]["vCMSols"]
+        if centStr not in genSimpVCMD:
+            genSimpVCMD[centStr]=[]
+        genSimpVCMD[centStr]+=myVCML
+
+    lastFragCheckBool=checkIfLastFragment(binTreeDict)
+    if lastFragCheckBool == True:
+        return
+
+    leftNode=binTreeDict["dictList"][0]
+    rightNode=binTreeDict["dictList"][1]
+
+    fillGeneralSimplifiedVCMD(leftNode,genSimpVCMD)
+    fillGeneralSimplifiedVCMD(rightNode,genSimpVCMD)
+
+def getGeneralSimplifiedVCMD(binTreeDict):
+    genSimpVCMD={}
+    fillGeneralSimplifiedVCMD(binTreeDict,genSimpVCMD)
+    return genSimpVCMD
 
 #############################################
 #########simple tree operarions end##########
