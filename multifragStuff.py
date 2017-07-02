@@ -769,10 +769,10 @@ def getClnSD(nodeDict,clnSDR):
     return clnSD
 
 def getB2SolClnSolsIdxs(b2SSolsD,vCM2Search):
-    vCML=b2SSolsD["vCMSols"]
-    for i in range(len(vCML)):
+    vCMSols=b2SSolsD["vCMSols"]
+    for i in range(len(vCMSols)):
         print(colored("Inside getB2SolClnSolsIdxs","magenta"))
-        lineSolCML=vCML[i]
+        lineSolCML=vCMSols[i]
         print(colored(lineSolCML,"magenta"))
         for j in range(len(lineSolCML)):
             vCM=lineSolCML[j]
@@ -1105,7 +1105,7 @@ def completeSecSolNode(treeNode):
     vLines=treeNode["vLines"]
     for centerStr in secSolsDict:
         secSolsDict[centerStr]["labVSols"]=[]
-        secSolsDict[centerStr]["vCML"]=[]
+        secSolsDict[centerStr]["vCMSols"]=[]
         secSolsDict[centerStr]["vCMMag"]=[]
         secSolsDict[centerStr]["labEnergy"]=[]
         secSolsDict[centerStr]["thetaPhi"]=[]
@@ -1121,7 +1121,7 @@ def completeSecSolNode(treeNode):
 
             centerVcm=str2NPArray(centerStr)
             vCM=vLabVal-centerVcm
-            secSolsDict[centerStr]["vCML"].append(vCM)
+            secSolsDict[centerStr]["vCMSols"].append(vCM)
 
             vCMMag=np.linalg.norm(vCM)
             secSolsDict[centerStr]["vCMMag"].append(vCMMag)
