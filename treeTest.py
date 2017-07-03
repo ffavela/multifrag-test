@@ -29,42 +29,91 @@ tI="initial"
 ##########Particle dict quaternary sequential####
 #################################################
 
-####Working with this one 4 now################
-initDict={"type":tI,"name":"12C+12C","massP":m12C,
-          "massT":m12C,"ELab":beamE}
-oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
-beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
-carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+# ####Working with this one 4 now################
+# initDict={"type":tI,"name":"12C+12C","massP":m12C,
+#           "massT":m12C,"ELab":beamE}
+# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
+# beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
+# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
 
-# alphaSysDict={"type":tS,"name":"4He+4He"}
-alphaADict={"type":tP,"name":"4HeA","mass":m4He}
-alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
-alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
-# alphaDDict={"type":tP,"name":"4He","mass":m4He}
-# alphaEDict={"type":tP,"name":"4He","mass":m4He}
+# # alphaSysDict={"type":tS,"name":"4He+4He"}
+# alphaADict={"type":tP,"name":"4HeA","mass":m4He}
+# alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
+# alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
+# # alphaDDict={"type":tP,"name":"4He","mass":m4He}
+# # alphaEDict={"type":tP,"name":"4He","mass":m4He}
 
-#Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(35),radians(20)]}
-d3Dict={"type":tD,"name":"d3","angles":[radians(140),radians(40)]}
-# d4Dict={"type":tD,"name":"d4"}
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(35),radians(20)]}
+# d3Dict={"type":tD,"name":"d3","angles":[radians(80),radians(140)]}
+# # d4Dict={"type":tD,"name":"d4"}
 
-#Completing the dictionaries
-alphaBDict["dictList"]=[d3Dict,{}]
-alphaADict["dictList"]=[{},{}]
-alphaCDict["dictList"]=[d1Dict,{}]
+# #Completing the dictionaries
+# alphaBDict["dictList"]=[d3Dict,{}]
+# alphaADict["dictList"]=[{},{}]
+# alphaCDict["dictList"]=[d1Dict,{}]
 
-oxyDict["dictList"]=[alphaCDict,carbonDict]
+# oxyDict["dictList"]=[alphaCDict,carbonDict]
 
-beDict["dictList"]=[alphaADict,alphaBDict]
-# alphaSysDict["dictList"]=[alphaADict,alphaBDict]
-carbonDict["dictList"]=[d2Dict,{}]
+# beDict["dictList"]=[alphaADict,alphaBDict]
+# # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
+# carbonDict["dictList"]=[d2Dict,{}]
 
-initDict["dictList"]=[oxyDict,beDict]
+# initDict["dictList"]=[oxyDict,beDict]
 
 #################################################
 ####Particle dict end quaternary sequential######
 #################################################
+
+#################################################
+##########Particle dict five part sequential#####
+#################################################
+
+# ####Not functional 4 now################
+# initDict={"type":tI,"name":"12C+12C","massP":m12C,
+#           "massT":m12C,"ELab":beamE}
+# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
+# be8ADict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
+# be8BDict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
+# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+
+# # alphaSysDict={"type":tS,"name":"4He+4He"}
+# alphaADict={"type":tP,"name":"4HeA","mass":m4He}
+# alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
+# alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
+# alphaDDict={"type":tP,"name":"4HeD","mass":m4He}
+# # alphaDDict={"type":tP,"name":"4He","mass":m4He}
+# # alphaEDict={"type":tP,"name":"4He","mass":m4He}
+
+
+
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(35),radians(20)]}
+# d3Dict={"type":tD,"name":"d3","angles":[radians(290),radians(40)]}
+# d4Dict={"type":tD,"name":"d4","angles":[radians(40),radians(11)]}
+# # d4Dict={"type":tD,"name":"d4"}
+
+# #Completing the dictionaries
+# alphaBDict["dictList"]=[d3Dict,{}]
+# alphaADict["dictList"]=[{},{}]
+# alphaCDict["dictList"]=[d1Dict,{}]
+# alphaDDict["dictList"]=[d2Dict,{}]
+# be8BDict["dictList"]=[d4Dict,{}]
+
+# oxyDict["dictList"]=[carbonDict,alphaCDict]
+
+# be8ADict["dictList"]=[alphaADict,alphaBDict]
+# # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
+# carbonDict["dictList"]=[alphaDDict,be8BDict]
+
+# initDict["dictList"]=[oxyDict,be8ADict]
+
+#################################################
+####Particle dict end five part sequential#######
+#################################################
+
 
 ##############################################
 ##########Particle dict ternary direct########
@@ -158,22 +207,22 @@ initDict["dictList"]=[oxyDict,beDict]
 ##############################################
 ##########Particle dict binary################
 ##############################################
-# beamE=60.0
-# initDict={"type":tI,"name":"d+14N","massP":m2H,
-#           "massT":m14N,"ELab":beamE}
+beamE=60.0
+initDict={"type":tI,"name":"d+14N","massP":m2H,
+          "massT":m14N,"ELab":beamE}
 
-# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
 
-# alphaDict={"type":tP,"name":"4He","mass":m4He}
+alphaDict={"type":tP,"name":"4He","mass":m4He}
 
-# #Defining the detectors
-# d1Dict={"type":tD,"name":"d1","angles":[radians(35),radians(0)]}
+#Defining the detectors
+d1Dict={"type":tD,"name":"d1","angles":[radians(35),radians(0)]}
 
-# #Completing the dictionaries
-# carbonDict["dictList"]=[{},{}]
-# alphaDict["dictList"]=[d1Dict,{}]
+#Completing the dictionaries
+carbonDict["dictList"]=[{},{}]
+alphaDict["dictList"]=[d1Dict,{}]
 
-# initDict["dictList"]=[carbonDict,alphaDict]
+initDict["dictList"]=[carbonDict,alphaDict]
 
 ##############################################
 ##########Particle dict end binary############
@@ -348,6 +397,15 @@ print(colored(easyStr,"red"))
 fig = plt.figure()
 ax = fig.gca(projection='3d')
 
+
+fig_size = plt.rcParams["figure.figsize"]
+print("The figsize is = ",fig_size)
+# Set figure width to 9 and height to 9, a square
+fig_size[0] = 8
+fig_size[1] = 4
+plt.rcParams["figure.figsize"] = fig_size
+print("The new figsize is = ",fig_size)
+
 plt.xlim(-15, 15)
 plt.ylim(-15, 15)
 
@@ -355,20 +413,11 @@ plotAllLines(initDict,ax)
 ax.legend()
 
 modifyAx4Arrows(ax,genSimpVCMD)
-# firstVelMag=initDict["redVcm"]
-# a = Arrow3D([0, 0], [0, 0], [0, firstVelMag], mutation_scale=20,
-#             lw=1, arrowstyle="-|>", color="k")
-
-# b = Arrow3D([0, 0], [0, 0.3*firstVelMag], [0, firstVelMag], mutation_scale=20,
-#             lw=1, arrowstyle="-|>", color="k")
-
-# ax.add_artist(a)
-# ax.add_artist(b)
 
 u = np.linspace(0, 2 * np.pi, 100)
 v = np.linspace(0, np.pi, 100)
 
-# ax.set_zlim3d(-5, 20)
+ax.set_zlim3d(-15, 15)
 
 plt.show()
 

@@ -22,3 +22,5 @@ DONE
 
 - Test thoroughly the getSecSolParentIdxWithNonesL2 and the
   fillSecSols do higher order fragmentations.
+
+- There is a BUG in the 5 particle system!!! FIX IT!!!

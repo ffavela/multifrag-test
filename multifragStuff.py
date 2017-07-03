@@ -1149,6 +1149,7 @@ def fillSecSols(treeNode):
     for centerStr in secSolsDict:
         threeSecSolIdxL=secSolsDict[centerStr]["threeSecSolIdxL"]
         for threeSecSolIdx in threeSecSolIdxL:
+            print(threeSecSolIdx)
             sweepStr,lInfo,nInfo,rInfo=threeSecSolIdx
             nLineIdx,nPointIdx=nInfo
             newVel=vLines[nLineIdx][nPointIdx]

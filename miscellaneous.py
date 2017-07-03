@@ -1,6 +1,7 @@
 from termcolor import colored
 import numpy as np
 from math import *
+import random
 
 easyStr="#"*50
 
@@ -160,7 +161,6 @@ def printLastNodes(binTreeDict):
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import proj3d
 class Arrow3D(FancyArrowPatch):
-
     def __init__(self, xs, ys, zs, *args, **kwargs):
         FancyArrowPatch.__init__(self, (0, 0), (0, 0), *args, **kwargs)
         self._verts3d = xs, ys, zs
@@ -199,6 +199,7 @@ def modifyAx4Arrows(ax,genSimpVCMD):
     for centStr in genSimpVCMD:
         vVal=str2NPArray(centStr)
         vXVal,vYVal,vZVal=vVal
+        myRandColor=getRandomColor()
         for vCMVal in genSimpVCMD[centStr]:
             newVLab=vCMVal+vVal
             vCMX,vCMY,vCMZ=newVLab
@@ -206,8 +207,13 @@ def modifyAx4Arrows(ax,genSimpVCMD):
                              [vZVal, vCMZ],
                              mutation_scale=20,
                              lw=1,
-                             arrowstyle="-|>", color="k")
+                             arrowstyle="-|>", color=myRandColor)
             ax.add_artist(vCMArrow)
+
+def getRandomColor():
+    r = lambda: random.randint(0,255)
+    randColor=('#%02X%02X%02X' % (r(),r(),r()))
+    return randColor
 
 #############################################
 #########plotting part end###################
