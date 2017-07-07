@@ -6,11 +6,13 @@ beamE=120.0
 
 m12C=11177.9292
 m16O=14899.168598161144
+m6He=5606.55669604
 m4He=3728.401315862896
 m8Be=7456.894471212898
 m14N=13043.780817
 m24Mg=22341.924829
 
+m3H=2809.43210768
 m2H=1876.12392312
 m1H=938.783071355
 m1n=939.565417991
@@ -207,22 +209,22 @@ tI="initial"
 ##############################################
 ##########Particle dict binary################
 ##############################################
-beamE=60.0
-initDict={"type":tI,"name":"d+14N","massP":m2H,
-          "massT":m14N,"ELab":beamE}
+# beamE=50.0
+# initDict={"type":tI,"name":"d+14N","massP":m2H,
+#           "massT":m14N,"ELab":beamE}
 
-carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":10.84}
 
-alphaDict={"type":tP,"name":"4He","mass":m4He}
+# alphaDict={"type":tP,"name":"4He","mass":m4He}
 
-#Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(35),radians(0)]}
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(51.31),radians(152.68)]}
 
-#Completing the dictionaries
-carbonDict["dictList"]=[{},{}]
-alphaDict["dictList"]=[d1Dict,{}]
+# #Completing the dictionaries
+# carbonDict["dictList"]=[{},{}]
+# alphaDict["dictList"]=[d1Dict,{}]
 
-initDict["dictList"]=[carbonDict,alphaDict]
+# initDict["dictList"]=[carbonDict,alphaDict]
 
 ##############################################
 ##########Particle dict end binary############
@@ -258,6 +260,148 @@ initDict["dictList"]=[carbonDict,alphaDict]
 
 ##################################################
 ##########Particle end dict ternary seq dpn#######
+##################################################
+
+##################################################
+##########Particle dict ternary 6He case protons detect##########
+##################################################
+# beamE=67.2
+
+# initDict={"type":tI,"name":"a+t","massP":m4He,
+#           "massT":m3H,"ELab":beamE}
+# helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.60}
+
+# protonDict={"type":tP,"name":"p","mass":m1H}
+# tritium1Dict={"type":tP,"name":"t1","mass":m3H}
+# tritium2Dict={"type":tP,"name":"t2","mass":m3H}
+
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(21),radians(0)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(15),radians(180)]}
+
+# #Completing the dictionaries
+# protonDict["dictList"]=[d1Dict,{}]
+# tritium1Dict["dictList"]=[d2Dict,{}]
+# tritium2Dict["dictList"]=[{},{}]
+
+# helium6Dict["dictList"]=[tritium1Dict,tritium2Dict]
+
+# initDict["dictList"]=[protonDict,helium6Dict]
+
+##################################################
+##########Particle end dict ternary 6He case protons detect######
+##################################################
+
+##################################################
+##########Particle dict ternary direct (no 6He) case##########
+##################################################
+
+# ##There appears to be no solutions, not even with proton conf
+
+# beamE=67.2
+
+# initDict={"type":tI,"name":"a+t","massP":m4He,
+#           "massT":m3H,"ELab":beamE}
+# # helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":15.80}
+# pTSysDict={"type":tP,"name":"(p+t)"}
+
+# protonDict={"type":tP,"name":"p","mass":m1H}
+# tritium1Dict={"type":tP,"name":"t1","mass":m3H}
+# tritium2Dict={"type":tP,"name":"t2","mass":m3H}
+
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(20),radians(180)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(21),radians(0)]}
+
+# #Completing the dictionaries
+# protonDict["dictList"]=[{},{}]
+# tritium1Dict["dictList"]=[d1Dict,{}]
+# tritium2Dict["dictList"]=[d2Dict,{}]
+
+# pTSysDict["dictList"]=[tritium1Dict,tritium2Dict]
+# # # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
+
+# initDict["dictList"]=[protonDict,pTSysDict]
+
+##################################################
+##########Particle end dict ternary direct (no 6He) case######
+##################################################
+
+##################################################
+##########Particle dict ternary 6He case tritons##########
+##################################################
+beamE=67.2
+
+initDict={"type":tI,"name":"a+t","massP":m4He,
+          "massT":m3H,"ELab":beamE}
+helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.3}
+
+#The actual state seems to be 15.8 for iii, with a contribution in
+#18.67 and 9.4 in the spectra fig4(b).
+
+#Same fig the peaks at 13.73,28.11,9.5 and 30.8 seem to come from the
+#18.6 *6He excitation level.
+
+#Notice the overlap of peaks below the 10MeV part.
+
+#Was not able to reproduce any *4He decay fragmentation.
+
+protonDict={"type":tP,"name":"p","mass":m1H}
+tritium1Dict={"type":tP,"name":"t1","mass":m3H,"exE":0.0}
+tritium2Dict={"type":tP,"name":"t2","mass":m3H,"exE":0.80}
+
+#Defining the detectors
+d1Dict={"type":tD,"name":"d1","angles":[radians(20),radians(180)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(21),radians(0)]}
+
+#Completing the dictionaries
+protonDict["dictList"]=[{},{}]
+tritium1Dict["dictList"]=[d1Dict,{}]
+tritium2Dict["dictList"]=[d2Dict,{}]
+
+helium6Dict["dictList"]=[tritium1Dict,tritium2Dict]
+
+
+initDict["dictList"]=[protonDict,helium6Dict]
+
+##################################################
+##########Particle end dict ternary 6He case tritons######
+##################################################
+
+##################################################
+##Particle dict ternary 6He case protons alphas##########
+##################################################
+
+##There appears to be no solutions, not even with proton conf
+
+# beamE=67.2
+
+# initDict={"type":tI,"name":"a+t","massP":m4He,
+#           "massT":m3H,"ELab":beamE}
+# # helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":15.5}
+# helium4Dict={"type":tP,"name":"4He","mass":m4He,"exE":20.20}
+# #The actual state seems 2 be
+
+# tritium1Dict={"type":tP,"name":"t1","mass":m3H}
+# tritium2Dict={"type":tP,"name":"t2","mass":m3H}
+# protonDict={"type":tP,"name":"p","mass":m1H}
+
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(21),radians(0)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(15),radians(180)]}
+
+# #Completing the dictionaries
+# protonDict["dictList"]=[d1Dict,{}]
+# tritium1Dict["dictList"]=[{},{}]
+# tritium2Dict["dictList"]=[d2Dict,{}]
+
+# helium4Dict["dictList"]=[protonDict,tritium1Dict]
+# # # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
+
+# initDict["dictList"]=[tritium1Dict,helium4Dict]
+
+##################################################
+##Particle end dict ternary 6He case protons alphas######
 ##################################################
 
 #####################################################################
@@ -382,7 +526,7 @@ print(colored("The energy print out function","yellow"))
 printLastNodes(initDict)
 
 genSimpVCMD=getGeneralSimplifiedVCMD(initDict)
-print(genSimpVCMD)
+# print(genSimpVCMD)
 print(colored(easyStr,"red"))
 
 
