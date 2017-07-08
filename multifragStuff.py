@@ -337,30 +337,34 @@ def pullLinesFromNode(binTreeDict):
     offsetList=[[],[]]
     #Sweep from line 1 to line 2
     vLLIdx=0#keeping track of the indices
-    for vLine1 in vLines1:
-        for vLine2 in vLines2:
+    for i in range(len(vLines1)):
+        vLine1=vLines1[i]
+        for j in range(len(vLines2)):
+            vLine2=vLines2[j]
             cmLine=getMidPointLine(vLine1,vLine2,vRad,myFrac)
             vLineList.append(cmLine)
             # vLLIdx=vLineList.index(cmLine)
             offsets=getMidPOffsets(vLine1,vLine2,vRad)
             offsetList[0].append([vLLIdx,offsets])
 
-            parentChildIdx1=vLines1.index(vLine1)
-            parentChildIdx2=vLines2.index(vLine2)
+            parentChildIdx1=i #vLines1.index(vLine1)
+            parentChildIdx2=j #vLines2.index(vLine2)
             lineParentsIdxList[0].append([vLLIdx,[parentChildIdx1,parentChildIdx2]])
             vLLIdx+=1
 
     #Sweep from line 2 to line 1
-    for vLine2 in vLines2:
-        for vLine1 in vLines1:
+    for i in range(len(vLines2)):
+        vLine2=vLines2[i]
+        for j in range(len(vLines1)):
+            vLine1=vLines1[j]
             cmLine=getMidPointLine(vLine2,vLine1,vRad,1-myFrac)
             vLineList.append(cmLine)
             print("cmLine = ",cmLine)
             # vLLIdx=vLineList.index(cmLine)
             print("Line idx = ",vLLIdx)
             offsets=getMidPOffsets(vLine2,vLine1,vRad)
-            parentChildIdx1=vLines1.index(vLine1)
-            parentChildIdx2=vLines2.index(vLine2)
+            parentChildIdx1=j #vLines1.index(vLine1)
+            parentChildIdx2=i #vLines2.index(vLine2)
 
             offsetList[1].append([vLLIdx,offsets])
             lineParentsIdxList[1].append([vLLIdx,[parentChildIdx1,parentChildIdx2]])
@@ -1223,7 +1227,7 @@ def fillSecSols(treeNode):
                 print(colored(rTreeNode["name"],"green"))
                 rSecSolParentIdxWithNonesL=getSecSolParentIdxWithNonesL2(newCentStr,rTreeNode)
                 print(colored(rSecSolParentIdxWithNonesL,"red"))
-                rThreeSecSolIdxL=getThreeSecSolsIdxL(lSecSolParentIdxWithNonesL,rTreeNode)
+                rThreeSecSolIdxL=getThreeSecSolsIdxL(rSecSolParentIdxWithNonesL,rTreeNode)
                 print(colored("The new element is "+str(rThreeSecSolIdxL),"green"))
                 if rThreeSecSolIdxL == []:
                     print(colored("AN EMPTY RIGHT LIST!!","red"))
