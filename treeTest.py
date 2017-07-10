@@ -31,7 +31,7 @@ tI="initial"
 ##########Particle dict quaternary sequential####
 #################################################
 
-####Working with this one 4 now################
+###############Working with this one 4 now################
 # initDict={"type":tI,"name":"12C+12C","massP":m12C,
 #           "massT":m12C,"ELab":beamE}
 # oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
@@ -254,9 +254,9 @@ initDict["dictList"]=[oxyDict,be8ADict]
 ##############################################
 
 
-##############################################
-##########Particle dict binary################
-##############################################
+# ##############################################
+# ##########Particle dict binary################
+# ##############################################
 # beamE=50.0
 # initDict={"type":tI,"name":"d+14N","massP":m2H,
 #           "massT":m14N,"ELab":beamE}
@@ -274,8 +274,42 @@ initDict["dictList"]=[oxyDict,be8ADict]
 
 # initDict["dictList"]=[carbonDict,alphaDict]
 
+# ##############################################
+# ##########Particle dict end binary############
+# ##############################################
+
 ##############################################
-##########Particle dict end binary############
+##########Particle dict alphas################
+##############################################
+# beamE=50.0
+# initDict={"type":tI,"name":"d+14N","massP":m2H,
+#           "massT":m14N,"ELab":beamE}
+
+# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+# be8Dict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
+
+# alphaADict={"type":tP,"name":"4HeA","mass":m4He}
+# alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
+# alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
+# alphaDDict={"type":tP,"name":"4HeD","mass":m4He}
+
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(51.31),radians(152.68)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(51.31),radians(2.6)]}
+# d3Dict={"type":tD,"name":"d3","angles":[radians(31.46),radians(340.2)]}
+
+# #Completing the dictionaries
+# alphaADict["dictList"]=[d1Dict,{}]
+# alphaBDict["dictList"]=[{},{}]
+# alphaCDict["dictList"]=[d3Dict,{}]
+# alphaDDict["dictList"]=[{},{}]
+# be8Dict["dictList"]=[{},d2Dict]
+
+# carbonDict["dictList"]=[alphaBDict,be8Dict]
+# initDict["dictList"]=[carbonDict,alphaADict]
+
+##############################################
+##########Particle dict end alphas############
 ##############################################
 
 
