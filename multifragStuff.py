@@ -39,6 +39,7 @@ def makeInitialTreeCompletion(binTreeDict):
     fillInit(binTreeDict)
     completeTree0(binTreeDict)
     completeTree1(binTreeDict)
+    printTree(binTreeDict)
     completeTree2(binTreeDict)
 
 def getInitSolsDict(binTreeDict):
