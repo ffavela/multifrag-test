@@ -3,11 +3,12 @@ from multifragStuff import *
 print(colored(easyStr,"blue"))
 #print all energies in MeV
 beamE=120.0
-
+m11B=10255.1029833
 m12C=11177.9292
 m16O=14899.168598161144
 m6He=5606.55669604
 m4He=3728.401315862896
+m9Be=8394.79535317
 m8Be=7456.894471212898
 m14N=13043.780817
 m24Mg=22341.924829
@@ -490,45 +491,45 @@ tI="initial"
 ##################################################
 
 # ##############################################
-# ##########Particle dict giuseppe nancy ternary seq########
+# ##########Particle dict giuseppe nancy ternary direct########
 # ##############################################
-beamE=56.0 #Originally 58 but beam lost approx 2MeV in target
+# beamE=56.0 #Originally 58 but beam lost approx 2MeV in target
 
-initDict={"type":tI,"name":"23Na+d","massP":m23Na,
-          "massT":m2H,"ELab":beamE}
-neon20Dict={"type":tP,"name":"20Ne","mass":m20Ne,"exE":0.0}
-#1.1 not reported...
+# initDict={"type":tI,"name":"23Na+d","massP":m23Na,
+#           "massT":m2H,"ELab":beamE}
+# neon20Dict={"type":tP,"name":"20Ne","mass":m20Ne,"exE":0.0}
+# #1.1 not reported...
 
-neutNeonSysDict={"type":tS,"name":"n+20Ne"}
-# neutNeonSysDict={"type":tS,"name":"n+20Ne","mass":(m1n+m20Ne)}
-# neon21Dict={"type":tS,"name":"21Ne","mass":m21Ne,"exE":7.35}
+# neutNeonSysDict={"type":tS,"name":"n+20Ne"}
+# # neutNeonSysDict={"type":tS,"name":"n+20Ne","mass":(m1n+m20Ne)}
+# # neon21Dict={"type":tS,"name":"21Ne","mass":m21Ne,"exE":7.35}
 
-alphaADict={"type":tP,"name":"4HeA","mass":m4He}
-neutronDict={"type":tP,"name":"n","mass":m1n}
+# alphaADict={"type":tP,"name":"4HeA","mass":m4He}
+# neutronDict={"type":tP,"name":"n","mass":m1n}
 
-#Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(7),radians(0)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(22),radians(180)]}
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(7),radians(0)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(22),radians(180)]}
 
-#Completing the dictionaries
-neon20Dict["dictList"]=[d1Dict,{}]
-alphaADict["dictList"]=[d2Dict,{}]
-neutronDict["dictList"]=[{},{}]
+# #Completing the dictionaries
+# neon20Dict["dictList"]=[d1Dict,{}]
+# alphaADict["dictList"]=[d2Dict,{}]
+# neutronDict["dictList"]=[{},{}]
 
-neutNeonSysDict["dictList"]=[neutronDict,neon20Dict]
-# neon21Dict["dictList"]=[neutronDict,neon20Dict]
+# neutNeonSysDict["dictList"]=[neutronDict,neon20Dict]
+# # neon21Dict["dictList"]=[neutronDict,neon20Dict]
 
-initDict["dictList"]=[alphaADict,neutNeonSysDict]
-# initDict["dictList"]=[alphaADict,neon21Dict]
+# initDict["dictList"]=[alphaADict,neutNeonSysDict]
+# # initDict["dictList"]=[alphaADict,neon21Dict]
 
 # ##############################################
-# ##########Particle end dict giuseppe nancy ternary seq####
+# ##########Particle end dict giuseppe nancy ternary direct####
 # ##############################################
 
 ##############################################
 ##########Particle dict giuseppe nancy ternary seq########
 ##############################################
-# beamE=58.0
+# beamE=56.0
 
 # initDict={"type":tI,"name":"23Na+d","massP":m23Na,
 #           "massT":m2H,"ELab":beamE}
@@ -595,6 +596,79 @@ initDict["dictList"]=[alphaADict,neutNeonSysDict]
 ##############################################
 #####Particle end dict  ternary direct THM####
 ##############################################
+
+
+# ##############################################
+# ##########Particle dict lamia ternary direct########
+# ##############################################
+# #Apparently no sols
+# beamE=27.0
+
+# initDict={"type":tI,"name":"d+11B","massP":m2H,
+#           "massT":m11B,"ELab":beamE}
+
+# alphaDict={"type":tP,"name":"alpha","mass":m4He,"exE":0.0}
+
+# neutBe8SysDict={"type":tS,"name":"n+8Be"}
+# be8Dict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
+
+# neutronDict={"type":tP,"name":"1n","mass":m1n}
+
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(52),radians(0)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(16),radians(180)]}
+
+# #Completing the dictionaries
+# be8Dict["dictList"]=[d2Dict,{}]
+# alphaDict["dictList"]=[d1Dict,{}]
+# neutronDict["dictList"]=[{},{}]
+
+# # neutNeonSysDict["dictList"]=[neutronDict,neon20Dict]
+# neutBe8SysDict["dictList"]=[be8Dict,neutronDict]
+
+# # initDict["dictList"]=[alphaADict,neutNeonSysDict]
+# initDict["dictList"]=[alphaDict,neutBe8SysDict]
+
+# ##############################################
+# ##########Particle end dict lamia ternary direct####
+# ##############################################
+
+
+##############################################
+##########Particle dict lamia ternary seq########
+##############################################
+beamE=27.0
+
+initDict={"type":tI,"name":"d+11B","massP":m2H,
+          "massT":m11B,"ELab":beamE}
+
+alphaDict={"type":tP,"name":"alpha","mass":m4He,"exE":0.0}
+
+be9Dict={"type":tP,"name":"9Be","mass":m9Be,"exE":3.04}
+be8Dict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
+
+neutronDict={"type":tP,"name":"1n","mass":m1n}
+
+#Defining the detectors
+d1Dict={"type":tD,"name":"d1","angles":[radians(132),radians(0)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(16),radians(180)]}
+
+#Completing the dictionaries
+be8Dict["dictList"]=[d2Dict,{}]
+alphaDict["dictList"]=[d1Dict,{}]
+neutronDict["dictList"]=[{},{}]
+
+# neutNeonSysDict["dictList"]=[neutronDict,neon20Dict]
+be9Dict["dictList"]=[be8Dict,neutronDict]
+# be9Dict["dictList"]=[{},{}]
+
+# initDict["dictList"]=[alphaADict,neutNeonSysDict]
+initDict["dictList"]=[alphaDict,be9Dict]
+
+##############################################
+##########Particle end dict lamia ternary seq####
+##############################################
+
 
 ##############################################
 ##########Particle dict  BUG HERE#############
@@ -756,7 +830,7 @@ print(colored("The energy print out function","yellow"))
 printLastNodes(initDict)
 
 genSimpVCMD=getGeneralSimplifiedVCMD(initDict)
-# print(genSimpVCMD)
+print(genSimpVCMD)
 print(colored(easyStr,"red"))
 
 

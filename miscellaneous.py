@@ -244,7 +244,7 @@ def npArray2Str(myNpArray):
 #############################################
 def getFinalMass(dictNode):
     if "mass" not in dictNode:
-        print("fetching the mass!")
+        print("in "+dictNode["name"])
         if dictNode["type"] == "set":
             leftDict=dictNode["dictList"][0]
             rightDict=dictNode["dictList"][1]
@@ -252,6 +252,7 @@ def getFinalMass(dictNode):
             mRight=getFinalMass(rightDict)
             m=mLeft+mRight
             return m
+        print("returning none")
         return None
 
     m=dictNode["mass"]
@@ -473,6 +474,7 @@ def fillGeneralSimplifiedVCMD(binTreeDict,genSimpVCMD):
     solsStr="solsDict"
     if "secSolsDict" in binTreeDict:
         solsStr="secSolsDict"
+
     mySolsD=binTreeDict[solsStr]
     for centStr in mySolsD:
         myVCML=mySolsD[centStr]["vCMSols"]
