@@ -244,11 +244,12 @@ def npArray2Str(myNpArray):
 #############################################
 def getFinalMass(dictNode):
     if "mass" not in dictNode:
+        print("fetching the mass!")
         if dictNode["type"] == "set":
             leftDict=dictNode["dictList"][0]
             rightDict=dictNode["dictList"][1]
             mLeft=getFinalMass(leftDict)
-            mRight=getFinalMass(leftDict)
+            mRight=getFinalMass(rightDict)
             m=mLeft+mRight
             return m
         return None
