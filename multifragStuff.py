@@ -15,6 +15,7 @@ from termcolor import colored
 
 def makeTreeCompletion(binTreeDict):
     makeInitialTreeCompletion(binTreeDict)
+
     print("Trying to pull every line automatically")
     generalList=getDirectFreeRoute(binTreeDict)
     if generalList == []:
