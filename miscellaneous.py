@@ -511,3 +511,67 @@ def spherToCart(r,theta,phi):
 #############################################
 #########simple coord transformations end####
 #############################################
+
+#############################################
+############combination algorithms###########
+#############################################
+
+#Taken from stackoverflow:
+
+#https://stackoverflow.com/questions/39192777/python-split-a-list-into-n-groups-in-all-possible-combinations-of-group-length-a
+
+def sorted_k_partitions(seq, k):
+    """Returns a list of all unique k-partitions of `seq`.
+
+    Each partition is a list of parts, and each part is a tuple.
+
+    The parts in each individual partition will be sorted in shortlex
+    order (i.e., by length first, then lexicographically).
+
+    The overall list of partitions will then be sorted by the length
+    of their first part, the length of their second part, ...,
+    the length of their last part, and then lexicographically.
+    """
+    n = len(seq)
+    groups = []  # a list of lists, currently empty
+
+    def generate_partitions(i):
+        if i >= n:
+            yield list(map(tuple, groups))
+        else:
+            if n - i > k - len(groups):
+                for group in groups:
+                    group.append(seq[i])
+                    yield from generate_partitions(i + 1)
+                    group.pop()
+
+            if len(groups) < k:
+                groups.append([seq[i]])
+                yield from generate_partitions(i + 1)
+                groups.pop()
+
+    result = generate_partitions(0)
+
+    ####NEW ADDED CODE 1 BEGIN#########
+    result = [[sorted(subList) for subList in ps]\
+              for ps in result]
+    #####NEW ADDED CODE 1 END ##########
+
+    # Sort the parts in each partition in shortlex order
+    result = [sorted(ps, key = lambda p: (len(p), p)) for ps in result]
+    # Sort partitions by the length of each part, then lexicographically.
+    result = sorted(result, key = lambda ps: (*map(len, ps), ps))
+
+    ####NEW ADDED CODE 2 BEGIN#########
+    uniqueResult=[]
+    for e in result:
+        if e not in uniqueResult:
+            uniqueResult.append(e)
+    result=uniqueResult
+    #####NEW ADDED CODE 2 END ##########
+
+    return result
+
+#############################################
+#########combination algorithms end##########
+#############################################
