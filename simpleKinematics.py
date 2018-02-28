@@ -49,8 +49,9 @@ def getVelcm(m1,m2,E1):
     v1=sqrt(2.0*E1/m1)*c
     v2=0 #assuming it is still
     Vcm=(1.0*v1*m1+1.0*v2*m2)/(m1+m2)
-    v1p=v1-Vcm
-    v2p=v2-Vcm
+    #Don't forget they are magnitudes!!
+    v1p=abs(v1-Vcm)
+    v2p=abs(v2-Vcm)
     return v1p,v2p,Vcm
 
 def getQVal(m1,m2,m3,m4):
