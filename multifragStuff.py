@@ -68,6 +68,7 @@ def getCompletedSolTree(treeNode,solsDict):
         myLabVelList=solsDict[vCenterStr]["vLabSols"]
         solsDict[vCenterStr]["labEnergy"]=[]
         solsDict[vCenterStr]["vCMSols"]=[]
+        solsDict[vCenterStr]["vCMMags"]=[] #4 debugging
         solsDict[vCenterStr]["thetaPhi"]=[]
         for myLabVel in myLabVelList:
             vCentNorm=np.linalg.norm(myLabVel)
@@ -77,6 +78,10 @@ def getCompletedSolTree(treeNode,solsDict):
             #Now the vel @ the CM system
             myCMVel=myLabVel-sysCMVel
             solsDict[vCenterStr]["vCMSols"].append(myCMVel)
+
+            #4 debugging
+            myCMMag=np.linalg.norm(myCMVel)
+            solsDict[vCenterStr]["vCMMags"].append(myCMMag)
 
             #Getting the lab angles
             thetaPhi=getThetaPhi(myLabVel)
@@ -608,6 +613,7 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
             solVelList=[]
             solEList=[]
             vCMSolList=[]
+            debugECMList=[]
             thetaPhiList=[]
             for vSolIndex in solIdxSubList:
                 velSol=myVLine[vSolIndex]
@@ -621,7 +627,9 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
                 vCMSolList.append(vCMSol)
 
                 #ECM energies should be the same as in the first
-                #calculation... I'll corroborate later
+                debugVCMNorm=np.linalg.norm(vCMSol)
+                debugECM=1.0/2.0*myMass*(debugVCMNorm/100.0)**2
+                debugECMList.append(debugECM)
 
                 thetaPhi=getThetaPhi(velSol)
                 thetaPhiList.append(thetaPhi)
@@ -637,6 +645,10 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
             if "vCMSols" not in sphereSolsDict[sphereCenterStr]:
                 sphereSolsDict[sphereCenterStr]["vCMSols"]=[]
             sphereSolsDict[sphereCenterStr]["vCMSols"].append(vCMSolList)
+
+            if "debugECMs" not in sphereSolsDict[sphereCenterStr]:
+                sphereSolsDict[sphereCenterStr]["debugECMs"]=[]
+            sphereSolsDict[sphereCenterStr]["debugECMs"].append(debugECMList)
 
             if "thetaPhi" not in sphereSolsDict[sphereCenterStr]:
                 sphereSolsDict[sphereCenterStr]["thetaPhi"]=[]
