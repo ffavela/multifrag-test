@@ -54,6 +54,8 @@ def getInitSolsDict(binTreeDict):
     #The only case when lab and cm solutions are the same
     sphereSols[centerStr]["vCMSols"]=[vCMVect]
     sphereSols[centerStr]["vCMPair"]=[sCenter,vCMVect]
+    #defining presicely the center
+    sphereSols[centerStr]["npCenter"]=vCMVect
 
     return sphereSols
 
@@ -63,8 +65,12 @@ def getCompletedSolTree(treeNode,solsDict):
 
     for vCenterStr in solsDict:
         #Get the CM vel of the system
-        sysCMVel=str2NPArray(vCenterStr)
+        # sysCMVel=str2NPArray(vCenterStr)
+        print("solsDict["+vCenterStr+"]")
+        print(solsDict[vCenterStr])
 
+        sysCMVel=solsDict[vCenterStr]["npCenter"]
+        print("Made it!!!")
         myLabVelList=solsDict[vCenterStr]["vLabSols"]
         solsDict[vCenterStr]["labEnergy"]=[]
         solsDict[vCenterStr]["vCMSols"]=[]
@@ -75,7 +81,7 @@ def getCompletedSolTree(treeNode,solsDict):
             solsDict[vCenterStr]["labEnergy"].append(ECentSol)
 
             #Now the vel @ the CM system
-            myCMVel=myLabVel-sysCMVel
+            myCMVel=myLabVel-sysCMVel #assuming the center is right
             solsDict[vCenterStr]["vCMSols"].append(myCMVel)
 
             #Getting the lab angles
@@ -433,20 +439,44 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     for importantL in vInfoList:
         newCent=importantL[0]
         pairCM=importantL[1]
-        newCentStr=npArray2Str(newCent)
+
+        newCentStr=npArray2Str(newCent) #Apparently not used here
         solsD4B2Solve=getDictWithIdxs(branch2Solve,\
                                       newCent,solsD4B2Solve)
 
     if solsD4B2Solve == {}:
         return False
 
+    #this is for defining presicely the center, unelegant way of doing
+    #it.
+    print("filling the unelegant npCenter")
+    for importantL in vInfoList:
+        newCent=importantL[0]
+        pairCM=importantL[1]
+
+        #Getting rid of the -0. It messes with the string convertion
+        newCent[newCent==0.] = 0.
+        centerStr=str(newCent.tolist())
+        #defining presicely the center
+        if centerStr in solsD4B2Solve:
+            solsD4B2Solve[centerStr]["npCenter"]=newCent
+
+    print("After the unelegant fill")
+    print("solsD4B2Solve["+centerStr+"][\"npCenter\"]")
+    print("Now making the print")
+    print(solsD4B2Solve[centerStr]["npCenter"])
+
+    print("After the print")
     solsD4B2Solve=getSolVelsEnergiesEtcInNode(branch2Solve,\
                                                    solsD4B2Solve)
+    print("After the getSolVelsEnergiesEtcInNode")
     branch2Solve["solsDict"]=solsD4B2Solve
     vMagL=[branch2Solve["redVcm"],branch2Go["redVcm"]]
     dict4Branch2Go=getComplementarySolsDict(solsD4B2Solve,vMagL)
+    print("After the getComplementarySolsDict")
+    print("B4 the next fillMajorSols call")
     fillBool=fillMajorSols(branch2Go,freePartRoute[1:],dict4Branch2Go)
-
+    print("After fillMajorSols call")
     return fillBool
 
 def cleanDict(binTreeDict,freePartRoute):
@@ -539,7 +569,10 @@ def getComplementarySolsDict(solsDict,vMagL):
     vMag2Sol,vMag2Go=vMagL
     for sphCentStr in solsDict:
         #Convert this string to an np array
-        vCenter=str2NPArray(sphCentStr)
+        #Here it would be better to grab the right ce...
+        # vCenter=str2NPArray(sphCentStr)
+        print("Inside getComplementarySolsDict b4 npCenter invocation")
+        vCenter=solsDict[sphCentStr]["npCenter"] #This should work
 
         myVCMList=solsDict[sphCentStr]["vCMSols"]
 
@@ -594,7 +627,9 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
     for sphereCenterStr in sphereSolsDict:
         #Surely some numerical errors lying around but I'll live with
         #it for now
-        myNpCenter=str2NPArray(sphereCenterStr)
+        # myNpCenter=str2NPArray(sphereCenterStr)
+        #The center should be more precise now
+        myNpCenter=sphereSolsDict[sphereCenterStr]["npCenter"]
 
         indexSolLists=sphereSolsDict[sphereCenterStr]["solIdxList"]
         #The proper indices on the outside list
@@ -617,6 +652,7 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
                 ESol=1.0/2.0*myMass*(vNorm/100.0)**2
                 solEList.append(ESol)
 
+                #Hoping every myNpCenter is right
                 vCMSol=velSol-myNpCenter
                 vCMSolList.append(vCMSol)
 
