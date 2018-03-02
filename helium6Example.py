@@ -25,7 +25,7 @@ tI="initial"
 initDict={"type":tI,"name":"a+t","massP":m4He,
           "massT":m3H,"ELab":beamE}
 # helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.6}
-helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.6}
+helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":15.5}
 #The actual state seems to be 15.8 for iii, with a contribution in
 #18.67 and 9.4 in the spectra fig4(b).
 

@@ -260,6 +260,8 @@ def getFinalMass(dictNode):
     if "exE" not in dictNode:
         myExE=0
     else:
+        #Any kinetic energy information is placed inside the Q value,
+        #making this the only invocation of "exE"
         myExE=dictNode["exE"]
 
     m+=myExE
