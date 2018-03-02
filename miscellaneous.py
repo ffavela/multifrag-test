@@ -197,6 +197,7 @@ def plotNoDisplay(ax,lineArray,name="defaultName"):
 
 def modifyAx4Arrows(ax,genSimpVCMD):
     for centStr in genSimpVCMD:
+        # vVal=genSimpVCMD[centStr]["npCenter"]
         vVal=str2NPArray(centStr)
         vXVal,vYVal,vZVal=vVal
         myRandColor=getRandomColor()
@@ -470,7 +471,7 @@ def getMyNode(treeNode,routeL):
     return myNode
 
 def fillGeneralSimplifiedVCMD(binTreeDict,genSimpVCMD):
-    #The binTreeDict needs to be solved at this point
+    #The binTreeDict needs to be solved by this point
     solsStr="solsDict"
     if "secSolsDict" in binTreeDict:
         solsStr="secSolsDict"

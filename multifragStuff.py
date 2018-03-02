@@ -66,19 +66,14 @@ def getCompletedSolTree(treeNode,solsDict):
 
     for vCenterStr in solsDict:
         #Get the CM vel of the system
-        sysCMVel=str2NPArray(vCenterStr)
+        # sysCMVel=str2NPArray(vCenterStr)
 
-        if "npCenter" in solsDict[vCenterStr]:
-            #2 change
+        #Here we can override the sysCMVel that is less accurate
+        npCenter=solsDict[vCenterStr]["npCenter"] #More precise
+        sysCMVel=npCenter
 
-            #Here we can override the sysCMVel that is less accurate
-            npCenter=solsDict[vCenterStr]["npCenter"]
-            print("ENTERED npCenter condition!!!!!!!!!!!")
-            print("npCenter = ",npCenter)
-        else:
-            print("UNABLE TO ENTER npCenter condition!!!!!!!!!!!")
+        print("npCenter = ",npCenter)
         print("vCenterStr = ",vCenterStr)
-
 
         myLabVelList=solsDict[vCenterStr]["vLabSols"]
         solsDict[vCenterStr]["labEnergy"]=[]
@@ -86,7 +81,6 @@ def getCompletedSolTree(treeNode,solsDict):
         solsDict[vCenterStr]["vCMMags"]=[] #4 debugging
         solsDict[vCenterStr]["thetaPhi"]=[]
 
-        solsDict[vCenterStr]["npCenter"]=str2NPArray(vCenterStr) #Provisional
         for myLabVel in myLabVelList:
             vCentNorm=np.linalg.norm(myLabVel)
             ECentSol=1.0/2.0*myMass*(vCentNorm/100.0)**2
@@ -563,13 +557,10 @@ def getComplementarySolsDict(solsDict,vMagL):
     print("Inside getComplementarySolsDict entering the for")
     for sphCentStr in solsDict:
         #Convert this string to an np array
-        vCenter=str2NPArray(sphCentStr)
+        # vCenter=str2NPArray(sphCentStr)
+        vCenter=solsDict[sphCentStr]["npCenter"]#More precise
 
-        if "npCenter" in solsDict[sphCentStr]:
-            print("YAAAAY npCenter inside solsDict["+sphCentStr+"]")
-            print("npCenter val is = ",solsDict[sphCentStr]["npCenter"])
-        else:
-            print(";'-( npCenter not inside solsDict["+sphCentStr+"]")
+        print("npCenter val is = ",solsDict[sphCentStr]["npCenter"])
 
         myVCMList=solsDict[sphCentStr]["vCMSols"]
 
@@ -629,13 +620,11 @@ def getSolVelsEnergiesEtcInNode(treeNode,sphereSolsDict):
     for sphereCenterStr in sphereSolsDict:
         #Surely some numerical errors lying around but I'll live with
         #it for now
-        myNpCenter=str2NPArray(sphereCenterStr)
+        # myNpCenter=str2NPArray(sphereCenterStr)
+        myNpCenter=sphereSolsDict[sphereCenterStr]["npCenter"]#More precise
 
-        if "npCenter" in sphereSolsDict[sphereCenterStr]:
-            print("npCenter present in for ",sphereCenterStr)
-            print("sphere..npCenter = ", sphereSolsDict[sphereCenterStr]["npCenter"])
-        else:
-            print("npCenter NOT present in for ",sphereCenterStr)
+        print("npCenter present in for ",sphereCenterStr)
+        print("sphere..npCenter = ", sphereSolsDict[sphereCenterStr]["npCenter"])
 
         indexSolLists=sphereSolsDict[sphereCenterStr]["solIdxList"]
         #The proper indices on the outside list
@@ -1061,6 +1050,7 @@ def fillInitSecSols(treeNode):
         if threeSecSolIdxL != None:
             secSolsDict[centStr]["threeSecSolIdxL"]=threeSecSolIdxL
 
+        secSolsDict[centStr]["npCenter"]=solsDict[centStr]["npCenter"]
     treeNode["secSolsDict"]=secSolsDict
 
 def getRawSecSolsLEntry(centerStr,treeNode):
@@ -1178,6 +1168,11 @@ def completeSecSolNode(treeNode):
         secSolsDict[centerStr]["labEnergy"]=[]
         secSolsDict[centerStr]["thetaPhi"]=[]
         simpleSecSolL=secSolsDict[centerStr]["simpleSecSolIdxL"]
+        # centerVcm=str2NPArray(centerStr)
+        print("Right b4 assigning npCenter on secSolsDict")
+        print("centerStr = ",centerStr)
+        print("treeNode[\"name\"] = ", treeNode["name"])
+        centerVcm=secSolsDict[centerStr]["npCenter"]
         for sSecSol in simpleSecSolL:
             lineIdx,pointIdx=sSecSol
             vLabVal=vLines[lineIdx][pointIdx]
@@ -1187,7 +1182,6 @@ def completeSecSolNode(treeNode):
             labEnergy=1.0/2.0*fMass*(vLabValNorm/100.0)**2
             secSolsDict[centerStr]["labEnergy"].append(labEnergy)
 
-            centerVcm=str2NPArray(centerStr)
             vCM=vLabVal-centerVcm
             secSolsDict[centerStr]["vCMSols"].append(vCM)
 
@@ -1230,16 +1224,20 @@ def fillSecSols(treeNode):
 
             if newCentStr not in lSecSolsD:
                 if lParentBool:
-                    lSecSolsD[newCentStr]={"simpleSecSolIdxL":[]}
+                    lSecSolsD[newCentStr]={"simpleSecSolIdxL":[],
+                                           "npCenter":newVel}
                 else:
                     lSecSolsD[newCentStr]={"simpleSecSolIdxL":[],
-                                           "threeSecSolIdxL":[]}
+                                           "threeSecSolIdxL":[],
+                                           "npCenter":newVel}
 
                 if rParentBool:
-                    rSecSolsD[newCentStr]={"simpleSecSolIdxL":[]}
+                    rSecSolsD[newCentStr]={"simpleSecSolIdxL":[],
+                                           "npCenter":newVel}
                 else:
                     rSecSolsD[newCentStr]={"simpleSecSolIdxL":[],
-                                           "threeSecSolIdxL":[]}
+                                           "threeSecSolIdxL":[],
+                                           "npCenter":newVel}
 
             lSecSolsD[newCentStr]["simpleSecSolIdxL"].append(lInfo)
             rSecSolsD[newCentStr]["simpleSecSolIdxL"].append(rInfo)
