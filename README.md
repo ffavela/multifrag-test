@@ -1,6 +1,6 @@
 Just some personal testing for multifragmentation stuff. Before
-running make sure you have python-numpy and python-matplotlib
-installed.
+running make sure you have python-numpy, python-matplotlib and
+python-termcolor installed.
 
 $ python helium6Example.py 
 
