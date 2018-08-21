@@ -111,7 +111,7 @@ def fillInit(binTreeDict):
 
     ELab=binTreeDict["ELab"]
     initEcm=getEcm(mPro,mTar,ELab)[2]
-    binTreeDict["Ecm"]=initEcm
+    binTreeDict["initEcm"]=initEcm
     #Saving the beta
     binTreeDict["BVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
     redVcm=binTreeDict["BVcm"]*100
@@ -175,14 +175,14 @@ def completeTree2(binTreeDict):
         completeTree2(e)
 
 def pushNewEcmAndVels(E1cm,E2cm,dictNode,maxVel):
-    dictNode[0]["Ecm"]=E1cm
+    dictNode[0]["initEcm"]=E1cm
     m1=dictNode[0]["fMass"]
     BVcm1=sqrt(2.0*E1cm/m1)#Leaving out *c for now
     dictNode[0]["BVcm"]=BVcm1
     dictNode[0]["redVcm"]=BVcm1*100
     dictNode[0]["BVLabMax"]=maxVel+BVcm1*100
 
-    dictNode[1]["Ecm"]=E2cm
+    dictNode[1]["initEcm"]=E2cm
     m2=dictNode[1]["fMass"]
     BVcm2=sqrt(2.0*E2cm/m2)#Leaving out *c for now
     dictNode[1]["BVcm"]=BVcm2

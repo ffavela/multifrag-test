@@ -58,6 +58,9 @@ def getQVal(m1,m2,m3,m4):
     Q=(m1+m2-m3-m4)
     return Q
 
+
+def getVoutCM(vInCM,mIn,mOut):
+    vOutCM=1.0*mIn/mOut*vInCM
 #Not using relativistic case here, these are betas (v/c)
 def getSimpleVels(m1,E1cm,m2,E2cm):
     v1cm=sqrt(2.0*E1cm/m1)

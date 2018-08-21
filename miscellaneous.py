@@ -268,9 +268,9 @@ def getFinalMass(dictNode):
     return m
 
 def getAvailE(dictNode):
-    if "Ecm" not in dictNode:
+    if "initEcm" not in dictNode:
         return None
-    eCm=dictNode["Ecm"]
+    eCm=dictNode["initEcm"]
     if "Q" not in dictNode:
         qVal=0
     else:
