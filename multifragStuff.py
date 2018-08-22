@@ -110,8 +110,8 @@ def fillInit(binTreeDict):
     binTreeDict["mass"]=mPro+mTar
 
     ELab=binTreeDict["ELab"]
-    initEcm=getEcm(mPro,mTar,ELab)[2]
-    binTreeDict["initEcm"]=initEcm
+    inEcmAvail=getEcm(mPro,mTar,ELab)[2]
+    binTreeDict["inEcmAvail"]=inEcmAvail
     #Saving the beta
     binTreeDict["BVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
     redVcm=binTreeDict["BVcm"]*100
@@ -133,6 +133,12 @@ def completeTree0(binTreeDict):
         print("filling tree with", qVal)
         binTreeDict["Q"]=qVal
 
+    inOutMass=getNodeInOutMass(binTreeDict)
+    if inOutMass != None:
+        print("filling tree with", inOutMass)
+        binTreeDict["inMass"]=inOutMass[0]
+        binTreeDict["outMass"]=inOutMass[1]
+
     if "dictList" not in binTreeDict:
         return
 
@@ -147,12 +153,17 @@ def completeTree1(binTreeDict):
     if qVal != None:
         binTreeDict["Q"]=qVal
 
+    inOutMass=getNodeInOutMass(binTreeDict)
+    if inOutMass != None:
+        print("filling tree with", inOutMass)
+        binTreeDict["inMass"]=inOutMass[0]
+        binTreeDict["outMass"]=inOutMass[1]
+
     if "dictList" not in binTreeDict:
         return
 
     for e in binTreeDict["dictList"]:
         completeTree1(e)
-
 
 def completeTree2(binTreeDict):
     if binTreeDict == {}:
@@ -175,14 +186,14 @@ def completeTree2(binTreeDict):
         completeTree2(e)
 
 def pushNewEcmAndVels(E1cm,E2cm,dictNode,maxVel):
-    dictNode[0]["initEcm"]=E1cm
+    dictNode[0]["inEcmAvail"]=E1cm
     m1=dictNode[0]["fMass"]
     BVcm1=sqrt(2.0*E1cm/m1)#Leaving out *c for now
     dictNode[0]["BVcm"]=BVcm1
     dictNode[0]["redVcm"]=BVcm1*100
     dictNode[0]["BVLabMax"]=maxVel+BVcm1*100
 
-    dictNode[1]["initEcm"]=E2cm
+    dictNode[1]["inEcmAvail"]=E2cm
     m2=dictNode[1]["fMass"]
     BVcm2=sqrt(2.0*E2cm/m2)#Leaving out *c for now
     dictNode[1]["BVcm"]=BVcm2

@@ -2,7 +2,11 @@
 
 - Do a recursive fill for the mass in case the type is a set (particle
   set). This will automatically take into account the cases where the
-  child states are in an excited state. DONE (I think)
+  child states are in an excited state. DONE (I think)...NOT
+    #Need to add somehow a recursive function in order to take into
+    #account nodes that represent sets of particles with child nodes
+    #excited. (miscellaneous.py, getNodeQVal)
+
 
 
 - Change the names from tree to binary tree. (treeDict => binTreeDict)

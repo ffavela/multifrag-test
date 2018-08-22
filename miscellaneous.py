@@ -257,20 +257,12 @@ def getFinalMass(dictNode):
         return None
 
     m=dictNode["mass"]
-    if "exE" not in dictNode:
-        myExE=0
-    else:
-        #Any kinetic energy information is placed inside the Q value,
-        #making this the only invocation of "exE"
-        myExE=dictNode["exE"]
-
-    m+=myExE
     return m
 
 def getAvailE(dictNode):
-    if "initEcm" not in dictNode:
+    if "inEcmAvail" not in dictNode:
         return None
-    eCm=dictNode["initEcm"]
+    eCm=dictNode["inEcmAvail"]
     if "Q" not in dictNode:
         qVal=0
     else:
@@ -308,7 +300,38 @@ def getNodeQVal(dictNode):
 
     Q=finalMass-daugthersMass
 
+    #Need to add somehow a recursive function in order to take into
+    #account nodes that represent sets of particles with child nodes
+    #excited.
+    if "exE" not in dictNode:
+        myExE=0
+    else:
+        #Any kinetic energy information is placed inside the Q value,
+        #making this the only invocation of "exE"
+        myExE=dictNode["exE"]
+
+    Q+=myExE
+
     return Q
+
+def getNodeInOutMass(dictNode):
+    if "fMass" not in dictNode:
+        return None
+
+    if "dictList" not in dictNode:
+        return None
+
+    for e in dictNode["dictList"]:
+        if "fMass" not in e:
+            return None
+
+    inMass=dictNode["fMass"]
+    outMass=0
+    for e in dictNode["dictList"]:
+        outMass+=e["fMass"]
+
+    return inMass,outMass
+
 
 def checkIfNodeIsFreePart(dictNode):
     if dictNode == {}:
