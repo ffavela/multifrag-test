@@ -39,13 +39,17 @@ def makeTreeCompletion(binTreeDict):
 def makeInitialTreeCompletion(binTreeDict):
     """Solves the system on its local CM system"""
     fillInit(binTreeDict)
+    myDesc=fillTreeDescriptorL(binTreeDict)
+    # print("myDesc = ",myDesc)
+    # printTree(binTreeDict)
+
     completeTree0(binTreeDict)
     completeTree1(binTreeDict)
-    completeTree2(binTreeDict)
+    # completeTree2(binTreeDict)
 
 def getInitSolsDict(binTreeDict):
     #This is our free CM solution, we at least know this one! ;-)
-    vCM=binTreeDict["redVcm"]
+    vCM=binTreeDict["outRedVcm"]
     sCenter=np.array([0.0,0.0,0.0])
     centerStr=str(sCenter.tolist())
     sphereSols={centerStr:{}}
@@ -110,15 +114,19 @@ def fillInit(binTreeDict):
     binTreeDict["mass"]=mPro+mTar
 
     ELab=binTreeDict["ELab"]
-    inEcmAvail=getEcm(mPro,mTar,ELab)[2]
+    EcmList=getAllEcms(mPro,mTar,ELab)
+    inEcmAvail=EcmList[2]
     binTreeDict["inEcmAvail"]=inEcmAvail
+    inEcmSys=EcmList[3]
+    binTreeDict["inEcmSys"]=inEcmSys
+    binTreeDict["inESum"]=inEcmAvail+inEcmSys
     #Saving the beta
-    binTreeDict["BVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
-    redVcm=binTreeDict["BVcm"]*100
-    binTreeDict["redVcm"]=redVcm
+    binTreeDict["inBVcm"]=getVelcm(mPro,mTar,ELab)[2]/c
+    inRedVcm=binTreeDict["inBVcm"]*100
+    binTreeDict["inRedVcm"]=inRedVcm
     #This is only for setting a search range, the final vel won't be
     #this high. This criteria will be improved eventually.
-    binTreeDict["BVLabMax"]=binTreeDict["redVcm"]
+    binTreeDict["inBVLabMax"]=binTreeDict["inRedVcm"]
 
 def completeTree0(binTreeDict):
     if binTreeDict == {}:
@@ -128,16 +136,10 @@ def completeTree0(binTreeDict):
     if finalMass != None:
         binTreeDict["fMass"]=finalMass
 
-    qVal=getNodeQVal(binTreeDict)
+    qVal=getNodeQVal(binTreeDict) #Always None
     if qVal != None:
         print("filling tree with", qVal)
         binTreeDict["Q"]=qVal
-
-    inOutMass=getNodeInOutMass(binTreeDict)
-    if inOutMass != None:
-        print("filling tree with", inOutMass)
-        binTreeDict["inMass"]=inOutMass[0]
-        binTreeDict["outMass"]=inOutMass[1]
 
     if "dictList" not in binTreeDict:
         return
@@ -146,18 +148,67 @@ def completeTree0(binTreeDict):
         completeTree0(e)
 
 def completeTree1(binTreeDict):
-    if binTreeDict == {}:
+    if binTreeDict == {} or "name" not in binTreeDict:
         return
 
     qVal=getNodeQVal(binTreeDict)
     if qVal != None:
         binTreeDict["Q"]=qVal
 
+    print("0qVal was = ",qVal)
+    print("Node name is "+binTreeDict["name"])
+
     inOutMass=getNodeInOutMass(binTreeDict)
     if inOutMass != None:
         print("filling tree with", inOutMass)
-        binTreeDict["inMass"]=inOutMass[0]
-        binTreeDict["outMass"]=inOutMass[1]
+        inMass,outMass=inOutMass
+        binTreeDict["inMass"]=inMass
+        binTreeDict["outMass"]=outMass
+
+        print("Also including the out energies")
+        inEcmSys=binTreeDict["inEcmSys"]
+        inEcmAvail=binTreeDict["inEcmAvail"]
+
+        if "leaf" in binTreeDict["descriptors"]:
+            return
+
+        exE1,exE2=getChildEx(binTreeDict)
+        locEx=0.0
+        if "exE" in binTreeDict:
+            locEx=binTreeDict["exE"]
+        outEcmSys=1.0*(inMass/outMass)*inEcmSys
+        binTreeDict["outEcmSys"]=outEcmSys
+        outEcmAvail=inEcmSys*(1-1.0*(inMass/outMass))+inEcmAvail+qVal+locEx-(exE1+exE2)
+        binTreeDict["outEcmAvail"]=outEcmAvail
+        binTreeDict["outEcmSum"]=outEcmSys+outEcmAvail
+
+        binTreeDict["outBVcm"]=getVelFromEAndM(outEcmSys,outMass)/c
+        outRedVcm=binTreeDict["outBVcm"]*100
+        binTreeDict["outRedVcm"]=outRedVcm
+        print("in "+binTreeDict["name"]+"outRedVcm = "+str(outEcmSys))
+        #This is only for setting a search range, the final vel won't be
+        #this high. This criteria will be improved eventually.
+        binTreeDict["outBVLabMax"]=binTreeDict["outRedVcm"]
+        BVcm=sqrt(2.0*outEcmAvail/outMass)#Leaving out *c for now
+        # dictNode["outBVcm"]=BVcm
+        # dictNode["outRedVcm"]=BVcm*100
+        # maxVel=binTreeDict["outBVLabMax"]
+        binTreeDict["outBVLabMax"]+=BVcm*100
+
+        childMasses=getChildMasses(binTreeDict)
+        if childMasses != None:
+            m1,m2=childMasses
+            print("qVal was = ",qVal)
+            print("locEx,outEcmAvail = ",locEx,outEcmAvail)
+            E1cm,E2cm=getEcmsFromECM2(m1,m2,outEcmAvail)
+            # maxVel=binTreeDict["outBVLabMax"]
+            maxVel=65 #This needs to be changed!!!!!
+            pushNewEcmAndVels2(E1cm,E2cm,binTreeDict["dictList"],maxVel)
+            # specialPushNewEcmAndVels(E1cm,E2cm,outEcmSys,binTreeDict["dictList"],maxVel)
+    # else:
+    #     binTreeDict["outEcmSys"]=binTreeDict["inEcmSys"]
+    #     binTreeDict["outEcmAvail"]=binTreeDict["inEcmAvail"]
+
 
     if "dictList" not in binTreeDict:
         return
@@ -169,14 +220,28 @@ def completeTree2(binTreeDict):
     if binTreeDict == {}:
         return
 
-    eAvail=getAvailE(binTreeDict)
-    if eAvail != None:
-        binTreeDict["EAvail"]=eAvail
+    outEcmAvail=getAvailE(binTreeDict)
+    # outEcmAvail=binTreeDict["outEcmAvail"]
+    print("outEcmAvail = ",outEcmAvail)
+        # eAvail=21.4147 #for ground
+    # eAvail=40.0147 #for 18.6
+    # Q = -7.506343852104692
+    if "inMass" in binTreeDict:
+        print("#####################")
+        print("###inMass is present####")
+        print("#####################")
+        print("eAvail and inEcmAvail = %0.4f,%0.4f" % (outEcmAvail,binTreeDict["inEcmAvail"]))
+    if outEcmAvail != None:
+        print("the local name is = "+binTreeDict["name"])
+        print("outEcmAvail=%0.4f" %(outEcmAvail))
+
+        binTreeDict["EAvail"]=outEcmAvail
         childMasses=getChildMasses(binTreeDict)
         if childMasses != None:
             m1,m2=childMasses
-            E1cm,E2cm=getEcmsFromECM2(m1,m2,eAvail)
-            maxVel=binTreeDict["BVLabMax"]
+            E1cm,E2cm=getEcmsFromECM2(m1,m2,outEcmAvail)
+            inEcmSys=binTreeDict["inEcmSys"]
+            maxVel=binTreeDict["outBVLabMax"]
             pushNewEcmAndVels(E1cm,E2cm,binTreeDict["dictList"],maxVel)
 
     if "dictList" not in binTreeDict:
@@ -185,22 +250,120 @@ def completeTree2(binTreeDict):
     for e in binTreeDict["dictList"]:
         completeTree2(e)
 
-def pushNewEcmAndVels(E1cm,E2cm,dictNode,maxVel):
-    dictNode[0]["inEcmAvail"]=E1cm
+def pushNewEcmAndVels(inE1cmAvail,inE2cmAvail,dictNode,maxVel):
     m1=dictNode[0]["fMass"]
-    BVcm1=sqrt(2.0*E1cm/m1)#Leaving out *c for now
-    dictNode[0]["BVcm"]=BVcm1
-    dictNode[0]["redVcm"]=BVcm1*100
-    dictNode[0]["BVLabMax"]=maxVel+BVcm1*100
+    Q1,locEx1=0.0, 0.0
+    if "exE" in dictNode[0]:
+        locEx1=dictNode[0]["exE"]
+    if "Q" in dictNode[0]:
+        Q1=dictNode[0]["Q"]
+    dictNode[0]["inEcmSys"]=inE1cmAvail# +locEx1
+    BVcm1=sqrt(2.0*inE1cmAvail/m1)#Leaving out *c for now
+    dictNode[0]["inBVcm"]=BVcm1
+    dictNode[0]["inRedVcm"]=BVcm1*100
+    dictNode[0]["inBVLabMax"]=maxVel+BVcm1*100
 
-    dictNode[1]["inEcmAvail"]=E2cm
     m2=dictNode[1]["fMass"]
-    BVcm2=sqrt(2.0*E2cm/m2)#Leaving out *c for now
-    dictNode[1]["BVcm"]=BVcm2
-    dictNode[1]["redVcm"]=BVcm2*100
-    dictNode[1]["BVLabMax"]=maxVel+BVcm2*100
+    Q2,locEx2=0.0, 0.0
+    if "exE" in dictNode[1]:
+        locEx1=dictNode[1]["exE"]
+    if "Q" in dictNode[1]:
+        Q1=dictNode[1]["Q"]
+    dictNode[1]["inEcmSys"]=inE2cmAvail# +locEx2
+    BVcm2=sqrt(2.0*inE2cmAvail/m2)#Leaving out *c for now
+    dictNode[1]["inBVcm"]=BVcm2
+    dictNode[1]["inRedVcm"]=BVcm2*100
+    dictNode[1]["inBVLabMax"]=maxVel+BVcm2*100
 
-def getStraightLinePoints(theta,phi,vLabMax,part=2000):
+def pushNewEcmAndVels2(inE1cmSys,inE2cmSys,dictNode,maxVel):
+    m1=dictNode[0]["fMass"]
+    Q1,locEx1=0.0, 0.0
+    if "exE" in dictNode[0]:
+        locEx1=dictNode[0]["exE"]
+    if "Q" in dictNode[0]:
+        Q1=dictNode[0]["Q"]
+    dictNode[0]["inEcmSys"]=inE1cmSys
+    dictNode[0]["inEcmAvail"]=0.0
+    BVcm1=sqrt(2.0*inE1cmSys/m1)#Leaving out *c for now
+    dictNode[0]["inBVcm"]=BVcm1
+    dictNode[0]["inRedVcm"]=BVcm1*100
+    dictNode[0]["inBVLabMax"]=maxVel+BVcm1*100
+    if "leaf" in dictNode[0]["descriptors"]:
+        dictNode[0]["outEcmSys"]=inE1cmSys
+        dictNode[0]["outEcmAvail"]=inE1cmSys
+
+        dictNode[0]["outBVcm"]=BVcm1
+        dictNode[0]["outRedVcm"]=BVcm1*100
+        dictNode[0]["outBVLabMax"]=maxVel+BVcm1*100
+
+    m2=dictNode[1]["fMass"]
+    Q2,locEx2=0.0, 0.0
+    if "exE" in dictNode[1]:
+        locEx1=dictNode[1]["exE"]
+    if "Q" in dictNode[1]:
+        Q1=dictNode[1]["Q"]
+    dictNode[1]["inEcmSys"]=inE2cmSys
+    dictNode[1]["inEcmAvail"]=0.0
+    BVcm2=sqrt(2.0*inE2cmSys/m2)#Leaving out *c for now
+    dictNode[1]["inBVcm"]=BVcm2
+    dictNode[1]["inRedVcm"]=BVcm2*100
+    dictNode[1]["inBVLabMax"]=maxVel+BVcm2*100
+    if "leaf" in dictNode[1]["descriptors"]:
+        dictNode[1]["outEcmSys"]=inE2cmSys
+        dictNode[1]["outEcmAvail"]=inE2cmSys
+        dictNode[1]["outBVcm"]=BVcm2
+        dictNode[1]["outRedVcm"]=BVcm2*100
+        dictNode[1]["outBVLabMax"]=maxVel+BVcm2*100
+
+def specialPushNewEcmAndVels(inE1cmAvail,inE2cmAvail,inEcmSys,dictNode,maxVel):
+    print("pushing vals into "+dictNode[0]["name"]+" and "+dictNode[1]["name"])
+    m1=dictNode[0]["fMass"]
+    Q1,locEx1=0.0, 0.0
+    if "exE" in dictNode[0]:
+        locEx1=dictNode[0]["exE"]
+    if "Q" in dictNode[0]:
+        Q1=dictNode[0]["Q"]
+    myEcm=inE1cmAvail
+    # if "leaf" in dictNode[0]["descriptors"]:
+    #     myEcm=inE1cmAvail+inEcmSys
+    dictNode[0]["inEcmSys"]=inEcmSys
+    dictNode[0]["inEcmAvail"]=myEcm
+    BVcm1=sqrt(2.0*myEcm/m1)#Leaving out *c for now
+    dictNode[0]["inBVcm"]=BVcm1
+    dictNode[0]["inRedVcm"]=BVcm1*100
+    dictNode[0]["inBVLabMax"]=maxVel+BVcm1*100
+    if "leaf" in dictNode[0]["descriptors"]:
+        dictNode[0]["outEcmSys"]=myEcm # +locEx1
+        dictNode[0]["outEcmAvail"]=myEcm # +locEx1
+
+        dictNode[0]["outBVcm"]=BVcm1
+        dictNode[0]["outRedVcm"]=BVcm1*100
+        dictNode[0]["outBVLabMax"]=maxVel+BVcm1*100
+
+    m2=dictNode[1]["fMass"]
+    Q2,locEx2=0.0, 0.0
+    if "exE" in dictNode[1]:
+        locEx1=dictNode[1]["exE"]
+    if "Q" in dictNode[1]:
+        Q1=dictNode[1]["Q"]
+    myEcm=inE2cmAvail
+    # if "leaf" in dictNode[1]["descriptors"]:
+    #     myEcm=inE2cmAvail+inEcmSys
+    dictNode[1]["inEcmSys"]=inEcmSys# +locEx2
+    dictNode[1]["inEcmAvail"]=myEcm
+    BVcm2=sqrt(2.0*myEcm/m2)#Leaving out *c for now
+    dictNode[1]["inBVcm"]=BVcm2
+    dictNode[1]["inRedVcm"]=BVcm2*100
+    dictNode[1]["inBVLabMax"]=maxVel+BVcm2*100
+
+    if "leaf" in dictNode[1]["descriptors"]:
+        dictNode[1]["outEcmSys"]=myEcm # +locEx1
+        dictNode[1]["outEcmAvail"]=myEcm # +locEx1
+        dictNode[1]["outBVcm"]=BVcm2
+        dictNode[1]["outRedVcm"]=BVcm2*100
+        dictNode[1]["outBVLabMax"]=maxVel+BVcm2*100
+
+def getStraightLinePoints(theta,phi,vLabMax,part=4000):
     vArray=np.linspace(0,vLabMax,part)
     myVectArray=np.zeros( (part,3) )
     for i in range(part):
@@ -331,7 +494,7 @@ def pullLinesFromNode(binTreeDict):
         idx=findDetectIndex(binTreeDict["dictList"])
         if idx == None:
             return False
-        vLabMax=binTreeDict["BVLabMax"]
+        vLabMax=binTreeDict["outBVLabMax"]
         theta,phi=binTreeDict["dictList"][idx]["angles"]
         vLine=getStraightLinePoints(theta,phi,vLabMax)
         binTreeDict["vLines"]=[vLine]
@@ -387,7 +550,7 @@ def pullLinesFromNode(binTreeDict):
             vLine1=vLines1[j]
             cmLine=getMidPointLine(vLine2,vLine1,vRad,1-myFrac)
             vLineList.append(cmLine)
-            print("cmLine = ",cmLine)
+            # print("cmLine = ",cmLine)
             # vLLIdx=vLineList.index(cmLine)
             print("Line idx = ",vLLIdx)
             offsets=getMidPOffsets(vLine2,vLine1,vRad)
@@ -471,7 +634,7 @@ def fillMajorSols(binTreeDic,freePartRoute,solsDict={}):
     solsD4B2Solve=getSolVelsEnergiesEtcInNode(branch2Solve,\
                                                    solsD4B2Solve)
     branch2Solve["solsDict"]=solsD4B2Solve
-    vMagL=[branch2Solve["redVcm"],branch2Go["redVcm"]]
+    vMagL=[branch2Solve["outRedVcm"],branch2Go["outRedVcm"]]
     dict4Branch2Go=getComplementarySolsDict(solsD4B2Solve,vMagL)
     fillBool=fillMajorSols(branch2Go,freePartRoute[1:],dict4Branch2Go)
 
@@ -600,7 +763,7 @@ def getDictWithIdxs(treeNode,vSCent,sphSolsDict):
     centerStr=str(vSCent.tolist())
 
     nodeVLines=treeNode["vLines"]
-    vSRad=treeNode["redVcm"]
+    vSRad=treeNode["outRedVcm"]
     solIdxList=[]
     #To properly connect the solIdxList to its corresponding vLine
     idxLineList=[]
@@ -713,7 +876,7 @@ def getVelSolutions(treeNode):
     if treeNode["type"]==detector:
             return False
     if treeNode["type"]=="initial":
-        initRedVcm=treeNode["redVcm"]
+        initRedVcm=treeNode["outRedVcm"]
         centerPos=np.array([0.0,0.0,initRedVcm])
         treeNode["velSolutions"]=[centerPos]
         return True
@@ -1088,7 +1251,7 @@ def getThreeSecSolsIdxL(secSolParentIdxL,treeNode):
     lVLines,rVLines=leftN["vLines"],rightN["vLines"]
     nVLines=treeNode["vLines"]
 
-    lVMag,rVMag=leftN["redVcm"],rightN["redVcm"]
+    lVMag,rVMag=leftN["outRedVcm"],rightN["outRedVcm"]
 
     secSolsL=[]
 

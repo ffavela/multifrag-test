@@ -24,8 +24,8 @@ tI="initial"
 ##################################################
 initDict={"type":tI,"name":"a+t","massP":m4He,
           "massT":m3H,"ELab":beamE}
-helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.6}
-# helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":15.5}
+helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.9}
+# helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":16.2}
 #The actual state seems to be 15.8 for iii, with a contribution in
 #18.67 and 9.4 in the spectra fig4(b).
 
@@ -37,6 +37,7 @@ helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.6}
 #Was not able to reproduce any *4He decay fragmentation.
 
 protonDict={"type":tP,"name":"p","mass":m1H}
+# tritium1Dict={"type":tP,"name":"t1","mass":m3H,"exE":1.2} #interesting when 6He is in 18...
 tritium1Dict={"type":tP,"name":"t1","mass":m3H,"exE":0.0}
 tritium2Dict={"type":tP,"name":"t2","mass":m3H,"exE":0.0}
 
@@ -59,6 +60,7 @@ initDict["dictList"]=[protonDict,helium6Dict]
 ##################################################
 
 makeTreeCompletion(initDict)
+# makeInitialTreeCompletion(initDict)
 printTree(initDict)
 
 print("")

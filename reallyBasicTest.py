@@ -24,7 +24,7 @@ tI="initial"
 ##################################################
 initDict={"type":tI,"name":"a+t","massP":m4He,
           "massT":m3H,"ELab":beamE}
-helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.6}
+helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":14.2}
 # helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":15.5}
 #The actual state seems to be 15.8 for iii, with a contribution in
 #18.67 and 9.4 in the spectra fig4(b).
@@ -54,11 +54,12 @@ helium6Dict["dictList"]=[d2Dict,{}]
 
 initDict["dictList"]=[protonDict,helium6Dict]
 
-######################################################
-##########Particle end dict ternary 6He case tritons######
-##################################################
+# ######################################################
+# ##########Particle end dict ternary 6He case tritons######
+# ##################################################
 
 makeTreeCompletion(initDict)
+# makeInitialTreeCompletion(initDict)
 printTree(initDict)
 
 print("")
@@ -73,38 +74,39 @@ print(colored(easyStr,"red"))
 ##Some extra tests#########################
 ###########################################
 
-mIn=m4He+m3H
+# mIn=m4He+m3H
 
-mOut=m6He+m1H
+# mOut=m6He+m1H
 
 
-print("mIn,mOut = %0.4f,%0.4f" % (mIn,mOut))
-print("beamE = %0.4f" % beamE)
-ECMListIn=getEcmNICE(m4He,m3H,beamE)
-print(ECMListIn)
-ECMSysIn=ECMListIn[3]
-ECMAvailIn=ECMListIn[2]
-print("ECMSysIn,ECMAvailIn = %0.4f,%0.4f" %(ECMSysIn,ECMAvailIn))
+# print("mIn,mOut = %0.4f,%0.4f" % (mIn,mOut))
+# print("beamE = %0.4f" % beamE)
+# ECMListIn=getAllEcms(m4He,m3H,beamE)
+# print(ECMListIn)
+# ECMSysIn=ECMListIn[3]
+# ECMAvailIn=ECMListIn[2]
+# print("ECMSysIn,ECMAvailIn = %0.4f,%0.4f" %(ECMSysIn,ECMAvailIn))
 
-ETotIn=ECMSysIn+ECMAvailIn
-print("ETotIn = %f" %(ETotIn))
+# ETotIn=ECMSysIn+ECMAvailIn
+# print("ETotIn = %f" %(ETotIn))
 
-ECMSysOut=1.0*(mIn/mOut)*ECMSysIn
-Q=getQVal(mIn,0,mOut,0)
-Ex=18.6
-# Ex=0.0
-Q+=Ex
-ECMAvailOut=ECMSysIn*(1.0-1.0*mIn/mOut)+ECMAvailIn-Q
-print("ECMSysOut,ECMAvailOut = %0.4f,%0.4f" %(ECMSysOut,ECMAvailOut))
-ETotOut=ECMSysOut+ECMAvailOut+Q
-print("ETotOut = %f" %(ETotOut))
+# ECMSysOut=1.0*(mIn/mOut)*ECMSysIn
+# Q=getQVal(mIn,0,mOut,0)
+# print("Q=%0.4f" %(Q))
+# Ex=18.6
+# # Ex=0.0
+# Q+=Ex
+# ECMAvailOut=ECMSysIn*(1.0-1.0*mIn/mOut)+ECMAvailIn+Q
+# print("ECMSysOut,ECMAvailOut = %0.4f,%0.4f" %(ECMSysOut,ECMAvailOut))
+# ETotOut=ECMSysOut+ECMAvailOut-Q
+# print("ETotOut = %f" %(ETotOut))
 
-print("Getting the respective values for the ECM of the 6He and proton")
-ECM6He,ECM1H=getEcmsFromECM2(m6He,m3H,ECMAvailOut)
-print("ECM6He,ECM1H = %0.4f,%0.4f" %(ECM6He,ECM1H))
+# print("Getting the respective values for the ECM of the 6He and proton")
+# ECM6He,ECM1H=getEcmsFromECM2(m6He,m3H,ECMAvailOut)
+# print("ECM6He,ECM1H = %0.4f,%0.4f" %(ECM6He,ECM1H))
 
-eTempSum=ECM6He+ECM1H
-print("eTempSum = %0.4f" %(eTempSum))
+# eTempSum=ECM6He+ECM1H
+# print("eTempSum = %0.4f" %(eTempSum))
 
 
 

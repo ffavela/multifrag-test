@@ -16,7 +16,7 @@ def getEcm(mE1,mE2,E1L):
     Ecm=E1cm+E2cm
     return E1cm,E2cm,Ecm
 
-def getEcmNICE(mE1,mE2,E1L):
+def getAllEcms(mE1,mE2,E1L):
     vels=getVelcm(mE1,mE2,E1L)
     # mE1=getEMass(iso1)
     # mE2=getEMass(iso2)
@@ -27,8 +27,8 @@ def getEcmNICE(mE1,mE2,E1L):
     E1cm=0.5*(vels[0]/c)**2*mE1
     E2cm=0.5*(vels[1]/c)**2*mE2
     EcmAvail0=E1cm+E2cm
-    EcmNice=0.5*(vels[2]/c)**2*(mE1+mE2)
-    return E1cm,E2cm,EcmAvail0,EcmNice
+    EcmSys=0.5*(vels[2]/c)**2*(mE1+mE2)
+    return E1cm,E2cm,EcmAvail0,EcmSys
 
 
 #ECM is really the available energy in the center of mass system.
@@ -53,6 +53,10 @@ def getEcmAvailOutFromInVals0(ECMIn,ECMAvailIn,mIn,mOut,Q):
 def getECMOutFromIn(ECMIn,mIn,mOut):
     ECMOut=1.0*(mIn/mOut)*ECMIn
     return ECMOut
+
+def getVelFromEAndM(E,m):
+    v=sqrt(2.0*E/m)*c
+    return v
 
 def getAvailEnergy(m1,m2,m3,m4,E1L,E2L=0):
     E1cm,E2cm,Ecm=getEcm(m1,m2,E1L)
