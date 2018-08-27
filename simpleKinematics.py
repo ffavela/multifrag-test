@@ -16,6 +16,22 @@ def getEcm(mE1,mE2,E1L):
     Ecm=E1cm+E2cm
     return E1cm,E2cm,Ecm
 
+def getAllEcms(mE1,mE2,E1L):
+    vels=getVelcm(mE1,mE2,E1L)
+    # mE1=getEMass(iso1)
+    # mE2=getEMass(iso2)
+    #Alternative way
+    # mu=mE1*mE2/(mE1+mE2)
+    # rVel=vels[0]-vels[1]
+    # print 1.0/2.0*mu*rVel**2
+    E1cm=0.5*(vels[0]/c)**2*mE1
+    E2cm=0.5*(vels[1]/c)**2*mE2
+    EcmAvail0=E1cm+E2cm
+    EcmSys=0.5*(vels[2]/c)**2*(mE1+mE2)
+    return E1cm,E2cm,EcmAvail0,EcmSys
+
+
+#ECM is really the available energy in the center of mass system.
 def getEcmsFromECM2(m1,m2,ECM):
     #For example, in a decay ECM=Q
     # m1=getEMass(iso1)
@@ -25,6 +41,22 @@ def getEcmsFromECM2(m1,m2,ECM):
     E1=0.5*(P*c)**2/m1
     E2=0.5*(P*c)**2/m2
     return E1,E2
+
+def getEcmAvailOutFromInVals0(ECMIn,ECMAvailIn,mIn,mOut,Q):
+    ECMAvailOut=ECMIn*(1-(mIn/mOut))+ECMAvailIn+Q
+    return ECMAvailOut
+
+# def getEcmAvailOutFromInVals1(ECMIn,ECMAvailIn,mIn,mOut,Q):
+#     ECMOut=getECMOutFromIn(ECMIn,mIn,mOut)
+#     EcmAvailOut=
+
+def getECMOutFromIn(ECMIn,mIn,mOut):
+    ECMOut=1.0*(mIn/mOut)*ECMIn
+    return ECMOut
+
+def getVelFromEAndM(E,m):
+    v=sqrt(2.0*E/m)*c
+    return v
 
 def getAvailEnergy(m1,m2,m3,m4,E1L,E2L=0):
     E1cm,E2cm,Ecm=getEcm(m1,m2,E1L)
@@ -58,6 +90,8 @@ def getQVal(m1,m2,m3,m4):
     Q=(m1+m2-m3-m4)
     return Q
 
+def getVoutCM(vInCM,mIn,mOut):
+    vOutCM=1.0*mIn/mOut*vInCM
 #Not using relativistic case here, these are betas (v/c)
 def getSimpleVels(m1,E1cm,m2,E2cm):
     v1cm=sqrt(2.0*E1cm/m1)

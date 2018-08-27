@@ -6,7 +6,6 @@ $ python helium6Example.py
 
 Runs a simple example involving 6He
 
-$ python treeTest.py
-
-Has other examples, see the code to comment and uncomment the
-fragmentation trees.
+The method still needs extensive testing but at least it is conserving
+energy. More updates will be made but probably in a fork or another
+repo.

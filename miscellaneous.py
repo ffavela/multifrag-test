@@ -33,7 +33,8 @@ def printTree(binTreeDict):
 
     # print(binTreeDict)
     print("")
-    print("name is ", binTreeDict["name"])
+    if "name" in binTreeDict:
+        print("name is ", binTreeDict["name"])
 
     if "dictList" not in binTreeDict:
         return
@@ -261,7 +262,10 @@ def npArray2Str(myNpArray):
 #############################################
 def getFinalMass(dictNode):
     if "mass" not in dictNode:
-        print("in "+dictNode["name"])
+        if "name" in dictNode:
+            print("in "+dictNode["name"])
+        if "type" not in dictNode:
+            return None
         if dictNode["type"] == "set":
             leftDict=dictNode["dictList"][0]
             rightDict=dictNode["dictList"][1]
@@ -273,26 +277,42 @@ def getFinalMass(dictNode):
         return None
 
     m=dictNode["mass"]
-    if "exE" not in dictNode:
-        myExE=0
-    else:
-        #Any kinetic energy information is placed inside the Q value,
-        #making this the only invocation of "exE"
-        myExE=dictNode["exE"]
-
-    m+=myExE
     return m
 
 def getAvailE(dictNode):
-    if "Ecm" not in dictNode:
+    if "outEcmAvail" not in dictNode:
         return None
-    eCm=dictNode["Ecm"]
+    eCm=dictNode["outEcmAvail"]
     if "Q" not in dictNode:
         qVal=0
     else:
         qVal=dictNode["Q"]
     eAvail=eCm+qVal
+
+    locEx=0
+    if "exE" in dictNode:
+        locEx=dictNode["exE"]
+
+    eAvail+=locEx
+    exE1,exE2=getChildEx(dictNode)
+    eAvail-=exE1+exE2
+
     return eAvail
+
+def getChildEx(dictNode):
+    exE1,exE2=0,0
+    # This should be taken care of in the future
+    # if "set"==dictNode["type"]:
+    #     exE1,exE2=getChildEx(dictNode)
+    if "dictList" not in dictNode:
+        return exE1,exE2
+    if "exE" in dictNode["dictList"][0]:
+        exE1=dictNode["dictList"][0]["exE"]
+
+    if "exE" in dictNode["dictList"][1]:
+        exE2=dictNode["dictList"][1]["exE"]
+
+    return exE1,exE2
 
 def getChildMasses(dictNode):
     if "dictList" not in dictNode:
@@ -324,7 +344,38 @@ def getNodeQVal(dictNode):
 
     Q=finalMass-daugthersMass
 
+    # #Need to add somehow a recursive function in order to take into
+    # #account nodes that represent sets of particles with child nodes
+    # #excited.
+    # if "exE" not in dictNode:
+    #     myExE=0
+    # else:
+    #     #Any kinetic energy information is placed inside the Q value,
+    #     #making this the only invocation of "exE"
+    #     myExE=dictNode["exE"]
+
+    # Q+=myExE #CheckHere
+
     return Q
+
+def getNodeInOutMass(dictNode):
+    if "fMass" not in dictNode:
+        return None
+
+    if "dictList" not in dictNode:
+        return None
+
+    for e in dictNode["dictList"]:
+        if "fMass" not in e:
+            return None
+
+    inMass=dictNode["fMass"]
+    outMass=0
+    for e in dictNode["dictList"]:
+        outMass+=e["fMass"]
+
+    return inMass,outMass
+
 
 def checkIfNodeIsFreePart(dictNode):
     if dictNode == {}:
@@ -413,10 +464,10 @@ def getChildVels(dictNode):
     leftDict=dictNode["dictList"][0]
     rightDict=dictNode["dictList"][1]
 
-    if "redVcm" not in leftDict or "redVcm" not in rightDict:
+    if "outRedVcm" not in leftDict or "outRedVcm" not in rightDict:
         return None
-    leftVel=leftDict["redVcm"]
-    rightVel=rightDict["redVcm"]
+    leftVel=leftDict["outRedVcm"]
+    rightVel=rightDict["outRedVcm"]
     return [leftVel,rightVel]
 
 def findDetectIndex(aList):
@@ -510,6 +561,63 @@ def fillGeneralSimplifiedVCMD(binTreeDict,genSimpVCMD):
 
     fillGeneralSimplifiedVCMD(leftNode,genSimpVCMD)
     fillGeneralSimplifiedVCMD(rightNode,genSimpVCMD)
+
+
+def fillTreeDescriptorL(treeDict):
+    treeDict["descriptors"]=[]
+    if "name" in treeDict:
+        print(treeDict["name"])
+
+    if "type" not in treeDict:
+        return "None"
+
+    nType=treeDict["type"]
+    print("nType = ",nType)
+    if nType == "detector":
+        treeDict["descriptors"].append("cNode")
+        print("cNode")
+        return "cNode"
+
+    if  nType == "initial":
+        treeDict["descriptors"].append("iNode")
+        treeDict["descriptors"].append("rNode")
+        # treeDict["descriptors"].append("root")
+        print("iNode")
+
+    if treeDict["dictList"]==[{},{}]:
+        treeDict["descriptors"].append("rNode")
+        treeDict["descriptors"].append("fNode")
+        treeDict["descriptors"].append("leaf")
+        print("rNode")
+        return "rNode"
+
+    childD1=fillTreeDescriptorL(treeDict["dictList"][0])
+    childD2=fillTreeDescriptorL(treeDict["dictList"][1])
+
+    childDL=[childD1,childD2]
+
+    if "error" in childDL or ["rNode","rNode"] == childDL:
+        print("error")
+        return "error"
+
+    if "cNode" in childDL:
+        treeDict["descriptors"].append("eNode")
+        treeDict["descriptors"].append("leaf")
+        print("Important")
+        print("eNode")
+        return "eNode"
+
+    if "eNode" in childDL and "rNode" in childDL:
+        if "rNode" not in treeDict["descriptors"]:
+            treeDict["descriptors"].append("rNode")
+        myIdx=childDL.index("eNode")
+        treeDict["dictList"][myIdx]["descriptors"].append("root")
+        print("rNode")
+        return "rNode"
+    if ["eNode","eNode"] == childDL:
+        treeDict["descriptors"].append("eNode")
+        print("eNode")
+        return "eNode"
 
 def getGeneralSimplifiedVCMD(binTreeDict):
     genSimpVCMD={}

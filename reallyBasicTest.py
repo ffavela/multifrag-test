@@ -24,8 +24,8 @@ tI="initial"
 ##################################################
 initDict={"type":tI,"name":"a+t","massP":m4He,
           "massT":m3H,"ELab":beamE}
-helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.9}
-# helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":16.2}
+helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":14.2}
+# helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":15.5}
 #The actual state seems to be 15.8 for iii, with a contribution in
 #18.67 and 9.4 in the spectra fig4(b).
 
@@ -37,27 +37,26 @@ helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.9}
 #Was not able to reproduce any *4He decay fragmentation.
 
 protonDict={"type":tP,"name":"p","mass":m1H}
-# tritium1Dict={"type":tP,"name":"t1","mass":m3H,"exE":1.2} #interesting when 6He is in 18...
 tritium1Dict={"type":tP,"name":"t1","mass":m3H,"exE":0.0}
 tritium2Dict={"type":tP,"name":"t2","mass":m3H,"exE":0.0}
 
 #Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(20),radians(180)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(21),radians(0)]}
+# d1Dict={"type":tD,"name":"d1","angles":[radians(20),radians(180)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(10),radians(0)]}
 
 #Completing the dictionaries
 protonDict["dictList"]=[{},{}]
-tritium1Dict["dictList"]=[d1Dict,{}]
-tritium2Dict["dictList"]=[d2Dict,{}]
+# tritium1Dict["dictList"]=[d1Dict,{}]
+# tritium2Dict["dictList"]=[d2Dict,{}]
 
-helium6Dict["dictList"]=[tritium1Dict,tritium2Dict]
-
+# helium6Dict["dictList"]=[tritium1Dict,tritium2Dict]
+helium6Dict["dictList"]=[d2Dict,{}]
 
 initDict["dictList"]=[protonDict,helium6Dict]
 
-######################################################
-##########Particle end dict ternary 6He case tritons######
-##################################################
+# ######################################################
+# ##########Particle end dict ternary 6He case tritons######
+# ##################################################
 
 makeTreeCompletion(initDict)
 # makeInitialTreeCompletion(initDict)
@@ -71,6 +70,46 @@ genSimpVCMD=getGeneralSimplifiedVCMD(initDict)
 print(genSimpVCMD)
 print(colored(easyStr,"red"))
 
+###########################################
+##Some extra tests#########################
+###########################################
+
+# mIn=m4He+m3H
+
+# mOut=m6He+m1H
+
+
+# print("mIn,mOut = %0.4f,%0.4f" % (mIn,mOut))
+# print("beamE = %0.4f" % beamE)
+# ECMListIn=getAllEcms(m4He,m3H,beamE)
+# print(ECMListIn)
+# ECMSysIn=ECMListIn[3]
+# ECMAvailIn=ECMListIn[2]
+# print("ECMSysIn,ECMAvailIn = %0.4f,%0.4f" %(ECMSysIn,ECMAvailIn))
+
+# ETotIn=ECMSysIn+ECMAvailIn
+# print("ETotIn = %f" %(ETotIn))
+
+# ECMSysOut=1.0*(mIn/mOut)*ECMSysIn
+# Q=getQVal(mIn,0,mOut,0)
+# print("Q=%0.4f" %(Q))
+# Ex=18.6
+# # Ex=0.0
+# Q+=Ex
+# ECMAvailOut=ECMSysIn*(1.0-1.0*mIn/mOut)+ECMAvailIn+Q
+# print("ECMSysOut,ECMAvailOut = %0.4f,%0.4f" %(ECMSysOut,ECMAvailOut))
+# ETotOut=ECMSysOut+ECMAvailOut-Q
+# print("ETotOut = %f" %(ETotOut))
+
+# print("Getting the respective values for the ECM of the 6He and proton")
+# ECM6He,ECM1H=getEcmsFromECM2(m6He,m3H,ECMAvailOut)
+# print("ECM6He,ECM1H = %0.4f,%0.4f" %(ECM6He,ECM1H))
+
+# eTempSum=ECM6He+ECM1H
+# print("eTempSum = %0.4f" %(eTempSum))
+
+
+
 ############################################
 ####The plotting part#######################
 ############################################
@@ -80,12 +119,12 @@ ax = fig.gca(projection='3d')
 
 
 fig_size = plt.rcParams["figure.figsize"]
-print("The figsize is = ",fig_size)
+# print("The figsize is = ",fig_size)
 # Set figure width to 9 and height to 9, a square
 fig_size[0] = 8
 fig_size[1] = 4
 plt.rcParams["figure.figsize"] = fig_size
-print("The new figsize is = ",fig_size)
+# print("The new figsize is = ",fig_size)
 
 plt.xlim(-15, 15)
 plt.ylim(-15, 15)
