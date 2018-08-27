@@ -211,6 +211,22 @@ def modifyAx4Arrows(ax,genSimpVCMD):
                              arrowstyle="-|>", color=myRandColor)
             ax.add_artist(vCMArrow)
 
+def modifyAx4ArrowsNormal(ax,genSimpVCMD):
+    for centStr in genSimpVCMD:
+        # vVal=genSimpVCMD[centStr]["npCenter"]
+        vVal=str2NPArray(centStr)
+        vXVal,vYVal,vZVal=vVal
+        myRandColor='#000000'
+        for vCMVal in genSimpVCMD[centStr]:
+            newVLab=vCMVal+vVal
+            vCMX,vCMY,vCMZ=newVLab
+            vCMArrow=Arrow3D([vXVal, vCMX], [vYVal, vCMY],
+                             [vZVal, vCMZ],
+                             mutation_scale=20,
+                             lw=1,
+                             arrowstyle="-|>", color=myRandColor)
+            ax.add_artist(vCMArrow)
+
 def getRandomColor():
     r = lambda: random.randint(0,255)
     randColor=('#%02X%02X%02X' % (r(),r(),r()))
