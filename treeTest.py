@@ -37,39 +37,39 @@ tI="initial"
 #################################################
 ##########Particle dict quaternary sequential####
 #################################################
-
+beamE=220
 ###############Working with this one 4 now################
-# initDict={"type":tI,"name":"12C+12C","massP":m12C,
-#           "massT":m12C,"ELab":beamE}
-# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
-# beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
-# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+initDict={"type":tI,"name":"12C+12C","massP":m12C,
+          "massT":m12C,"ELab":beamE}
+oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":16.2}
+beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
+carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":0.0}
 
 # # alphaSysDict={"type":tS,"name":"4He+4He"}
-# alphaADict={"type":tP,"name":"4HeA","mass":m4He}
-# alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
-# alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
+alphaADict={"type":tP,"name":"4HeA","mass":m4He}
+alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
+alphaCDict={"type":tP,"name":"4HeC","mass":m4He}
 # # alphaDDict={"type":tP,"name":"4He","mass":m4He}
 # # alphaEDict={"type":tP,"name":"4He","mass":m4He}
 
-# #Defining the detectors
-# d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
-# d2Dict={"type":tD,"name":"d2","angles":[radians(35),radians(20)]}
-# d3Dict={"type":tD,"name":"d3","angles":[radians(80),radians(140)]}
+#Defining the detectors
+d1Dict={"type":tD,"name":"d1","angles":[radians(3),radians(6)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(35),radians(20)]}
+d3Dict={"type":tD,"name":"d3","angles":[radians(10),radians(180)]}
 # # d4Dict={"type":tD,"name":"d4"}
 
-# #Completing the dictionaries
-# alphaBDict["dictList"]=[d3Dict,{}]
-# alphaADict["dictList"]=[{},{}]
-# alphaCDict["dictList"]=[d1Dict,{}]
+#Completing the dictionaries
+alphaBDict["dictList"]=[d3Dict,{}]
+alphaADict["dictList"]=[{},{}]
+alphaCDict["dictList"]=[d1Dict,{}]
 
-# oxyDict["dictList"]=[alphaCDict,carbonDict]
+oxyDict["dictList"]=[alphaCDict,carbonDict]
 
-# beDict["dictList"]=[alphaADict,alphaBDict]
+beDict["dictList"]=[alphaADict,alphaBDict]
 # # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
-# carbonDict["dictList"]=[d2Dict,{}]
+carbonDict["dictList"]=[d2Dict,{}]
 
-# initDict["dictList"]=[oxyDict,beDict]
+initDict["dictList"]=[oxyDict,beDict]
 
 #################################################
 ####Particle dict end quaternary sequential######
@@ -78,13 +78,13 @@ tI="initial"
 #################################################
 ##########Particle dict five part sequential#####
 #################################################
-
+# ELab=240 # Not working for now
 # initDict={"type":tI,"name":"12C+12C","massP":m12C,
 #           "massT":m12C,"ELab":beamE}
-# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
-# be8ADict={"type":tP,"name":"8BeA","mass":m8Be,"exE":0.0}
-# be8BDict={"type":tP,"name":"8BeB","mass":m8Be,"exE":0.0}
-# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
+# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":16.0494}
+# be8ADict={"type":tP,"name":"8BeA","mass":m8Be,"exE":4.0}
+# be8BDict={"type":tP,"name":"8BeB","mass":m8Be,"exE":4.0}
+# carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":17.65}
 
 # # alphaSysDict={"type":tS,"name":"4He+4He"}
 # alphaADict={"type":tP,"name":"4HeA","mass":m4He}
@@ -123,13 +123,13 @@ tI="initial"
 #################################################
 ##########Particle dict six part sequential#####
 #################################################
-
+# ELab=240 # Not working for now
 # initDict={"type":tI,"name":"12C+12C","massP":m12C,
 #           "massT":m12C,"ELab":beamE}
 
-# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":6.0494}
-# be8ADict={"type":tP,"name":"8BeA","mass":m8Be,"exE":0.0}
-# be8BDict={"type":tP,"name":"8BeB","mass":m8Be,"exE":0.0}
+# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":16.0494}
+# be8ADict={"type":tP,"name":"8BeA","mass":m8Be,"exE":30.0}
+# be8BDict={"type":tP,"name":"8BeB","mass":m8Be,"exE":10.0}
 # carbonDict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
 
 # # alphaSysDict={"type":tS,"name":"4He+4He"}
@@ -206,27 +206,27 @@ tI="initial"
 ##########Particle dict ternary sequential########
 ##################################################
 
-initDict={"type":tI,"name":"12C+12C","massP":m12C,
-          "massT":m12C,"ELab":beamE}
-oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":0.0}
+# initDict={"type":tI,"name":"12C+12C","massP":m12C,
+#           "massT":m12C,"ELab":beamE}
+# oxyDict={"type":tP,"name":"16O","mass":m16O,"exE":0.0}
 
-beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
-# alphaSysDict={"type":tS,"name":"4He+4He"}
-alphaADict={"type":tP,"name":"4HeA","mass":m4He}
-alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
+# beDict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
+# # alphaSysDict={"type":tS,"name":"4He+4He"}
+# alphaADict={"type":tP,"name":"4HeA","mass":m4He}
+# alphaBDict={"type":tP,"name":"4HeB","mass":m4He}
 
-#Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(17),radians(0)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(130),radians(0)]}
+# #Defining the detectors
+# d1Dict={"type":tD,"name":"d1","angles":[radians(17),radians(0)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(130),radians(0)]}
 
-#Completing the dictionaries
-oxyDict["dictList"]=[d1Dict,{}]
-alphaADict["dictList"]=[d2Dict,{}]
-alphaBDict["dictList"]=[{},{}]
-beDict["dictList"]=[alphaADict,alphaBDict]
-# # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
+# #Completing the dictionaries
+# oxyDict["dictList"]=[d1Dict,{}]
+# alphaADict["dictList"]=[d2Dict,{}]
+# alphaBDict["dictList"]=[{},{}]
+# beDict["dictList"]=[alphaADict,alphaBDict]
+# # # alphaSysDict["dictList"]=[alphaADict,alphaBDict]
 
-initDict["dictList"]=[oxyDict,beDict]
+# initDict["dictList"]=[oxyDict,beDict]
 
 ##################################################
 ##########Particle end dict ternary sequential####
@@ -681,15 +681,16 @@ initDict["dictList"]=[oxyDict,beDict]
 ##############################################
 ##########Particle dict lamia ternary seq########
 ##############################################
-# beamE=27.0
+# beamE=40.0
 
+# #I invented some excited levels here... ;-P
 # initDict={"type":tI,"name":"d+11B","massP":m2H,
 #           "massT":m11B,"ELab":beamE}
 
 # alphaDict={"type":tP,"name":"alpha","mass":m4He,"exE":0.0}
 
-# be9Dict={"type":tP,"name":"9Be","mass":m9Be,"exE":3.04}
-# be8Dict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
+# be9Dict={"type":tP,"name":"9Be","mass":m9Be,"exE":7.04}
+# be8Dict={"type":tP,"name":"8Be","mass":m8Be,"exE":2.0}
 
 # neutronDict={"type":tP,"name":"1n","mass":m1n}
 
@@ -715,7 +716,7 @@ initDict["dictList"]=[oxyDict,beDict]
 
 
 ##############################################
-##########Particle dict  BUG HERE (starting from 31)#######
+##########Particle dict  #####################
 ##############################################
 # beamE=35.5
 
@@ -725,7 +726,7 @@ initDict["dictList"]=[oxyDict,beDict]
 
 # deuteron1Dict={"type":tP,"name":"deut1","mass":m2H}
 # deuteron2Dict={"type":tP,"name":"deut2","mass":m2H}
-# # dSysDict={"type":tP,"name":"dSys","mass":2*m2H}
+# # # # dSysDict={"type":tP,"name":"dSys","mass":2*m2H}
 # alphaDict={"type":tP,"name":"alpha","mass":m4He,"exE":30.0}
 
 # #Defining the detectors
@@ -737,15 +738,15 @@ initDict["dictList"]=[oxyDict,beDict]
 # deuteron1Dict["dictList"]=[d1Dict,{}]
 # deuteron2Dict["dictList"]=[d2Dict,{}]
 
-# # dSysDict["dictList"]=[deuteron1Dict,deuteron2Dict]
+# # # # dSysDict["dictList"]=[deuteron1Dict,deuteron2Dict]
 # alphaDict["dictList"]=[deuteron1Dict,deuteron2Dict]
 
 
-# # initDict["dictList"]=[neutronDict,dSysDict]
+# # # initDict["dictList"]=[neutronDict,dSysDict]
 # initDict["dictList"]=[neutronDict,alphaDict]
 
 ##############################################
-#####Particle end dict BUG HERE###############
+#####Particle end dict #######################
 ##############################################
 
 
