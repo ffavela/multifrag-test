@@ -2,15 +2,19 @@ from multifragStuff import *
 
 print(colored(easyStr,"blue"))
 #print all energies in MeV
-beamE=67.2
-m6He=5606.55669604
+beamE=50.0
+
 m4He=3728.401315862896
 m3He=2809.41351708
 
 m3H=2809.43210768
 m2H=1876.12392312
 m1H=938.783071355
-m1n=939.565417991
+
+m9B=8395.86338939857
+m9Be=8394.795353167417
+m8Be=7456.894471212898
+m5Li=4669.14938672698
 
 #Types of dictionaries
 tP="particle"
@@ -22,36 +26,36 @@ tI="initial"
 ##################################################
 ##########Particle dict ternary 6He case tritons##########
 ##################################################
-initDict={"type":tI,"name":"a+t","massP":m4He,
-          "massT":m3H,"ELab":beamE}
-helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":18.9}
-# helium6Dict={"type":tP,"name":"6He","mass":m6He,"exE":16.2}
-
-#Same fig the peaks at 13.73,28.11,9.5 and 30.8 seem to come from the
-#18.6 *6He excitation level.
-
-#Notice the overlap of peaks below the 10MeV part.
-
-#Was not able to reproduce any *4He decay fragmentation.
+initDict={"type":tI,"name":"3He+9Be","massP":m3He,
+          "massT":m9Be,"ELab":beamE}
 
 protonDict={"type":tP,"name":"p","mass":m1H}
-# tritium1Dict={"type":tP,"name":"t1","mass":m3H,"exE":1.2} #interesting when 6He is in 18...
-tritium1Dict={"type":tP,"name":"t1","mass":m3H,"exE":0.0}
-tritium2Dict={"type":tP,"name":"t2","mass":m3H,"exE":0.0}
 
+alpha1Dict={"type":tP,"name":"a1","mass":m4He,"exE":0.0}
+alpha2Dict={"type":tP,"name":"a2","mass":m4He,"exE":0.0}
+
+tritiumDict={"type":tP,"name":"t","mass":m3H,"exE":0.0}
+
+boron9Dict={"type":tP,"name":"9B","mass":m9B,"exE":11.7}
+
+berillium8Dict={"type":tP,"name":"8Be","mass":m8Be,"exE":3.04}
 #Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(20),radians(180)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(21),radians(0)]}
+d1Dict={"type":tD,"name":"d1","angles":[radians(0),radians(0)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(140),radians(180)]}
+d3Dict={"type":tD,"name":"d3","angles":[radians(23),radians(0)]}
 
 #Completing the dictionaries
-protonDict["dictList"]=[{},{}]
-tritium1Dict["dictList"]=[d1Dict,{}]
-tritium2Dict["dictList"]=[d2Dict,{}]
+protonDict["dictList"]=[d3Dict,{}]
+tritiumDict["dictList"]=[d1Dict,{}]
 
-helium6Dict["dictList"]=[tritium1Dict,tritium2Dict]
+alpha1Dict["dictList"]=[{},{}]
+alpha2Dict["dictList"]=[d2Dict,{}]
 
+berillium8Dict["dictList"]=[alpha1Dict,alpha2Dict]
+# berillium8Dict["dictList"]=[{},{}]
+boron9Dict["dictList"]=[berillium8Dict,protonDict]
 
-initDict["dictList"]=[protonDict,helium6Dict]
+initDict["dictList"]=[tritiumDict,boron9Dict]
 
 ######################################################
 ##########Particle end dict ternary 6He case tritons######
