@@ -136,8 +136,12 @@ def printFreePartProp(initDict):
     for centStr in solsDict:
         print("center = "+centStr)
         centSol=solsDict[centStr]
+        print("The energies are")
         for energySol in centSol["labEnergy"]:
             print(colored(energySol,"magenta"))
+        print("The thetaPhi angles are")
+        for thetaPhiVal in centSol["thetaPhi"]:
+            print(colored(thetaPhiVal,"blue"))
 
 def getFreePartDict(treeNode,freePartRoute):
     if len(freePartRoute) == 1:
@@ -529,7 +533,9 @@ def printPropAtDetector(binTreeDict):
         for centStr in mySolsD:
             print("center = "+centStr)
             energyList=mySolsD[centStr]["labEnergy"]
-            print(colored(energyList,"magenta"))
+            print(colored("thetaPhi "+str(mySolsD[centStr]["thetaPhi"]),"blue"))
+
+            print(colored("lab energy "+str(energyList),"magenta"))
 
 def getMyNode(treeNode,routeL):
     if routeL == []:

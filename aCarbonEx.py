@@ -43,7 +43,7 @@ initDict={"type":tI,"name":"a+12C","massP":m4He,
           "massT":m12C,"ELab":beamE}
 alphaADict={"type":tP,"name":"4He_A","mass":m4He,"exE":0.0}
 
-carbon12Dict={"type":tP,"name":"12C","mass":m12C,"exE":10.3}
+carbon12Dict={"type":tP,"name":"12C","mass":m12C,"exE":7.65}
 
 alphaBDict={"type":tP,"name":"4He_B","mass":m4He,"exE":0.0}
 alphaCDict={"type":tP,"name":"4He_C","mass":m4He,"exE":0.0}
@@ -53,21 +53,21 @@ be8Dict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
 
 #Defining the detectors
 # d1Dict={"type":tD,"name":"d1","angles":[radians(47.82),radians(180)]}
-d1Dict={"type":tD,"name":"d1","angles":[radians(70.82),radians(180)]}
-# d2Dict={"type":tD,"name":"d2","angles":[radians(35.2),radians(180)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(34.9),radians(180)]}
-d3Dict={"type":tD,"name":"d3","angles":[radians(35.4),radians(180)]}
+d1Dict={"type":tD,"name":"d1","angles":[radians(33.1),radians(190)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(45.2),radians(153)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(34.9),radians(180)]}
+# d3Dict={"type":tD,"name":"d3","angles":[radians(35.4),radians(180)]}
 
 #Completing the dictionaries
 alphaADict["dictList"]=[{},{}]
 carbon12Dict["dictList"]=[alphaBDict,be8Dict]
 
 alphaBDict["dictList"]=[d1Dict,{}]
-# be8Dict["dictList"]=[d2Dict,{}]
-be8Dict["dictList"]=[alphaCDict,alphaDDict]
+be8Dict["dictList"]=[d2Dict,{}]
+# be8Dict["dictList"]=[alphaCDict,alphaDDict]
 
-alphaCDict["dictList"]=[d2Dict,{}]
-alphaDDict["dictList"]=[d3Dict,{}]
+# alphaCDict["dictList"]=[d2Dict,{}]
+# alphaDDict["dictList"]=[d3Dict,{}]
 
 initDict["dictList"]=[alphaADict,carbon12Dict]
 
