@@ -23,7 +23,8 @@ tI="initial"
 
 ###This example is not working for now#######
 #### Of course it shouldn't, with only 10 MeV there is not enough
-#### energy for the other neutron!!
+#### energy for the other neutron!! Should take a better look into Ecm
+#### avail
 
 initDict={"type":tI,"name":"68Ni+12C","massP":m68Ni,
           "massT":m12C,"ELab":beamE}
