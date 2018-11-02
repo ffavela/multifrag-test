@@ -28,8 +28,11 @@ carbon12Dict={"type":tP,"name":"12C","mass":m12C,"exE":0.0}
 neutron1Dict={"type":tP,"name":"n1","mass":m1n,"exE":0.0}
 
 #Defining the detectors
-d1Dict={"type":tD,"name":"d1","angles":[radians(6.6),radians(0)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(65.6),radians(180)]}
+# d1Dict={"type":tD,"name":"d1","angles":[radians(6.6),radians(0)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(65.6),radians(180)]}
+
+d1Dict={"type":tD,"name":"d1","angles":[radians(2.2),radians(0)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(78.8),radians(180)]}
 
 #Completing the dictionaries
 nickel68Dict["dictList"]=[nickel67Dict,neutron1Dict]
