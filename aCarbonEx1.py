@@ -53,17 +53,18 @@ be8Dict={"type":tP,"name":"8Be","mass":m8Be,"exE":0.0}
 
 #Defining the detectors
 # d1Dict={"type":tD,"name":"d1","angles":[radians(47.82),radians(180)]}
-d1Dict={"type":tD,"name":"d1","angles":[radians(33.1),radians(190)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(45.2),radians(153)]}
+d1Dict={"type":tD,"name":"d1","angles":[radians(30.1),radians(210)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(60.2),radians(33)]}
 # d2Dict={"type":tD,"name":"d2","angles":[radians(34.9),radians(180)]}
 # d3Dict={"type":tD,"name":"d3","angles":[radians(35.4),radians(180)]}
 
 #Completing the dictionaries
-alphaADict["dictList"]=[{},{}]
+alphaADict["dictList"]=[d1Dict,{}]
 carbon12Dict["dictList"]=[alphaBDict,be8Dict]
+# carbon12Dict["dictList"]=[{},{}]
 
-alphaBDict["dictList"]=[d1Dict,{}]
-be8Dict["dictList"]=[d2Dict,{}]
+alphaBDict["dictList"]=[d2Dict,{}]
+be8Dict["dictList"]=[{},{}]
 # be8Dict["dictList"]=[alphaCDict,alphaDDict]
 
 # alphaCDict["dictList"]=[d2Dict,{}]
