@@ -2,12 +2,12 @@ from multifragStuff import *
 
 print(colored(easyStr,"blue"))
 #print all energies in MeV
-beamE=1904.0
+beamE=53.0
 
-m12C=11177.9292
-m68Ni=63278.13497892765
-m67Ni=62346.36201288145
+m4He=3728.401315862896
+mt=2809.4321076824253
 m1n=939.565417991
+m1H=938.7830713545549
 
 #Types of dictionaries
 tP="particle"
@@ -17,37 +17,32 @@ tI="initial"
 
 
 ##################################################
-########## Example 4 Nancy 1 #####################
+########## Example 4 Aylin 1 #####################
 ##################################################
-initDict={"type":tI,"name":"68Ni+12C","massP":m68Ni,
-          "massT":m12C,"ELab":beamE}
-nickel68Dict={"type":tP,"name":"68Ni","mass":m68Ni,"exE":10.0}
-nickel67Dict={"type":tP,"name":"67Ni","mass":m67Ni,"exE":0.0}
+initDict={"type":tI,"name":"a+a","massP":m4He,
+          "massT":m4He,"ELab":beamE}
+alpha1Dict={"type":tP,"name":"4He_1","mass":m4He,"exE":0.0}
+alpha2Dict={"type":tP,"name":"4He_2","mass":m4He,"exE":20.3}
 
-carbon12Dict={"type":tP,"name":"12C","mass":m12C,"exE":0.0}
-neutron1Dict={"type":tP,"name":"n1","mass":m1n,"exE":0.0}
+# neutron1Dict={"type":tP,"name":"n1","mass":m1n,"exE":0.0}
+protonDict={"type":tP,"name":"p1","mass":m1H,"exE":0.0}
+tritonDict={"type":tP,"name":"t1","mass":mt,"exE":0.0}
 
 #Defining the detectors
-
-###
-#ANOTHER VALID CONF
-# d1Dict={"type":tD,"name":"d1","angles":[radians(6.6),radians(0)]}
-# d2Dict={"type":tD,"name":"d2","angles":[radians(65.6),radians(180)]}
-###
-
-d1Dict={"type":tD,"name":"d1","angles":[radians(2.2),radians(0)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(78.8),radians(180)]}
+d1Dict={"type":tD,"name":"d1","angles":[radians(0.0),radians(0)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(30.0),radians(180)]}
 
 #Completing the dictionaries
-nickel68Dict["dictList"]=[nickel67Dict,neutron1Dict]
-nickel67Dict["dictList"]=[d1Dict,{}]
-carbon12Dict["dictList"]=[d2Dict,{}]
-neutron1Dict["dictList"]=[{},{}]
+alpha1Dict["dictList"]=[d1Dict,{}]
+protonDict["dictList"]=[d2Dict,{}]
+alpha2Dict["dictList"]=[protonDict,tritonDict]
+tritonDict["dictList"]=[{},{}]
+# neutron1Dict["dictList"]=[{},{}]
 
-initDict["dictList"]=[carbon12Dict,nickel68Dict]
+initDict["dictList"]=[alpha1Dict,alpha2Dict]
 
 ######################################################
-########## Example 4 Nancy 1 #########################
+########## Example 4 Aylin 1 #########################
 ######################################################
 
 makeTreeCompletion(initDict)
