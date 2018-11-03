@@ -21,7 +21,7 @@ tI="initial"
 ##################################################
 initDict={"type":tI,"name":"68Ni+12C","massP":m68Ni,
           "massT":m12C,"ELab":beamE}
-nickel68Dict={"type":tP,"name":"68Ni","mass":m68Ni,"exE":11.0}
+nickel68Dict={"type":tP,"name":"68Ni","mass":m68Ni,"exE":10.0}
 nickel67Dict={"type":tP,"name":"67Ni","mass":m67Ni,"exE":0.0}
 
 carbon12Dict={"type":tP,"name":"12C","mass":m12C,"exE":0.0}
@@ -36,13 +36,13 @@ neutron1Dict={"type":tP,"name":"n1","mass":m1n,"exE":0.0}
 ###
 
 d1Dict={"type":tD,"name":"d1","angles":[radians(2.2),radians(0)]}
-d2Dict={"type":tD,"name":"d2","angles":[radians(78.0),radians(180)]}
+d2Dict={"type":tD,"name":"d2","angles":[radians(8.0),radians(180)]}
 
 #Completing the dictionaries
 nickel68Dict["dictList"]=[nickel67Dict,neutron1Dict]
 nickel67Dict["dictList"]=[d1Dict,{}]
-carbon12Dict["dictList"]=[d2Dict,{}]
-neutron1Dict["dictList"]=[{},{}]
+carbon12Dict["dictList"]=[{},{}]
+neutron1Dict["dictList"]=[d2Dict,{}]
 
 initDict["dictList"]=[carbon12Dict,nickel68Dict]
 
