@@ -31,6 +31,7 @@ tritonDict={"type":tP,"name":"t1","mass":mt,"exE":0.0}
 #Defining the detectors
 d1Dict={"type":tD,"name":"d1","angles":[radians(0.0),radians(0)]}
 d2Dict={"type":tD,"name":"d2","angles":[radians(30.0),radians(180)]}
+# d2Dict={"type":tD,"name":"d2","angles":[radians(10.0),radians(180)]} #the other conf
 
 #Completing the dictionaries
 alpha1Dict["dictList"]=[d1Dict,{}]
