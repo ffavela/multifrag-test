@@ -60,6 +60,6 @@ studied one.
 After some discussion with the team (mainly with Dr. Cardella) it was
 pointed out that even though those are the "regions" where the peaks
 should be, we aren't saying anything about the probabilities (other
-than 0 if it is energetically forbidden or !=0). The height of those
-peaks (if any) might be under the background and therefore not clearly
-visible in the spectrum.
+than 0 if it is energetically forbidden or !=0 in case it wasn't). The
+height of those peaks (if any) might be under the background and
+therefore not clearly visible in the spectrum.
