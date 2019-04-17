@@ -1,7 +1,7 @@
 The article is out!!
 Here is the link:
 
-https://www.sif.it/riviste/sif/ncc/econtents/2018/041/05/article/33
+http://dx.doi.org/10.1393/ncc/i2018-18197-1
 
 I think I'll later upload the poster.
 
