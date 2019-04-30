@@ -3,13 +3,18 @@ Here is the link:
 
 http://dx.doi.org/10.1393/ncc/i2018-18197-1
 
-I think I'll later upload the poster.
+Here is a link to the 5 min presentation:
 
-Just some personal testing for multifragmentation stuff. Before
-running make sure you have python-numpy, python-matplotlib and
+https://agenda.infn.it/event/13852/attachments/15263/17263/favela.pdf
+
+I'll put the link to the gifs later.
+
+Look at the bottom for poster link
+
+Before running make sure you have python-numpy, python-matplotlib and
 python-termcolor installed.
 
-$ python helium6Example.py 
+$ python helium6Example.py
 
 Runs a simple example involving 6He
 
@@ -28,7 +33,7 @@ The method still needs extensive testing but at least it is conserving
 energy. More updates will be made but probably in a fork or another
 repo.
 
-#Some important clarifications:
+# Some important clarifications:
 
 The article explicitly refers to the Ex=18.3 in 6He and the peak
 associated with it in their plot is the 18.6 peak. If the program is
@@ -70,3 +75,39 @@ should be, we aren't saying anything about the probabilities (other
 than 0 if it is energetically forbidden or !=0 in case it wasn't). The
 height of those peaks (if any) might be under the background and
 therefore not clearly visible in the spectrum.
+
+# About the poster
+
+The link is:
+
+"put link here"
+
+So as you can see the table is different, that's because I used
+E\_final instead of E\_final-Q. And also because the program still had
+the energy conservation BUG (it still has other bugs btw). So please
+refer to the table of the article, not the poster. Also, the caption
+of the spectra shown in figure 1 is obsolete so please ignore that
+also (BUG etc.). And last but not least the Ex=18.6 should be 18.9
+(for our paper) or 18.3 (as mentioned b4, for the PRC)
+
+In the graphical algorithm section, you may notice that the pulling
+can have more than one line on an eNode eventhough on all the leaf
+eNodes there is only one single straight line. This is because lines
+can be broken during the line pulling (all the way to the root eNode).
+
+Also on the poster I call the dots points.
+
+Any obsessive-compulsive might notice, from how the code is written,
+that the implementation of the algorithm is not the same as the
+published one (the program pulls all the lines first for example),
+this is because at the moment of writting the algorithm was not clear
+to begin with and many ideas where tried before concluding which was
+the most compact way of explaining it.
+
+I highly encourage to make your own implementation. Recursion is a
+difficult concept, however it's more natural that we are normally
+aware, for example grammar has a recursive nature and we are natural
+intuitive grammarians from the simple fact that you are able to speak
+your own language (more or less) without knowing the explicit
+rules. That was a good reason for explaining the algorithm in terms of
+a simple grammar. The analogy goes a long way but I'll leave it as is.
