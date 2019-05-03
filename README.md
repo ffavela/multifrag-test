@@ -7,7 +7,9 @@ Here is a link to the 5 min presentation:
 
 https://agenda.infn.it/event/13852/attachments/15263/17263/favela.pdf
 
-I'll put the link to the gifs later.
+A couple of gifs from the presentation can be found here:
+
+https://drive.google.com/drive/folders/1M8DYx_ynWXXOfcUI0JUo6ChWaKPU-j41?usp=sharing
 
 Look at the bottom for poster link
 
@@ -111,3 +113,13 @@ intuitive grammarians from the simple fact that you are able to speak
 your own language (more or less) without knowing the explicit
 rules. That was a good reason for explaining the algorithm in terms of
 a simple grammar. The analogy goes a long way but I'll leave it as is.
+
+Also about the gifs, ani.gif shows an example of a line pull for a 3
+case like the 6He BRT, the masses of the constricted fragments are
+equal. That means that the lengths of the velocity vectors of the
+sibling nodes are equal. The geometric place of the fragment that
+splits into the two particles is as shown.
+
+For the 4 particle case shown in animTree.gif, I just want to clarify
+that it was done with an energy conservation BUG, so the CM velocity
+vectors should not have exactly the same magnitudes.
